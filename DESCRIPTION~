@@ -4,7 +4,7 @@ Title: Bayesian quantile regression methods
 Version: 0.1
 Date: 2015-12-02
 Author: Bruno Santos
-Maintainer: Bruno Santos <bramos@ime.usp.br>
+Maintainer: Bruno Santos <bramos at ime.usp.br>
 Description: This package estimates different models of Bayesian quantile 
 	      regression based in the asymmetric Laplace distribution 
 	      in the likelihood.
