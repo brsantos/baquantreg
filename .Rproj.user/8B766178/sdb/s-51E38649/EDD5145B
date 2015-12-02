@@ -1,0 +1,17 @@
+{
+    "contents" : "#include <Rcpp.h>\nusing namespace Rcpp;\n\n// This is a simple function using Rcpp that creates an R list\n// containing a character vector and a numeric vector.\n//\n// Learn more about how to use Rcpp at:\n//\n//   http://www.rcpp.org/\n//   http://adv-r.had.co.nz/Rcpp.html\n//\n// and browse examples of code using Rcpp at:\n// \n//   http://gallery.rcpp.org/\n//\n\n// [[Rcpp::export]]\nList rcpp_hello() {\n  CharacterVector x = CharacterVector::create(\"foo\", \"bar\");\n  NumericVector y   = NumericVector::create(0.0, 1.0);\n  List z            = List::create(x, y);\n  return z;\n}\n",
+    "created" : 1449077840480.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1412119302",
+    "id" : "EDD5145B",
+    "lastKnownWriteTime" : 1449077838,
+    "path" : "~/SpiderOak Hive/Pós Graduação/PacotesR/baquantreg/src/rcpp_hello.cpp",
+    "project_path" : "src/rcpp_hello.cpp",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "type" : "cpp"
+}
