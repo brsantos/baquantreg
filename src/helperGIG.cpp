@@ -1,4 +1,3 @@
-#include <Rcpp.h>
 #include <RcppGSL.h>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>

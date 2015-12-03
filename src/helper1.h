@@ -1,7 +1,4 @@
-using namespace Rcpp;
-using namespace arma;
+double postDensMHstep(arma::colvec parameters, int link, arma::mat X, arma::colvec varInd,
+                      arma::colvec priorBeta, arma::mat priorSigma);
 
-double postDensMHstep(colvec parameters, String link, mat X, colvec varInd,
-                      colvec priorBeta, mat priorSigma);
-
-double predicProb(colvec parameters, String link, rowvec x);
+double predicProb(arma::colvec parameters, int link, arma::rowvec x);

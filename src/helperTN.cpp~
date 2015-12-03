@@ -1,3 +1,5 @@
+using namespace Rcpp;
+
 double rtnormRcpp(NumericVector a, NumericVector b, double mean, double sigma){
   double out(1);
   NumericVector unif(1);
@@ -20,6 +22,8 @@ double rtnormRcpp(NumericVector a, NumericVector b, double mean, double sigma){
 // (a,b) via rejection sampling.
 // ======================================================================
 
+// [[Rcpp::export]]
+
 double norm_rs(double a, double b)
 {
   double x;
@@ -33,6 +37,8 @@ double norm_rs(double a, double b)
 // generates a sample from a N(0,1) RV restricted to the interval
 // (a,b) using exponential rejection sampling.
 // ======================================================================
+
+// [[Rcpp::export]]
 
 double exp_rs(double a, double b)
 {
@@ -66,7 +72,7 @@ double exp_rs(double a, double b)
 // lower can be -Inf and upper can be Inf.
 //======================================================================
 
-
+// [[Rcpp::export]]
 double rnorm_trunc (double mu, double sigma, double lower, double upper)
 {
   double a, b;

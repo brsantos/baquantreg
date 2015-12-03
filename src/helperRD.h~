@@ -1,3 +1,6 @@
+using namespace Rcpp;
+using namespace arma;
+
 double rinvgammaRcpp(double shape, double scale);
 
 colvec mvrnormRcpp(arma::colvec mu, arma::mat Sigma);

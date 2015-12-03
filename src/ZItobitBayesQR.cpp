@@ -1,4 +1,3 @@
-#include <Rcpp.h>
 #include <RcppArmadillo.h>
 #include "helper1.h"
 #include "helperGIG.h"
@@ -6,15 +5,14 @@
 #include "helperRD.h"
 
 using namespace Rcpp;   // inline does that for us already
-using namespace arma;
 
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::depends(RcppGSL)]]
 
 // [[Rcpp::export]]
-List ziTobitBayesQR(double tau, colvec y, mat X, int itNum, int thin,
-                      colvec betaValue, double sigmaValue, colvec betaZeroValue,
-                      double sigmaBetaZero, String link){
+List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
+                      arma::colvec betaValue, double sigmaValue, arma::colvec betaZeroValue,
+                      double sigmaBetaZero, int link){
 
    RNGScope scope;
 
@@ -26,7 +24,7 @@ List ziTobitBayesQR(double tau, colvec y, mat X, int itNum, int thin,
    n = X.n_rows;
    p = X.n_cols;
 
-   colvec varInd(n, fill::zeros);
+   arma::colvec varInd(n, fill::zeros);
    for (int dd = 0; dd < n; dd++){
      if (y[dd]==0){
        varInd[dd] = 1.0;
@@ -37,20 +35,20 @@ List ziTobitBayesQR(double tau, colvec y, mat X, int itNum, int thin,
    n2 = n - n1;
 
    double fObsLap, probCens;
-   colvec censInd(n, fill::zeros);
+   arma::colvec censInd(n, fill::zeros);
 
    double theta, psi2, s0, n0, gama2, lambda, meanModel, sdModel, nTilde, sTilde, zValue,
             postNew, postAnt, probAcceptance, acceptRate, accept, termsSum;
 
    acceptRate = 0;
 
-   mat betaSample(itNum/thin, p, fill::zeros), betaZeroSample(itNum/thin, p, fill::zeros);
-   colvec sigmaSample(itNum/thin, fill::zeros);
+   arma::mat betaSample(itNum/thin, p, arma::fill::zeros), betaZeroSample(itNum/thin, p, arma::fill::zeros);
+   arma::colvec sigmaSample(itNum/thin, arma::fill::zeros);
    NumericVector InfPar(1), LimSup(1);
 
-   colvec b0(p), mu(p), newBetaZeroValue(p), vetorUm(p, fill::ones), delta2(n);
+   arma::colvec b0(p), mu(p), newBetaZeroValue(p), vetorUm(p, arma::fill::ones), delta2(n);
 
-   mat B0(p,p), sigmaMinusOne(p,p), diagU, sigmaMat(p,p), matIdsigmaBetaZero(p,p);
+   arma::mat B0(p,p), sigmaMinusOne(p,p), diagU, sigmaMat(p,p), matIdsigmaBetaZero(p,p);
 
    // Hiperparâmetros da priori normal
    B0 = 100 * B0.eye(p,p);
@@ -74,13 +72,13 @@ List ziTobitBayesQR(double tau, colvec y, mat X, int itNum, int thin,
 
    IntegerVector seqRefresh = seq(1, itNum/100)*100;
 
-   colvec zSample(n, fill::ones), aux(n), aux2;
+   arma::colvec zSample(n, arma::fill::ones), aux(n), aux2;
 
    sigmaSample[0] = sigmaValue;
 
-   mat matrizIndCens(itNum/thin, n, fill::zeros), matrizIndNCens(itNum/thin, n, fill::zeros);
+   arma::mat matrizIndCens(itNum/thin, n, arma::fill::zeros), matrizIndNCens(itNum/thin, n, arma::fill::zeros);
 
-   uvec ind_n2(n2, fill::zeros), ind_l(n1, fill::zeros), ind_m(n1, fill::zeros);
+   arma::uvec ind_n2(n2, arma::fill::zeros), ind_l(n1, arma::fill::zeros), ind_m(n1, arma::fill::zeros);
 
    double probZero;
 
@@ -98,7 +96,7 @@ List ziTobitBayesQR(double tau, colvec y, mat X, int itNum, int thin,
 
         for (int ee = 0; ee < n; ee++){
           if (y[ee]==0){
-            fObsLap = Flaplace(as_scalar(X.row(ee) * betaValue), tau, sigmaValue);
+            fObsLap = Flaplace(arma::as_scalar(X.row(ee) * betaValue), tau, sigmaValue);
             probZero = 1-predicProb(betaZeroValue, link, X.row(ee));
             probCens = (probZero * fObsLap)/(1-probZero + probZero*fObsLap);
             if (runif(1)[0] < probCens){
@@ -122,10 +120,10 @@ List ziTobitBayesQR(double tau, colvec y, mat X, int itNum, int thin,
         m = sum(censInd);
         l = n1 - m;
 
-        uvec ind_v(n2 + m, fill::zeros);
+        arma::uvec ind_v(n2 + m, arma::fill::zeros);
 
         if (m > 0) {
-          uvec ind_m2 = ind_m.subvec(0, cont_m - 1);
+          arma::uvec ind_m2 = ind_m.subvec(0, cont_m - 1);
           ind_v.subvec(0, m - 1) = ind_m2;
           ind_v.subvec(m, n2+m-1) = ind_n2;
         }
@@ -133,9 +131,9 @@ List ziTobitBayesQR(double tau, colvec y, mat X, int itNum, int thin,
           ind_v = ind_n2;
         }
 
-        colvec yS = y;
-        mat X2 = X.rows(ind_v);
-        colvec zSample2(n2+m, fill::ones);
+        arma::colvec yS = y;
+        arma::mat X2 = X.rows(ind_v);
+        arma::colvec zSample2(n2+m, arma::fill::ones);
 
         aux = X * betaValue;
         for (int aa = 0; aa < n; aa++){
@@ -146,7 +144,7 @@ List ziTobitBayesQR(double tau, colvec y, mat X, int itNum, int thin,
            }
         }
 
-        colvec y2 = yS(ind_v);
+        arma::colvec y2 = yS(ind_v);
 
         delta2 = diagvec((1/(psi2*sigmaValue)) * diagmat(yS - aux) * diagmat(yS - aux));
 
@@ -164,7 +162,7 @@ List ziTobitBayesQR(double tau, colvec y, mat X, int itNum, int thin,
 
         zSample2 = zSample(ind_v);
         aux2 = aux.rows(ind_v);
-        termsSum = as_scalar((y2 - aux2 - theta*zSample2).t() * diagmat(zSample2).i() * (y2 - aux2 - theta*zSample2));
+        termsSum = arma::as_scalar((y2 - aux2 - theta*zSample2).t() * diagmat(zSample2).i() * (y2 - aux2 - theta*zSample2));
 
         nTilde = n0 + 3*(n2+m);
         sTilde =  s0 + 2*sum(zSample2) + termsSum/psi2;
