@@ -3,15 +3,15 @@
         "-I/usr/lib/rstudio/resources/libclang/builtin-headers/3.5",
         "-I/usr/lib/rstudio/resources/libclang/builtin-headers/libc++/3.5",
         "-I/home/bruno/R/x86_64-pc-linux-gnu-library/3.2/Rcpp/include",
-        "-I/home/bruno/R/x86_64-pc-linux-gnu-library/3.2/RcppGSL/include",
         "-I/usr/local/lib/R/site-library/RcppArmadillo/include",
+        "-I/home/bruno/R/x86_64-pc-linux-gnu-library/3.2/RcppGSL/include",
         "-I/usr/share/R/include",
         "-DNDEBUG",
         "-fpic",
         "-fstack-protector-strong",
         "-D_FORTIFY_SOURCE=2"
     ],
-    "hash" : "1449085098",
+    "hash" : "144916304614490848031449084803",
     "is_cpp" : true,
     "pch" : "Rcpp"
 }

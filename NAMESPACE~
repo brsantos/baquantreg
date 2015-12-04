@@ -1,5 +1,3 @@
 exportPattern("^[[:alpha:]]+")
 import(RcppArmadillo)
-import(RcppGSL)
-importFrom(Rcpp, evalCpp)
 useDynLib(baquantreg)

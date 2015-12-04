@@ -1,4 +1,4 @@
-double rtnormRcpp(NumericVector a, NumericVector b, double mean, double sigma);
+double rtnormRcpp(Rcpp::NumericVector a, Rcpp::NumericVector b, double mean, double sigma);
 
 double norm_rs(double a, double b);
 

@@ -1,16 +1,19 @@
-#include <RcppArmadillo.h>
 #include <RcppGSL.h>
+#include <RcppArmadillo.h>
 
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_roots.h>
 
-#include "helperTN.h"
 #include "helper1.h"
 #include "helperGIG.h"
+#include "helperTN.h"
 #include "helperRD.h"
 
 using namespace Rcpp;   // inline does that for us already
+
+// [[Rcpp::depends(RcppGSL)]]
+// [[Rcpp::depends(RcppArmadillo)]]
 
 // [[Rcpp::export]]
 List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,

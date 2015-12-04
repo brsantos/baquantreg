@@ -2,6 +2,8 @@
 
 using namespace Rcpp;
 
+// [[Rcpp::depends(RcppArmadillo)]]
+
 double rinvgammaRcpp(double shape, double scale){
   double out = pow(rgamma(1, shape, 1/scale)[0],-1);
   return out;

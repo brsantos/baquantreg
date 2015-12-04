@@ -1,3 +1,9 @@
+#include <RcppArmadillo.h>
+
+using namespace Rcpp;
+
+// [[Rcpp::depends(RcppArmadillo)]]
+
 double rtnormRcpp(NumericVector a, NumericVector b, double mean, double sigma){
   double out(1);
   NumericVector unif(1);

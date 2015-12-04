@@ -12,8 +12,8 @@ License: GPL-2 | GPL-3
 LazyData: TRUE
 Imports: 
     Rcpp (>= 0.12.2), 
-    RcppGSL (>= 0.4.100.2.1), 
-    RcppArmadillo
+    RcppGSL, 
+    RcppArmadillo (>= 0.4.100.2.1)
 LinkingTo: 
     Rcpp, 
     RcppGSL, 
