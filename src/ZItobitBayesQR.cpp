@@ -12,6 +12,9 @@
 
 using namespace Rcpp;   // inline does that for us already
 
+// [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::depends(RcppGSL)]]
+
 // [[Rcpp::export]]
 List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
                       arma::colvec betaValue, double sigmaValue, arma::colvec betaZeroValue,
