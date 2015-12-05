@@ -2,6 +2,6 @@
 
 export(zitobitQR)
 useDynLib(baquantreg)
-import(RcppArmadillo)
+import(RcppArmadillo, RcppGSL)
 importFrom(Rcpp, evalCpp)
 exportPattern("^[[:alpha:]]+")
