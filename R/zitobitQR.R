@@ -26,7 +26,7 @@
 zitobitQR <- function(tau = 0.5, y, X, itNum, thin=1, betaValue=rep(0, dim(X)[2]),
                       sigmaValue=1, gamaValue=rep(0, dim(X)[2]),
                       sigmaBetaZero = 0.5, link=1){
-
+  print("Entrei na função do R.")
   ziTobitBayesQR(tau = tau, y=y, X=X, itNum=itNum, thin=thin,
                  betaValue=betaValue, sigmaValue=sigmaValue, betaZeroValue = gamaValue,
                  sigmaBetaZero=gamaValue, link=link)

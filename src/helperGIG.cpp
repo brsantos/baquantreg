@@ -40,64 +40,63 @@ double rgigRcpp(double chi, double psi, double lambda){
   F1.function = &funG; F2.function = &funG;
   F1.params = &params; F2.params = &params;
 
-//   T1 = gsl_root_fsolver_brent;
-//   T2 = gsl_root_fsolver_brent;
-//   s1 = gsl_root_fsolver_alloc (T1);
-//   s2 = gsl_root_fsolver_alloc (T2);
-//
-//   int status1, status2;
-//
-//   double x_lo1 = 0.0, x_hi1 = m;
-//   double x_lo2 = m, x_hi2 = upper;
-//
-//   gsl_root_fsolver_set (s1, &F1, x_lo1, x_hi1);
-//   gsl_root_fsolver_set (s2, &F2, x_lo2, x_hi2);
-//
-//   double yM, yP;
-//
-//   // Obtendo primeira raiz.
-//   do
-//   {
-//     status1 = gsl_root_fsolver_iterate (s1);
-//     yM = gsl_root_fsolver_root (s1);
-//     x_lo1 = gsl_root_fsolver_x_lower (s1);
-//     x_hi1 = gsl_root_fsolver_x_upper (s1);
-//     status1 = gsl_root_test_interval (x_lo1, x_hi1,0, 0.000001);
-//   }
-//   while (status1 == GSL_CONTINUE);
-//   gsl_root_fsolver_free (s1);
-//
-//   // Obtendo segunda raiz.
-//   do
-//   {
-//     status2 = gsl_root_fsolver_iterate (s2);
-//     yP = gsl_root_fsolver_root (s2);
-//     x_lo2 = gsl_root_fsolver_x_lower (s2);
-//     x_hi2 = gsl_root_fsolver_x_upper (s2);
-//     status2 = gsl_root_test_interval (x_lo2, x_hi2,0, 0.000001);
-//   }
-//   while (status2 == GSL_CONTINUE);
-//   gsl_root_fsolver_free (s2);
-//
-//   double a = (yP - m) * pow(yP/m,0.5 * (lambda - 1)) * exp(-0.25 * beta * (yP + 1/yP - m - 1/m));
-//   double b = (yM - m) * pow(yM/m,0.5 * (lambda - 1)) * exp(-0.25 * beta * (yM + 1/yM - m - 1/m));
-//   double c = -0.25 * beta * (m + 1/m) + 0.5 * (lambda - 1) * log(m);
-//
-//   double output;
-//
-//   int needValue = 1;
-//   double Y;
-//   while (needValue==1) {
-//     double R1 = runif(1)[0];
-//     double R2 = runif(1)[0];
-//     Y = m + a * R2/R1 + b * (1 - R2)/R1;
-//     if (Y > 0) {
-//       if (-log(R1) >= -0.5 * (lambda - 1) * log(Y) + 0.25 * beta * (Y + 1/Y) + c){
-//         needValue = 0;
-//       }
-//     }
-//   }
-//   output = Y/alpha;
-  double output = 1.0;
+  T1 = gsl_root_fsolver_brent;
+  T2 = gsl_root_fsolver_brent;
+  s1 = gsl_root_fsolver_alloc (T1);
+  s2 = gsl_root_fsolver_alloc (T2);
+
+  int status1, status2;
+
+  double x_lo1 = 0.0, x_hi1 = m;
+  double x_lo2 = m, x_hi2 = upper;
+
+  gsl_root_fsolver_set (s1, &F1, x_lo1, x_hi1);
+  gsl_root_fsolver_set (s2, &F2, x_lo2, x_hi2);
+
+  double yM, yP;
+
+  // Obtendo primeira raiz.
+  do
+  {
+    status1 = gsl_root_fsolver_iterate (s1);
+    yM = gsl_root_fsolver_root (s1);
+    x_lo1 = gsl_root_fsolver_x_lower (s1);
+    x_hi1 = gsl_root_fsolver_x_upper (s1);
+    status1 = gsl_root_test_interval (x_lo1, x_hi1,0, 0.000001);
+  }
+  while (status1 == GSL_CONTINUE);
+  gsl_root_fsolver_free (s1);
+
+  // Obtendo segunda raiz.
+  do
+  {
+    status2 = gsl_root_fsolver_iterate (s2);
+    yP = gsl_root_fsolver_root (s2);
+    x_lo2 = gsl_root_fsolver_x_lower (s2);
+    x_hi2 = gsl_root_fsolver_x_upper (s2);
+    status2 = gsl_root_test_interval (x_lo2, x_hi2,0, 0.000001);
+  }
+  while (status2 == GSL_CONTINUE);
+  gsl_root_fsolver_free (s2);
+
+  double a = (yP - m) * pow(yP/m,0.5 * (lambda - 1)) * exp(-0.25 * beta * (yP + 1/yP - m - 1/m));
+  double b = (yM - m) * pow(yM/m,0.5 * (lambda - 1)) * exp(-0.25 * beta * (yM + 1/yM - m - 1/m));
+  double c = -0.25 * beta * (m + 1/m) + 0.5 * (lambda - 1) * log(m);
+
+  double output;
+
+  int needValue = 1;
+  double Y;
+  while (needValue==1) {
+    double R1 = runif(1)[0];
+    double R2 = runif(1)[0];
+    Y = m + a * R2/R1 + b * (1 - R2)/R1;
+    if (Y > 0) {
+      if (-log(R1) >= -0.5 * (lambda - 1) * log(Y) + 0.25 * beta * (Y + 1/Y) + c){
+        needValue = 0;
+      }
+    }
+  }
+  output = Y/alpha;
   return output;
 }

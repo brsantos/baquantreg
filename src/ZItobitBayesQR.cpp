@@ -22,6 +22,8 @@ List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin
 
    RNGScope scope;
 
+   Rcout << "Entrei na função do Rcpp." << std::endl;
+
    int n, n1, n2, l, m, p, cont_n2, cont_l, cont_m;
    cont_n2 = 0;
    cont_l = 0;
