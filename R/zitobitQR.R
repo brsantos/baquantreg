@@ -13,7 +13,8 @@
 #' @param sigmaValue Initial value for the scale parameter.
 #' @param gamaValue Initial value for the parameter gamma of the discrete part.
 #' @param sigmaBetaZero Tuning parameter for the Metropolis-Hastings step.
-#' @param link Integer defining the link function used for the probability model. Default is 1
+#' @param link Integer defining the link function used for the probability
+#' model. Default is 1.
 #' for the logit link function.
 #' @return A list with the chains of all parameters of interest.
 #' @references Santos and Bolfarine (2015) - Bayesian quantile regression analysis for continuous data
@@ -23,13 +24,24 @@
 #' @examples
 #' set.seed(1)
 
-zitobitQR <- function(tau = 0.5, y, X, itNum, thin=1, betaValue=rep(0, dim(X)[2]),
-                      sigmaValue=1, gamaValue=rep(0, dim(X)[2]),
-                      sigmaBetaZero = 0.5, link=1){
-  print("Entrei na função do R.")
-  ziTobitBayesQR(tau = tau, y=y, X=X, itNum=itNum, thin=thin,
-                 betaValue=betaValue, sigmaValue=sigmaValue, betaZeroValue = gamaValue,
-                 sigmaBetaZero=gamaValue, link=link)
+zitobitQR <- function(tau = 0.5, y, X, itNum, thin=1,
+                      betaValue=rep(0, dim(X)[2]),
+                      sigmaValue=1, gammaValue=rep(0, dim(X)[2]),
+                      sigmaGamma = 0.5, link=1){
+
+  ziTobit <- ziTobitBayesQR(tau = tau, y=y, X=X, itNum=itNum, thin=thin,
+                          betaValue=betaValue, sigmaValue=sigmaValue,
+                          gammaValue = gammaValue,
+                          sigmaGamma=sigmaGamma, link=link)
+
+  ziTobit$tau <- tau
+  ziTobit$y <- y
+  ziTobit$X <- X
+  ziTobit$link <- link
+
+  class(ziTobit) <- "zitobitQR"
+
+  return(ziTobit)
 }
 
 

@@ -8,8 +8,8 @@
 using namespace Rcpp;
 
 // ziTobitBayesQR
-List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::colvec betaZeroValue, double sigmaBetaZero, int link);
-RcppExport SEXP baquantreg_ziTobitBayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP betaZeroValueSEXP, SEXP sigmaBetaZeroSEXP, SEXP linkSEXP) {
+List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::colvec gammaValue, double sigmaGamma, int link);
+RcppExport SEXP baquantreg_ziTobitBayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP gammaValueSEXP, SEXP sigmaGammaSEXP, SEXP linkSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -20,10 +20,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
     Rcpp::traits::input_parameter< arma::colvec >::type betaValue(betaValueSEXP);
     Rcpp::traits::input_parameter< double >::type sigmaValue(sigmaValueSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type betaZeroValue(betaZeroValueSEXP);
-    Rcpp::traits::input_parameter< double >::type sigmaBetaZero(sigmaBetaZeroSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type gammaValue(gammaValueSEXP);
+    Rcpp::traits::input_parameter< double >::type sigmaGamma(sigmaGammaSEXP);
     Rcpp::traits::input_parameter< int >::type link(linkSEXP);
-    __result = Rcpp::wrap(ziTobitBayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, betaZeroValue, sigmaBetaZero, link));
+    __result = Rcpp::wrap(ziTobitBayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, gammaValue, sigmaGamma, link));
     return __result;
 END_RCPP
 }

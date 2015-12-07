@@ -5,7 +5,7 @@
 \title{Bayesian quantile regression model with a discrete component at zero}
 \usage{
 zitobitQR(tau = 0.5, y, X, itNum, thin = 1, betaValue = rep(0, dim(X)[2]),
-  sigmaValue = 1, gamaValue = rep(0, dim(X)[2]), sigmaBetaZero = 0.5,
+  sigmaValue = 1, gammaValue = rep(0, dim(X)[2]), sigmaGamma = 0.5,
   link = 1)
 }
 \arguments{
@@ -23,12 +23,13 @@ zitobitQR(tau = 0.5, y, X, itNum, thin = 1, betaValue = rep(0, dim(X)[2]),
 
 \item{sigmaValue}{Initial value for the scale parameter.}
 
+\item{link}{Integer defining the link function used for the probability
+model. Default is 1.
+for the logit link function.}
+
 \item{gamaValue}{Initial value for the parameter gamma of the discrete part.}
 
 \item{sigmaBetaZero}{Tuning parameter for the Metropolis-Hastings step.}
-
-\item{link}{Integer defining the link function used for the probability model. Default is 1
-for the logit link function.}
 }
 \value{
 A list with the chains of all parameters of interest.
