@@ -28,7 +28,8 @@ of 2000, and some sociodemographic variables.
 \references{
 Santos and Bolfarine (2015). Bayesian analysis for zero-or-one
  inflated proportion data using quantile regression. \emph{Journal of
- Statistical Computation and Simulation}.
+ Statistical Computation and Simulation}. \url{http://www.tandfonline.com
+ /doi/abs/10.1080/00949655.2014.986733}
 }
 \keyword{datasets}
 
