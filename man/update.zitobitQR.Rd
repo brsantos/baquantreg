@@ -4,18 +4,18 @@
 \alias{update.zitobitQR}
 \title{Model update}
 \usage{
-\method{update}{zitobitQR}(model, numIt, thin, sigmaGamma)
+\method{update}{zitobitQR}(model, itNum, thin = 1, sigmaGamma, ...)
 }
 \arguments{
 \item{model}{Fitted model by the function zitobitQR}
-
-\item{numIt}{Size of the chain that will be added to the current available
-chain.}
 
 \item{thin}{Thinning parameter for the chains.}
 
 \item{sigmaGamma}{Tuning parameter for the Metropolis-Hasting part of the
 algorithm.}
+
+\item{numIt}{Size of the chain that will be added to the current available
+chain.}
 }
 \value{
 A list with the updated chains.
@@ -26,8 +26,14 @@ zitobitQR.
 }
 \examples{
 set.seed(1)
+data("BrazilDurableGoods")
+# Change the number of iterations for better results.
+model <- zitobitQR(expenditure ~ age + education, tau=0.5,
+                  data=BrazilDurableGoods, itNum=100,
+                  sigmaGamma=0.10, refresh=20)
+model <- update(modelo, 100, thin=1, sigmaGamma = 0.10, refresh=10)
 }
 \seealso{
-zitobitQR
+\code{\link{zitobitQR}}
 }
 

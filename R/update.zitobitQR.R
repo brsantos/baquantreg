@@ -10,25 +10,29 @@
 #' @param sigmaGamma Tuning parameter for the Metropolis-Hasting part of the
 #' algorithm.
 #' @return A list with the updated chains.
-#' @seealso zitobitQR
+#' @seealso \code{\link{zitobitQR}}
 #' @export
-#' @S3method update zitobitQR
 #' @examples
 #' set.seed(1)
-#'
+#' data("BrazilDurableGoods")
+#' # Change the number of iterations for better results.
+#' model <- zitobitQR(expenditure ~ age + education, tau=0.5,
+#'                   data=BrazilDurableGoods, itNum=100,
+#'                   sigmaGamma=0.10, refresh=20)
+#' model <- update(modelo, 100, thin=1, sigmaGamma = 0.10, refresh=10)
 
-update.zitobitQR <- function(model, numIt, thin, sigmaGamma){
+update.zitobitQR <- function(model, itNum, thin=1, sigmaGamma, ...){
   if(class(model)!='zitobitQR')
     stop("Class different of 'zitobitQR'. Use a different update function.")
 
-  newChains <- zitobitQR(tau = model$tau, y=model$y, X=model$X, numIt=numIt,
+  newChains <- zitobitQR(model$formula, model$tau, model$data, itNum=itNum,
                          thin=thin, betaValue=tail(model$betaSample,1),
                          sigmaValue=tail(model$sigmaSample, 1),
                          gammaValue=tail(model$gammaSample, 1),
-                         sigmaGamma = sigmaGamma, link=model$link)
+                         sigmaGamma = sigmaGamma, link=model$link, ...)
 
-  w1 <- dim(model$betaSample)[1]/(numIt + dim(model$betaSample)[1])
-  w2 <- numIt/(numIt + dim(model$betaSample)[1])
+  w1 <- dim(model$betaSample)[1]/(itNum + dim(model$betaSample)[1])
+  w2 <- itNum/(itNum + dim(model$betaSample)[1])
 
   newZiTobit <- list(tau = model$tau, y=model$y, X=model$X,
                      betaSample = rbind(model$betaSample,
@@ -37,7 +41,8 @@ update.zitobitQR <- function(model, numIt, thin, sigmaGamma){
                                          newChains$sigmaSample),
                      gammaSample = rbind(model$gammaSample,
                                          newChains$gammaSample),
-                     acceptRate = w1*model$acceptRate + w2*newChains$acceptRate)
+                     acceptRate = w1*model$acceptRate +
+                       w2*newChains$acceptRate)
   class(newZiTobit) <- "zitobitQR"
 
   return(newZiTobit)
