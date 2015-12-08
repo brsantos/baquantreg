@@ -4,8 +4,9 @@ using namespace Rcpp;
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
-double postDensMHstep(arma::colvec parameters, int link, arma::mat X, arma::colvec varInd,
-                      arma::colvec priorBeta, arma::mat priorSigma){
+double postDensMHstep(arma::colvec parameters, int link, arma::mat X,
+                      arma::colvec varInd, arma::colvec priorBeta,
+                      arma::mat priorSigma){
 
   int n = X.n_rows;
 
@@ -13,7 +14,8 @@ double postDensMHstep(arma::colvec parameters, int link, arma::mat X, arma::colv
   arma::colvec valLik(n), aux(n);
   Rcpp::NumericVector aux1(1);
 
-  priorWeight = -0.5 * as_scalar((parameters.t() - priorBeta.t()) * priorSigma.i() * (parameters - priorBeta));
+  priorWeight = -0.5 * as_scalar((parameters.t() - priorBeta.t()) *
+    priorSigma.i() * (parameters - priorBeta));
 
   aux = X * parameters;
 
