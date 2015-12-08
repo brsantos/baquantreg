@@ -18,7 +18,8 @@ using namespace Rcpp;   // inline does that for us already
 // [[Rcpp::export]]
 List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
                     int thin, arma::colvec betaValue, double sigmaValue,
-                    arma::colvec gammaValue, double sigmaGamma, int link){
+                    arma::colvec gammaValue, double sigmaGamma, int link,
+                    double priorVar, int refresh){
 
    RNGScope scope;
 
@@ -60,15 +61,15 @@ List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
    arma::mat B0(p,p), sigmaMinusOne(p,p), diagU, sigmaMat(p,p),
     matIdsigmaGamma(p,p);
 
-   // Hiperparâmetros da priori normal
-   B0 = 100 * B0.eye(p,p);
+   // Hyperparameters of the normal prior distribution
+   B0 = priorVar * B0.eye(p,p);
    b0.fill(0);
 
-   /* Constantes que dependem somente do tau estimado */
+   /* Constants that only depend on tau. */
    theta = (1-2*tau)/(tau*(1-tau));
    psi2 = 2/(tau*(1-tau));
 
-   /* Inicializando valores. */
+   /* Initializing values. */
    n0 = 3;
    s0 = 0.1;
 
@@ -80,7 +81,7 @@ List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
 
    matIdsigmaGamma = sigmaGamma * diagmat(vetorUm);
 
-   IntegerVector seqRefresh = seq(1, itNum/100)*100;
+   IntegerVector seqRefresh = seq(1, itNum/refresh)*refresh;
 
    arma::colvec zSample(n, arma::fill::ones), aux(n), aux2;
 
@@ -94,7 +95,6 @@ List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
 
    double probZero;
 
-   // Laço que vai fazer a atualização dos estados das cadeias.
    for(int k = 1; k < itNum; k++){
       for(int j = 0; j < thin; j++){
 

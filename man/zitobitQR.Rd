@@ -4,16 +4,18 @@
 \alias{zitobitQR}
 \title{Bayesian quantile regression model with a discrete component at zero}
 \usage{
-zitobitQR(tau = 0.5, y, X, itNum, thin = 1, betaValue = rep(0, dim(X)[2]),
-  sigmaValue = 1, gammaValue = rep(0, dim(X)[2]), sigmaGamma = 0.5,
-  link = 1)
+zitobitQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
+  sigmaValue = 1, gammaValue = NULL, sigmaGamma = 0.5, link = 1,
+  priorVar = 100, refresh = 100)
 }
 \arguments{
+\item{formula}{a formula object, with the response on the left of a ~
+operator, and the terms, separated by + operators, on the right.}
+
 \item{tau}{Quantile of interest.}
 
-\item{y}{Vector of response variable.}
-
-\item{X}{Design matrix.}
+\item{data}{a data.frame from which to find the variables defined in the
+formula}
 
 \item{itNum}{Number of iterations.}
 
@@ -26,6 +28,12 @@ zitobitQR(tau = 0.5, y, X, itNum, thin = 1, betaValue = rep(0, dim(X)[2]),
 \item{link}{Integer defining the link function used for the probability
 model. Default is 1.
 for the logit link function.}
+
+\item{priorVar}{Value that multiplies a identity matrix in the elicition
+process of the prior variance of the regression parameters.}
+
+\item{refresh}{Interval between printing a message during the iteration
+process. Default is set to 100.}
 
 \item{gamaValue}{Initial value for the parameter gamma of the discrete part.}
 
@@ -41,6 +49,11 @@ discrete-continuous distribution.
 }
 \examples{
 set.seed(1)
+data("BrazilDurableGoods")
+# Change the number of iterations for better results.
+model <- zitobitQR(expenditure ~ age + education, tau=0.5,
+                  data=BrazilDurableGoods, itNum=100,
+                  sigmaGamma=0.10, refresh=20)
 }
 \references{
 Santos and Bolfarine (2015) - Bayesian quantile regression analysis for continuous data
