@@ -17,7 +17,7 @@
 #'
 
 update.twopartQR <- function(model, itNum, thin, sigmaGamma, ...){
-  if(class(model)!='zitobitQR')
+  if(class(model)!='twopartQR')
     stop("Class different of 'twopartQR'. Use a different update function.")
 
   newChains <- twopartQR(model$formula, model$tau, model$data, itNum,
@@ -29,7 +29,7 @@ update.twopartQR <- function(model, itNum, thin, sigmaGamma, ...){
   w1 <- dim(model$betaSample)[1]/(itNum + dim(model$betaSample)[1])
   w2 <- itNum/(itNum + dim(model$betaSample)[1])
 
-  newTwopart <- list(tau = model$tau, y=model$y, X=model$X,
+  newTwopart <- list(formula=model$formula, tau = model$tau,
                      betaSample = rbind(model$betaSample,
                                         newChains$betaSample),
                      sigmaSample = rbind(model$sigmaSample,
@@ -38,6 +38,7 @@ update.twopartQR <- function(model, itNum, thin, sigmaGamma, ...){
                                          newChains$gammaSample),
                      acceptRate = w1*model$acceptRate +
                        w2*newChains$acceptRate)
+
   class(newTwopart) <- "twopartQR"
 
   return(newTwopart)
