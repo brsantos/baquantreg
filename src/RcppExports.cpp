@@ -7,6 +7,24 @@
 
 using namespace Rcpp;
 
+// BayesQRrcpp
+List BayesQRrcpp(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, int refresh);
+RcppExport SEXP baquantreg_BayesQRrcpp(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP refreshSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type itNum(itNumSEXP);
+    Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type betaValue(betaValueSEXP);
+    Rcpp::traits::input_parameter< double >::type sigmaValue(sigmaValueSEXP);
+    Rcpp::traits::input_parameter< int >::type refresh(refreshSEXP);
+    __result = Rcpp::wrap(BayesQRrcpp(tau, y, X, itNum, thin, betaValue, sigmaValue, refresh));
+    return __result;
+END_RCPP
+}
 // tpBayesQR
 List tpBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::colvec gammaValue, double sigmaGamma, int link, double priorVar, int refresh);
 RcppExport SEXP baquantreg_tpBayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP gammaValueSEXP, SEXP sigmaGammaSEXP, SEXP linkSEXP, SEXP priorVarSEXP, SEXP refreshSEXP) {
