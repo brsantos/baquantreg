@@ -31,7 +31,7 @@ data("BrazilDurableGoods")
 model <- zitobitQR(expenditure ~ age + education, tau=0.5,
                   data=BrazilDurableGoods, itNum=100,
                   sigmaGamma=0.10, refresh=20)
-model <- update(modelo, 100, thin=1, sigmaGamma = 0.10, refresh=10)
+model <- update(model, 100, thin=1, sigmaGamma = 0.10, refresh=10)
 }
 \seealso{
 \code{\link{zitobitQR}}

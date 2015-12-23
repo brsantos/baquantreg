@@ -19,7 +19,7 @@
 #' model <- zitobitQR(expenditure ~ age + education, tau=0.5,
 #'                   data=BrazilDurableGoods, itNum=100,
 #'                   sigmaGamma=0.10, refresh=20)
-#' model <- update(modelo, 100, thin=1, sigmaGamma = 0.10, refresh=10)
+#' model <- update(model, 100, thin=1, sigmaGamma = 0.10, refresh=10)
 
 update.zitobitQR <- function(model, itNum, thin=1, sigmaGamma, ...){
   if(class(model)!='zitobitQR')
@@ -34,7 +34,7 @@ update.zitobitQR <- function(model, itNum, thin=1, sigmaGamma, ...){
   w1 <- dim(model$betaSample)[1]/(itNum + dim(model$betaSample)[1])
   w2 <- itNum/(itNum + dim(model$betaSample)[1])
 
-  newZiTobit <- list(tau = model$tau, y=model$y, X=model$X,
+  newZiTobit <- list(formula = model$formula, tau = model$tau,
                      betaSample = rbind(model$betaSample,
                                         newChains$betaSample),
                      sigmaSample = rbind(model$sigmaSample,
