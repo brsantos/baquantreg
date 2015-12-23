@@ -4,8 +4,8 @@
 \alias{twopartQR}
 \title{Two part model using Bayesian quantile regression model}
 \usage{
-twopartQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue,
-  sigmaValue = 1, gammaValue, sigmaGamma = 0.5, link = 1,
+twopartQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
+  sigmaValue = 1, gammaValue = NULL, sigmaGamma = 0.5, link = 1,
   priorVar = 100, refresh = 100)
 }
 \arguments{

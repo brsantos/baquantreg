@@ -33,7 +33,7 @@
 #' set.seed(1)
 
 twopartQR <- function(formula, tau = 0.5, data, itNum, thin=1,
-                      betaValue, sigmaValue=1, gammaValue,
+                      betaValue = NULL, sigmaValue=1, gammaValue = NULL,
                       sigmaGamma = 0.5, link=1, priorVar = 100,
                       refresh = 100){
 
