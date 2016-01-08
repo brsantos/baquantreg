@@ -86,7 +86,7 @@ List tpBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
       for(int j = 0; j < thin; j++) {
 
         if(is_true(any(k+1 == seqRefresh))){
-          Rcout << "Iteração = " << k+1 << std::endl;
+          Rcout << "Iteration = " << k+1 << std::endl;
         }
 
 
@@ -115,12 +115,12 @@ List tpBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
         betaValue = mvrnormRcpp(mu, sigmaMat);
 
         aux = X2 * betaValue;
+        gama2 = 2/sigmaValue + pow(theta,2.0)/(psi2*sigmaValue);
 
         for(int o = 0; o < n2; o++){
           delta2 = pow(y2[o] - aux[o],2.0)/(psi2*sigmaValue);
-          gama2 = 2/sigmaValue + pow(theta,2.0)/(psi2*sigmaValue);
-          zSample[o] = rgigRcpp(delta2, gama2, lambda);
 
+          zSample[o] = rgigRcpp(delta2, gama2, lambda);
           termsSum[o] = pow(y2[o] - aux[o] - theta*zSample[o],2.0)/zSample[o];
         }
 
