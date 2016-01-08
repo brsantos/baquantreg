@@ -163,11 +163,11 @@ List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
           diagmat(yS - aux));
 
         gama2 = 2/sigmaValue + (theta*theta)/(psi2*sigmaValue);
+        gama2 = std::max(gama2, 1e-10);
 
         for(int o = 0; o < n; o++){
           if (varInd(o)==censInd(o)){
             delta2[o] = std::max(delta2[o], 1e-10);
-            gama2 = std::max(gama2, 1e-10);
             zSample[o] = rgigRcpp(delta2[o], gama2, lambda);
           }
         }
