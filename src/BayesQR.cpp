@@ -15,8 +15,9 @@ using namespace Rcpp;
 // [[Rcpp::depends(RcppGSL)]]
 
 // [[Rcpp::export]]
-List BayesQRrcpp(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
-                 arma::colvec betaValue, double sigmaValue, int refresh){
+List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
+                 arma::colvec betaValue, double sigmaValue, double priorVar,
+                 int refresh){
 
   RNGScope scope;
 
@@ -25,14 +26,12 @@ List BayesQRrcpp(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
   n = X.n_rows;
   p = X.n_cols;
 
-  // Hiperparâmetros da priori normal
   arma::mat B0(p,p);
   arma::colvec b0(p);
 
-  B0 = 100 * B0.eye(p,p);
+  B0 = priorVar * B0.eye(p,p);
   b0.fill(0);
 
-  NumericMatrix betaSample(itNum, p);
   NumericVector sigmaSample(itNum);
 
   arma::colvec zSample(n);
@@ -45,15 +44,13 @@ List BayesQRrcpp(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
   int n0 = 3;
   double s0 = 0.1;
 
-  arma::mat sigmaMinusOne(p,p);
+  arma::mat sigmaMinusOne(p,p), vSample(itNum, n), betaSample(itNum, p);
 
   arma::mat xAux(n,p);
 
-  arma::colvec mu(p);
+  arma::colvec mu(p), aux(n), delta2(n);
 
-  NumericVector termsSum(n);
-
-  double delta2, gama2, aux, lambda= 0.5, meanModel, sdModel, sTilde, zValue;
+  double gama2, lambda= 0.5, meanModel, sdModel, sTilde, zValue, termsSum;
 
   int nTilde;
 
@@ -63,11 +60,11 @@ List BayesQRrcpp(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
 
   IntegerVector seqRefresh = seq(1, itNum/refresh)*(refresh);
 
-  for(int k = 1; k < itNum; k++) {
+  for(int k = 1; k < itNum; k++){
     for(int j = 0; j < thin; j++) {
 
       if(is_true(any(k+1 == seqRefresh))){
-        Rcout << "Iteração = " << k+1 << std::endl;
+        Rcout << "Iteration = " << k+1 << std::endl;
       }
 
       diagU = diagmat(zSample)*(psi2*sigmaValue);
@@ -81,27 +78,32 @@ List BayesQRrcpp(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
 
       betaValue = mvrnormRcpp(mu, sigma);
 
+      aux = X * betaValue;
       gama2 = 2/sigmaValue + pow(theta,2.0)/(psi2*sigmaValue);
 
+      delta2 = diagvec((1/(psi2*sigmaValue)) * diagmat(y - aux) *
+        diagmat(y - aux));
+
       for(int o = 0; o < n; o++){
-        aux = arma::as_scalar(X.row(o) * betaValue);
-        delta2 = pow(y[o] - aux,2.0)/(psi2*sigmaValue);
-
-        zSample[o] = rgigRcpp(delta2, gama2, lambda);
-
-        termsSum[o] = pow(y[o] - aux - theta*zSample[o],2.0)/zSample[o];
+        delta2[o] = std::max(delta2[o], 1e-10);
+        zSample[o] = rgigRcpp(delta2[o], gama2, lambda);
       }
 
+      termsSum = arma::as_scalar((y - aux - theta*zSample).t() *
+        diagmat(zSample).i() * (y - aux - theta*zSample));
+
       nTilde = n0 + 3*n;
-      sTilde =  s0 + 2*sum(zSample) + sum(termsSum)/psi2;
+      sTilde =  s0 + 2*sum(zSample) + termsSum/psi2;
       sigmaValue = rinvgammaRcpp(nTilde/2,sTilde/2);
     }
 
-    for(int jj = 0; jj < p; jj++) betaSample(k,jj) = betaValue[jj];
+    betaSample.row(k) = betaValue.t();
     sigmaSample[k] = sigmaValue;
+    vSample.row(k) = zSample.t();
   }
 
   return Rcpp::List::create(
     Rcpp::Named("BetaSample") = betaSample,
-    Rcpp::Named("SigmaSample") = sigmaSample);
+    Rcpp::Named("SigmaSample") = sigmaSample,
+    Rcpp::Named("vSample") = vSample);
 }
