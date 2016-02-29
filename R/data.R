@@ -42,3 +42,23 @@
 #'  Statistical Computation and Simulation}. \url{http://www.tandfonline.com
 #'  /doi/abs/10.1080/00949655.2014.986733}
 "BrazilElectricity"
+
+#' Gini index for Brazilian states in three censuses.
+#'
+#' A dataset containing data about the Gini index of 27 Brazilian states for
+#'  three different censuses, 1991, 2000 and 2010, where each row represents
+#'  the data about a specific state in a specific census year.
+#'
+#' @format A data frame with 81 rows and 4 variables:
+#' \describe{
+#'   \item{UFN}{Name of the state}
+#'   \item{GINI}{Gini index}
+#'   \item{INCPC}{Average income per capita}
+#'   \item{EDUC}{Average years of education}
+#'   \item{YEAR}{Year of the census}
+#' }
+#' @source \url{http://www.ibge.gov.br/english/estatistica/populacao/
+#' default_censo_2000.shtm}
+#' @references Santos and Bolfarine (2016). On Bayesian quantile regression
+#'  and outliers. \url{http://arxiv.org/abs/1601.07344}
+"BrazilGini"

@@ -1,0 +1,104 @@
+double logPriorKappa (double value);
+
+double logLikelihoodKappa (double kappa, arma::mat aux, arma::mat diagU,
+                           arma::mat covMat, arma::mat covMatInv);
+
+double logLikelihoodKappaNew (double kappa, arma::mat aux, arma::mat diagU,
+                              arma::vec spCoord1, arma::vec spCoord2,
+                              double alpha, double jitter);
+
+double mhKappa(double kappa, arma::vec spCoord1, arma::vec spCoord2,
+               arma::mat aux, arma::mat diagU,
+               arma::mat covMat, arma::mat covMatInv, double tuneParam,
+               double alpha, double jitter);
+
+double logLikelihoodAlpha (double alpha, arma::mat aux, arma::mat diagU,
+                           arma::mat covMat, double jitter);
+
+double mhAlpha(double alpha, arma::mat aux, arma::mat diagU,
+               arma::mat covMat, double tuneA, double jitter);
+
+// double logLikelihood2Kappa (double kappa, arma::mat aux, arma::mat diagU,
+//                        arma::mat CovCov){
+//
+//   double output;
+//
+//   double valDetC, signDetC, valDetM, signDetM;
+//
+//   log_det(valDetC, signDetC, CovCov);
+//   log_det(valDetM, signDetM, matM);
+//
+//   output = -0.5 * ((-as_scalar(sum(log(sigmaDot))) - valDetC + valDetM)) -
+//     0.5*(as_scalar(aux.t() * diagU.t() * CovCov * diagU *aux));
+//
+//   return output;
+// }
+
+
+// double logPosterior2 (double value, arma::mat X, arma::vec y, arma::vec beta,
+//                       double sigma, arma::vec zSample, double tau, double psi2,
+//                       double theta, arma::vec spCoord1, arma::vec spCoord2,
+//                       arma::uvec indices, int m, double alpha){
+//
+//   double output = logLikelihood2(value, X, y, beta, sigma, zSample, tau, psi2,
+//                                  theta, spCoord1, spCoord2, indices, m,
+//                                  alpha) + logPriorKappa(value);
+//   return output;
+// }
+
+// double mhKappa2(double value, arma::mat X, arma::vec y, arma::vec beta,
+//                 double sigma, arma::vec zSample, double tau, double psi2,
+//                 double theta, arma::vec spCoord1, arma::vec spCoord2,
+//                 double tuneParam, arma::uvec indices, int m, double alpha){
+//
+//   double postCur, postProp, kappaProposal, densCur, densProp, new_kappa;
+//
+//   kappaProposal = rexp(1, tuneParam)[0];
+//
+//   postCur = logPosterior2(value, X, y, beta, sigma, zSample, tau, psi2,
+//                           theta, spCoord1, spCoord2, indices, m, alpha);
+//   postProp = logPosterior2(kappaProposal, X, y, beta, sigma, zSample,
+//                            tau, psi2, theta, spCoord1, spCoord2, indices,
+//                            m, alpha);
+//
+//   NumericVector xx(1); xx[0] = value;
+//   NumericVector yy(1); yy[0] = kappaProposal;
+//
+//   densCur = dexp(xx, kappaProposal)[0];
+//   densProp = dexp(yy, value)[0];
+//
+//   double accepProb = std::min(1.0, (postProp*densCur)/(postCur*densProp));
+//
+//   if(runif(1)[0] < accepProb) new_kappa = kappaProposal;
+//   else new_kappa = value;
+//
+//   return new_kappa;
+// }
+
+
+double mhAlpha2(double kappa, arma::mat X, arma::vec y, arma::vec beta,
+                double sigma, arma::vec zSample, double tau,
+                double psi2, double theta, arma::vec spCoord1,
+                arma::vec spCoord2, double value,
+                arma::uvec indices, int m, double tuneA){
+
+  double postCur, postProp, alphaProp, new_alpha;
+
+  double p1, p2;
+  double precision = tuneA;
+  p1 = value * precision;
+  p2 = (1-value) * precision;
+  alphaProp = rbeta(1, p1, p2)[0];
+
+  postCur = logLikelihood2(kappa, X, y, beta, sigma, zSample, tau, psi2,
+                           theta, spCoord1, spCoord2, indices, m, value);
+  postProp = logLikelihood2(kappa, X, y, beta, sigma, zSample, tau, psi2,
+                            theta, spCoord1, spCoord2, indices, m, alphaProp);
+
+  double accepProb = std::min(1.0, (postProp)/(postCur));
+
+  if(runif(1)[0] < accepProb) new_alpha = alphaProp;
+  else new_alpha = value;
+
+  return new_alpha;
+}

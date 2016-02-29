@@ -43,7 +43,9 @@ twopartQR <- function(formula, tau = 0.5, data, itNum, thin=1,
   if (is.null(betaValue)) betaValue <- rep(0, dim(X)[2])
   if (is.null(gammaValue)) gammaValue <- rep(0, dim(X)[2])
 
-  twoPartModel <- tpBayesQR(tau = tau, y=y, X=X, itNum=itNum, thin=thin,
+  twoPartModel <- list()
+
+  twoPartModel$chains <- tpBayesQR(tau = tau, y=y, X=X, itNum=itNum, thin=thin,
                           betaValue=betaValue, sigmaValue=sigmaValue,
                           gammaValue = gammaValue, sigmaGamma=sigmaGamma,
                           link=link, priorVar = priorVar, refresh=refresh)

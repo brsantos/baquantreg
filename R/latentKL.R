@@ -21,7 +21,7 @@
 #' @importFrom FNN KL.divergence
 
 latentKL <- function(object, burnin = 50, plotKL = TRUE,
-                        scales.free = FALSE){
+                        scales.free = FALSE, all.obs = TRUE, obs){
 
   if (class(object) != "bqr")
     stop("This function is not suited for your model.")
@@ -29,37 +29,48 @@ latentKL <- function(object, burnin = 50, plotKL = TRUE,
   taus <- object$tau
   nobs <- dim(object$chains[[1]]$vSample)[2]
 
-  klValues <- t(sapply(1:nobs, function(b){
-    as.numeric(sapply(object$chains, function(a){
-      sapply(1:nobs, function(c){
-        if (b != c){
-          max(FNN::KL.divergence(a$vSample[-c(1:burnin), b],
-                                 a$vSample[-c(1:burnin), c], k = 5))
-        }
-        else 0
-      })
-    }))
-  }))
+  if (all.obs) seqObs <- 1:nobs
+  else seqObs <- obs
 
-  plotData <- data.frame(nobs = rep(1:nobs, times=dim(klValues)[2]),
+  klValues <- sapply(object$chains, function(a){
+    sapply(seqObs, function(b){
+      otherV <- a$vSample[-c(1:burnin),-b]
+      vSample <- a$vSample[-c(1:burnin), b]
+      mean(sapply(1:(nobs-1), function(c){
+        minV <- min(vSample, otherV[,c])
+        maxV <- max(vSample, otherV[,c])
+        g1 <- density(otherV[,c], from = minV, to = maxV)$y
+        g2 <- density(vSample, from = minV, to = maxV)$y
+        g1[g1 == 0] <- .Machine$double.eps
+        g2[g2 == 0] <- .Machine$double.eps
+        valF <- g2 * (log(g2) - log(g1))
+        tail(cumsum(.5 * (valF[-1] + valF[-length(valF)])), 1)
+      }))
+    })
+  })
+
+  plotData <- data.frame(nobs = rep(seqObs, times=length(taus)),
                          values = as.numeric(klValues),
-                         taus = rep(taus, each=dim(klValues)[1]))
+                         taus = rep(taus, each=length(seqObs)))
 
-  maxProb <- which.max(aggregate(values ~ nobs, data=plotData, mean)$values)
-  print(paste("The observation with greater Kullback-Leibler divergence
-              from the others is:",
-              maxProb))
+  if (all.obs){
+    maxKL <- which.max(aggregate(values ~ nobs, data=plotData, mean)$values)
 
-  g <- ggplot(subset(plotData), aes(y=values, x=nobs)) + theme_bw()
-  if (length(taus) > 1){
-    if (scales.free) g <- g + facet_wrap(~taus, scales='free')
-    else g <- g + facet_wrap(~taus)
+    print(paste("The observation with greater Kullback-Leibler divergence from the others is:",
+                maxKL))
+
+    g <- ggplot(subset(plotData), aes(y=values, x=nobs)) + theme_bw()
+    if (length(taus) > 1){
+      if (scales.free) g <- g + facet_wrap(~taus, scales='free')
+      else g <- g + facet_wrap(~taus)
+    }
+
+    g <- g + geom_point() +
+      ylab("Mean Kullback-Leibler divergence for each point") +
+      xlab("# Observation")
+
+    if (plotKL) print(g)
   }
-
-  g <- g + geom_point() +
-    ylab("Mean Kullback-Leibler divergence for each point") + xlab("# Observation")
-
-  if (plotKL) print(g)
 
   return(plotData)
 }

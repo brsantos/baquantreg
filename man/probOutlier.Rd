@@ -4,14 +4,15 @@
 \alias{probOutlier}
 \title{Probability of being an outlier given the Bayesian quantile regression fits.}
 \usage{
-probOutlier(object, burnin = 50, plotProb = TRUE, scales.free = FALSE)
+probOutlier(object, burnin = 50, plotProb = TRUE, scales.free = FALSE,
+  all.obs = TRUE, obs)
 }
 \arguments{
 \item{object}{This is an object of the class "bqr", produced by a call
 to the bayesQR function.}
 
-\item{burnin}{Initial part of the chain, which is to be discarded. Default
-value is 50.}
+\item{burnin}{Initial part of the chain, which is to be discarded.
+Default value is 50.}
 
 \item{plotProb}{If TRUE, the function prints the plot with all probabilities.
 Default is set to TRUE.}

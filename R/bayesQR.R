@@ -20,9 +20,16 @@
 #' process of the prior variance of the regression parameters.
 #' @param refresh Interval between printing a message during the iteration
 #' process. Default is set to 100.
+#' @param quiet If TRUE, the default, it does not print messages to check if
+#'  the MCMC is actually updating. If FALSE, it will use the value of refresh
+#'  to print messages to control the iteration process.
+#' @param tobit If TRUE, it will input the censored value for all observations
+#'  with y = 0, according to the model. If FALSE, the default, it will estimate
+#'  the parameter without this inputation process.
 #' @return A list with the chains of all parameters of interest.
-#' @references Kozumi and Kobayashi (2015) - Gibbs sampling methods for
-#' Bayesian quantile regression.
+#' @references Kozumi and Kobayashi (2011) - Gibbs sampling methods for
+#'  Bayesian quantile regression. Journal of Statistical Computation and
+#'  Simulation.
 #' @export
 #' @useDynLib baquantreg
 #' @examples
@@ -30,7 +37,7 @@
 
 bayesQR <- function(formula, tau = 0.5, data, itNum, thin=1,
                       betaValue = NULL, sigmaValue=1, priorVar = 100,
-                      refresh = 100){
+                      refresh = 100, quiet = T, tobit = F){
 
   y <- as.numeric(model.extract(model.frame(formula, data), 'response'))
   X <- model.matrix(formula, data)
@@ -40,9 +47,10 @@ bayesQR <- function(formula, tau = 0.5, data, itNum, thin=1,
   output <- list()
 
   output$chains <- lapply(tau, function(a){
-    BayesQR(tau = a, y=y, X=X, itNum=itNum, thin=thin,
-            betaValue=betaValue, sigmaValue=sigmaValue,
-            priorVar = priorVar,  refresh=refresh)
+    BayesQR(tau = a, y = y, X = X, itNum = itNum, thin = thin,
+            betaValue = betaValue, sigmaValue = sigmaValue,
+            priorVar = priorVar,  refresh = refresh, quiet = quiet,
+            tobit = tobit)
   })
 
   output$tau <- tau

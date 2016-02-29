@@ -5,7 +5,7 @@
 \title{Bayesian quantile regression model}
 \usage{
 bayesQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
-  sigmaValue = 1, priorVar = 100, refresh = 100)
+  sigmaValue = 1, priorVar = 100, refresh = 100, quiet = T, tobit = F)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -31,6 +31,14 @@ process of the prior variance of the regression parameters.}
 \item{refresh}{Interval between printing a message during the iteration
 process. Default is set to 100.}
 
+\item{quiet}{If TRUE, the default, it does not print messages to check if
+the MCMC is actually updating. If FALSE, it will use the value of refresh
+to print messages to control the iteration process.}
+
+\item{tobit}{If TRUE, it will input the censored value for all observations
+with y = 0, according to the model. If FALSE, the default, it will estimate
+the parameter without this inputation process.}
+
 \item{gammaValue}{Initial value for the parameter gamma of the discrete
 part.}
 }
@@ -46,7 +54,8 @@ distribution.
 set.seed(1)
 }
 \references{
-Kozumi and Kobayashi (2015) - Gibbs sampling methods for
-Bayesian quantile regression.
+Kozumi and Kobayashi (2011) - Gibbs sampling methods for
+ Bayesian quantile regression. Journal of Statistical Computation and
+ Simulation.
 }
 

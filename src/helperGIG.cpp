@@ -20,6 +20,7 @@ double funG(double y, void *params){
   return 0.5 * beta * pow(y,3) - pow(y,2) * (0.5 * beta * m + lambda + 1) + y * ((lambda - 1) * m - 0.5 * beta) + 0.5 * beta * m;
 }
 
+// [[Rcpp::export]]
 double rgigRcpp(double chi, double psi, double lambda){
   double alpha = sqrt(psi/chi);
   double beta = sqrt(psi * chi);

@@ -4,7 +4,8 @@
 \alias{latentKL}
 \title{Probability of being an outlier given the Bayesian quantile regression fits.}
 \usage{
-latentKL(object, burnin = 50, plotKL = TRUE, scales.free = FALSE)
+latentKL(object, burnin = 50, plotKL = TRUE, scales.free = FALSE,
+  all.obs = TRUE, obs)
 }
 \arguments{
 \item{object}{This is an object of the class "bqr", produced by a call

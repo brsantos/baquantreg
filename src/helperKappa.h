@@ -1,44 +1,21 @@
 double logPriorKappa (double value);
 
-double logLikelihood (double value, arma::mat X, arma::vec y, arma::vec beta,
-                      double sigma, arma::vec zSample, double tau, double psi2,
-                      double theta, arma::vec spCoord1, arma::vec spCoord2,
-                      double nugget);
+double logLikelihoodKappa (double kappa, arma::mat aux, arma::mat diagU,
+                           arma::mat covMat, arma::mat covMatInv);
 
-double logLikelihood2 (double value, arma::mat X, arma::vec y,
-                       arma::vec beta, double sigma, arma::vec zSample,
-                       double tau, double psi2, double theta,
-                       arma::vec spCoord1, arma::vec spCoord2,
-                       arma::uvec indices, int m, double nugget);
+double logLikelihoodKappaNew (double kappa, arma::mat aux, arma::mat diagU,
+                              arma::vec spCoord1, arma::vec spCoord2,
+                              double alpha, double jitter);
 
-double logLikelihood3 (double kappa, arma::mat X, arma::vec y, arma::vec beta,
-                       double sigma, arma::vec zSample, double tau,
-                       double psi2, double theta, arma::vec spCoord1,
-                       arma::vec spCoord2, arma::uvec indices, int m,
-                       double nugget);
+double mhKappa(double kappa, arma::vec spCoord1, arma::vec spCoord2,
+               arma::mat aux, arma::mat diagU,
+               arma::mat covMat, arma::mat covMatInv, double tuneParam,
+               double alpha, double jitter);
 
-double logLikelihood4 (double kappa, arma::mat X, arma::vec y,
-                       arma::vec beta, double sigma, arma::vec zSample,
-                       double tau, double psi2, double theta,
-                       arma::vec spCoord1, arma::vec spCoord2,
-                       double nugget);
+double logLikelihoodAlpha (double alpha, arma::mat aux, arma::mat diagU,
+                           arma::mat covMat, double jitter);
 
-double logPosterior (double value, arma::mat X, arma::vec y, arma::vec beta,
-                     double sigma, arma::vec zSample, double tau, double psi2,
-                     double theta, arma::vec spCoord1, arma::vec spCoord2,
-                     double nugget);
+double mhAlpha(double alpha, arma::mat aux, arma::mat diagU,
+               arma::mat covMat, double tuneA, double jitter);
 
-double logPosterior2 (double value, arma::mat X, arma::vec y, arma::vec beta,
-                      double sigma, arma::vec zSample, double tau, double psi2,
-                      double theta, arma::vec spCoord1, arma::vec spCoord2,
-                      arma::uvec indices, int m, double nugget);
 
-double mhKappa(double value, arma::mat X, arma::vec y, arma::vec beta,
-               double sigma, arma::vec zSample, double tau, double psi2,
-               double theta, arma::vec spCoord1, arma::vec spCoord2,
-               double tuneParam, double nugget);
-
-double mhKappa2(double value, arma::mat X, arma::vec y, arma::vec beta,
-                double sigma, arma::vec zSample, double tau, double psi2,
-                double theta, arma::vec spCoord1, arma::vec spCoord2,
-                double tuneParam, arma::uvec indices, int m, double nugget);

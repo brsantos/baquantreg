@@ -10,213 +10,205 @@ double logPriorKappa (double value){
   return output;
 }
 
-double logLikelihood (double value, arma::mat X, arma::vec y, arma::vec beta,
-                      double sigma, arma::vec zSample, double tau, double psi2,
-                      double theta, arma::vec spCoord1, arma::vec spCoord2,
-                      double nugget){
+
+// [[Rcpp::export]]
+double logLikelihoodKappa (double kappa, arma::mat aux, arma::mat diagU,
+                           arma::mat covMat, arma::mat covMatInv,
+                           arma::vec spCoord1, arma::vec spCoord2,
+                           double alpha, double jitter, bool newkappa){
 
   double output;
+  double valDet;
+  double sign;
 
-  arma::mat aux = y - X*beta - theta*zSample;
-  int n = X.n_rows;
-  arma::mat covMat(n, n, arma::fill::zeros);
+  int n = aux.n_rows;
 
-  for (int aa = 0; aa < n; aa++)
-    for (int bb = 0; bb < n; bb++)
-      covMat(aa,bb) = exp(-value * (pow(spCoord1(aa) - spCoord1(bb),2) +
-        pow(spCoord2(aa) - spCoord2(bb),2)));
+  if(newkappa){
+    arma::mat covMat(n, n, arma::fill::zeros);
 
-  arma::mat diagU = diagmat(sqrt(zSample))*(sqrt(psi2));
+    for (int aa = 0; aa < n; aa++)
+      for (int bb = 0; bb < n; bb++)
+        covMat(aa,bb) = exp(-kappa * (pow(spCoord1(aa) - spCoord1(bb),2) +
+          pow(spCoord2(aa) - spCoord2(bb),2)));
 
-  arma::mat auxCov(n,n, arma::fill::zeros);
+    arma::mat auxCov(n,n, arma::fill::zeros);
+    auxCov.diag().fill(alpha+jitter);
 
-  arma::mat R = chol(covMat + nugget * auxCov.eye()).i();
+    arma::mat R = chol((1-alpha)*covMat + auxCov).i();
+    arma::mat covMatInv = R * R.t();
 
-  arma::mat covMatInv = R * R.t();
+    arma::log_det(valDet, sign, covMat);
 
-  output = -0.5 * (as_scalar(aux.t() * diagU.i().t() * covMatInv *
-    diagU.i() *aux));
+    output = -0.5*valDet -0.5*(as_scalar(aux.t()*diagU*covMatInv*diagU*aux));
+  }
+  else {
+    arma::log_det(valDet, sign, (1-alpha)*covMat);
 
-  return output;
-}
-
-double logLikelihood2 (double value, arma::mat X, arma::vec y,
-                       arma::vec beta, double sigma, arma::vec zSample,
-                       double tau, double psi2, double theta,
-                       arma::vec spCoord1, arma::vec spCoord2,
-                       arma::uvec indices, int m, double nugget){
-
-  double output;
-
-  arma::mat aux = y - X*beta - theta*zSample;
-  int n = X.n_rows;
-  arma::mat covMat(n, n, arma::fill::zeros), covMat2(m, m, arma::fill::zeros),
-    covMatAux(n, m, arma::fill::zeros);
-
-  for(int aa = 0; aa < n; aa++)
-    for(int bb = 0; bb < n; bb++)
-      covMat(aa,bb) = exp(-value * (pow(spCoord1(aa) - spCoord1(bb),2) +
-        pow(spCoord2(aa) - spCoord2(bb),2)));
-
-  arma::mat diagU = diagmat(sqrt(1/zSample)) * (sqrt(1/psi2));
-
-  arma::mat auxCov(m, m, arma::fill::zeros);
-
-  // Selecting the terms of the knots.
-  covMat2 = covMat.submat(indices, indices);
-
-  covMatAux = covMat.cols(indices);
-
-  arma::mat R = chol(covMat2 + nugget * auxCov.eye()).i();
-
-  arma::mat covMatInv = R * R.t();
-
-  output = -0.5*(as_scalar(aux.t() * diagU.t() * covMatAux *
-    covMatInv * covMatAux.t() * diagU *aux));
+    output = -0.5 * valDet -
+      0.5 * (as_scalar(aux.t() * diagU * covMatInv * diagU * aux));
+  }
 
   return output;
 }
 
-double logLikelihood3 (double kappa, arma::mat X, arma::vec y, arma::vec beta,
-                       double sigma, arma::vec zSample, double tau,
-                       double psi2, double theta, arma::vec spCoord1,
-                       arma::vec spCoord2, arma::uvec indices, int m,
-                       double nugget){
+// [[Rcpp::export]]
+double mhKappa(double kappa, arma::vec spCoord1, arma::vec spCoord2,
+               arma::mat aux, arma::mat diagU,
+               arma::mat covMat, arma::mat covMatInv, double tuneParam,
+               double alpha, double jitter){
 
-  double output;
+  double postCur, postProp, kappaProp, densCur, densProp, new_kappa;
 
-  arma::mat aux = y - X * beta - theta * zSample;
-  int n = X.n_rows;
-  arma::mat covMat(n, n, arma::fill::zeros), covMat2(m, m, arma::fill::zeros),
-    covMatAux(n, m, arma::fill::zeros);
+  kappaProp = rexp(1, tuneParam)[0];
 
-  for(int aa = 0; aa < n; aa++)
-    for(int bb = 0; bb < n; bb++)
-      covMat(aa,bb) = exp(-kappa * (pow(spCoord1(aa) - spCoord1(bb),2) +
-        pow(spCoord2(aa) - spCoord2(bb),2)));
+  postCur = logLikelihoodKappa(kappa, aux, diagU, covMat, covMatInv,
+                               spCoord1, spCoord2, alpha, jitter, false) +
+                                 logPriorKappa(kappa);
+  postProp = logLikelihoodKappa(kappaProp, aux, diagU, covMat, covMatInv,
+                                   spCoord1, spCoord2, alpha, jitter, true) +
+              logPriorKappa(kappaProp);
 
-  arma::mat diagU = diagmat(sqrt(1/zSample)) * (sqrt(1/psi2));
+  NumericVector xx(1); xx[0] = kappa;
+  NumericVector yy(1); yy[0] = kappaProp;
 
-  arma::mat auxCov(m,m, arma::fill::zeros);
+  densCur = dexp(xx, kappaProp)[0];
+  densProp = dexp(yy, kappa)[0];
 
-  // Selecting the terms of the knots.
-  covMat2 = covMat.submat(indices, indices);
+  double logAccepProb = exp(postProp-postCur)*densCur/densProp;
 
-  covMatAux = covMat.cols(indices);
-
-  arma::mat R = chol(covMat2 + nugget * auxCov.eye()).i();
-
-  arma::mat covMatInv = R * R.t();
-
-  output = -0.5*(as_scalar(aux.t()* diagU.t() * covMatAux * covMatInv *
-    covMatAux.t() * diagU *aux));
-
-  return output;
-}
-
-double logLikelihood4 (double kappa, arma::mat X, arma::vec y,
-                       arma::vec beta, double sigma, arma::vec zSample,
-                       double tau, double psi2, double theta,
-                       arma::vec spCoord1, arma::vec spCoord2,
-                       double nugget){
-
-  double output;
-
-  arma::mat aux = y - X * beta - theta * zSample;
-  int n = X.n_rows;
-  arma::mat covMat(n, n, arma::fill::zeros), auxCov(n, n, arma::fill::zeros);
-
-  for(int aa = 0; aa < n; aa++)
-    for(int bb = 0; bb < n; bb++)
-      covMat(aa,bb) = exp(-kappa * (pow(spCoord1(aa) - spCoord1(bb),2) +
-        pow(spCoord2(aa) - spCoord2(bb),2)));
-
-  arma::mat diagU = diagmat(sqrt(1/zSample)) * (sqrt(1/psi2));
-
-  arma::mat R = chol(covMat + nugget * auxCov.eye()).i();
-
-  arma::mat covMatInv = R * R.t();
-
-  output = -0.5*(as_scalar(aux.t() * diagU.t() * covMatInv * diagU *aux));
-
-  return output;
-}
-
-double logPosterior (double value, arma::mat X, arma::vec y, arma::vec beta,
-                     double sigma, arma::vec zSample, double tau, double psi2,
-                     double theta, arma::vec spCoord1, arma::vec spCoord2,
-                     double nugget){
-
-  double output = logLikelihood(value, X, y, beta, sigma, zSample, tau,
-                                psi2, theta, spCoord1, spCoord2, nugget) +
-                                  logPriorKappa(value);
-  return output;
-}
-
-double logPosterior2 (double value, arma::mat X, arma::vec y, arma::vec beta,
-                      double sigma, arma::vec zSample, double tau, double psi2,
-                      double theta, arma::vec spCoord1, arma::vec spCoord2,
-                      arma::uvec indices, int m, double nugget){
-
-  double output = logLikelihood2(value, X, y, beta, sigma, zSample, tau, psi2,
-                                 theta, spCoord1, spCoord2, indices, m,
-                                 nugget) + logPriorKappa(value);
-  return output;
-}
-
-double mhKappa(double value, arma::mat X, arma::vec y, arma::vec beta,
-               double sigma, arma::vec zSample, double tau, double psi2,
-               double theta, arma::vec spCoord1, arma::vec spCoord2,
-               double tuneParam, double nugget){
-
-  double postCur, postProp, kappaProposal, densCur, densProp, new_kappa;
-
-  kappaProposal = rexp(1, tuneParam)[0];
-
-  postCur = logPosterior(value, X, y, beta, sigma, zSample, tau, psi2,
-                         theta, spCoord1, spCoord2, nugget);
-  postProp = logPosterior(kappaProposal, X, y, beta, sigma, zSample, tau,
-                          psi2, theta, spCoord1, spCoord2, nugget);
-
-  NumericVector xx(1); xx[0] = value;
-  NumericVector yy(1); yy[0] = kappaProposal;
-
-  densCur = dexp(xx, kappaProposal)[0];
-  densProp = dexp(yy, value)[0];
-
-  double accepProb = std::min(1.0, (postProp*densCur)/(postCur * densProp));
-
-  if(runif(1)[0] < accepProb) new_kappa = kappaProposal;
-  else new_kappa = value;
+  if(runif(1)[0] < logAccepProb) new_kappa = kappaProp;
+  else new_kappa = kappa;
 
   return new_kappa;
 }
 
-double mhKappa2(double value, arma::mat X, arma::vec y, arma::vec beta,
-                double sigma, arma::vec zSample, double tau, double psi2,
-                double theta, arma::vec spCoord1, arma::vec spCoord2,
-                double tuneParam, arma::uvec indices, int m, double nugget){
+// [[Rcpp::export]]
+double logLikelihoodAlpha (double alpha, arma::mat aux, arma::mat diagU,
+                           arma::mat covMat, double jitter){
 
-  double postCur, postProp, kappaProposal, densCur, densProp, new_kappa;
+  double output;
+  double valDet;
+  double sign;
 
-  kappaProposal = rexp(1, tuneParam)[0];
+  int n = covMat.n_rows;
+  arma::mat covMatAux(n,n, arma::fill::zeros);
+  covMatAux.diag().fill(alpha + jitter);
 
-  postCur = logPosterior2(value, X, y, beta, sigma, zSample, tau, psi2,
-                          theta, spCoord1, spCoord2, indices, m, nugget);
-  postProp = logPosterior2(kappaProposal, X, y, beta, sigma, zSample,
-                           tau, psi2, theta, spCoord1, spCoord2, indices,
-                           m, nugget);
+  arma::mat cholCov = chol((1-alpha)*covMat + covMatAux).i();
+  arma::mat covMatInv = cholCov * cholCov.t();
 
-  NumericVector xx(1); xx[0] = value;
-  NumericVector yy(1); yy[0] = kappaProposal;
+  arma::log_det(valDet, sign, (1-alpha)*covMat);
 
-  densCur = dexp(xx, kappaProposal)[0];
-  densProp = dexp(yy, value)[0];
+  output = -0.5*valDet-0.5*(as_scalar(aux.t()*diagU*covMatInv*diagU*aux));
 
-  double accepProb = std::min(1.0, (postProp*densCur)/(postCur*densProp));
-
-  if(runif(1)[0] < accepProb) new_kappa = kappaProposal;
-  else new_kappa = value;
-
-  return new_kappa;
+  return output;
 }
+
+// [[Rcpp::export]]
+double mhAlpha(double alpha, arma::mat aux, arma::mat diagU,
+               arma::mat covMat, double tuneA, double jitter){
+
+  double postCur, postProp, alphaProp, new_alpha;
+
+  double p1, p2;
+  double precision = tuneA;
+  p1 = alpha * precision;
+  p2 = (1-alpha) * precision;
+  // alphaProp = rbeta(1, p1, p2)[0];
+  alphaProp = runif(1)[0]*0.8 + 0.1;
+
+  postCur = logLikelihoodAlpha(alpha, aux, diagU, covMat, jitter);
+  postProp = logLikelihoodAlpha(alphaProp, aux, diagU, covMat, jitter);
+
+  double logAccepProb = postProp - postCur;
+
+  if(log(runif(1)[0]) < logAccepProb) new_alpha = alphaProp;
+  else new_alpha = alpha;
+
+  return new_alpha;
+}
+
+// double logLikelihood2Kappa (double kappa, arma::mat aux, arma::mat diagU,
+//                        arma::mat CovCov){
+//
+//   double output;
+//
+//   double valDetC, signDetC, valDetM, signDetM;
+//
+//   log_det(valDetC, signDetC, CovCov);
+//   log_det(valDetM, signDetM, matM);
+//
+//   output = -0.5 * ((-as_scalar(sum(log(sigmaDot))) - valDetC + valDetM)) -
+//     0.5*(as_scalar(aux.t() * diagU.t() * CovCov * diagU *aux));
+//
+//   return output;
+// }
+
+
+// double logPosterior2 (double value, arma::mat X, arma::vec y, arma::vec beta,
+//                       double sigma, arma::vec zSample, double tau, double psi2,
+//                       double theta, arma::vec spCoord1, arma::vec spCoord2,
+//                       arma::uvec indices, int m, double alpha){
+//
+//   double output = logLikelihood2(value, X, y, beta, sigma, zSample, tau, psi2,
+//                                  theta, spCoord1, spCoord2, indices, m,
+//                                  alpha) + logPriorKappa(value);
+//   return output;
+// }
+
+// double mhKappa2(double value, arma::mat X, arma::vec y, arma::vec beta,
+//                 double sigma, arma::vec zSample, double tau, double psi2,
+//                 double theta, arma::vec spCoord1, arma::vec spCoord2,
+//                 double tuneParam, arma::uvec indices, int m, double alpha){
+//
+//   double postCur, postProp, kappaProposal, densCur, densProp, new_kappa;
+//
+//   kappaProposal = rexp(1, tuneParam)[0];
+//
+//   postCur = logPosterior2(value, X, y, beta, sigma, zSample, tau, psi2,
+//                           theta, spCoord1, spCoord2, indices, m, alpha);
+//   postProp = logPosterior2(kappaProposal, X, y, beta, sigma, zSample,
+//                            tau, psi2, theta, spCoord1, spCoord2, indices,
+//                            m, alpha);
+//
+//   NumericVector xx(1); xx[0] = value;
+//   NumericVector yy(1); yy[0] = kappaProposal;
+//
+//   densCur = dexp(xx, kappaProposal)[0];
+//   densProp = dexp(yy, value)[0];
+//
+//   double accepProb = std::min(1.0, (postProp*densCur)/(postCur*densProp));
+//
+//   if(runif(1)[0] < accepProb) new_kappa = kappaProposal;
+//   else new_kappa = value;
+//
+//   return new_kappa;
+// }
+
+
+// double mhAlpha2(double kappa, arma::mat X, arma::vec y, arma::vec beta,
+//                 double sigma, arma::vec zSample, double tau,
+//                 double psi2, double theta, arma::vec spCoord1,
+//                 arma::vec spCoord2, double value,
+//                 arma::uvec indices, int m, double tuneA){
+//
+//   double postCur, postProp, alphaProp, new_alpha;
+//
+//   double p1, p2;
+//   double precision = tuneA;
+//   p1 = value * precision;
+//   p2 = (1-value) * precision;
+//   alphaProp = rbeta(1, p1, p2)[0];
+//
+//   postCur = logLikelihood2(kappa, X, y, beta, sigma, zSample, tau, psi2,
+//                            theta, spCoord1, spCoord2, indices, m, value);
+//   postProp = logLikelihood2(kappa, X, y, beta, sigma, zSample, tau, psi2,
+//                             theta, spCoord1, spCoord2, indices, m, alphaProp);
+//
+//   double accepProb = std::min(1.0, (postProp)/(postCur));
+//
+//   if(runif(1)[0] < accepProb) new_alpha = alphaProp;
+//   else new_alpha = value;
+//
+//   return new_alpha;
+// }

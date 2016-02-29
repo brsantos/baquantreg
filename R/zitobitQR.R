@@ -49,7 +49,9 @@ zitobitQR <- function(formula, tau = 0.5, data, itNum, thin=1,
   if (is.null(betaValue)) betaValue <- rep(0, dim(X)[2])
   if (is.null(gammaValue)) gammaValue <- rep(0, dim(X)[2])
 
-  ziTobit <- ziTobitBayesQR(tau = tau, y=y, X=X, itNum=itNum, thin=thin,
+  ziTobit <- list()
+
+  ziTobit$chains <- ziTobitBayesQR(tau = tau, y=y, X=X, itNum=itNum, thin=thin,
                           betaValue=betaValue, sigmaValue=sigmaValue,
                           gammaValue=gammaValue, sigmaGamma=sigmaGamma,
                           link=link, priorVar=priorVar, refresh=refresh)

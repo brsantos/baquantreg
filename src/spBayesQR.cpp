@@ -7,6 +7,7 @@
 
 #include "helper1.h"
 #include "helperGIG.h"
+#include "helperGIG2.h"
 #include "helperRD.h"
 #include "helperKappa.h"
 
@@ -18,24 +19,25 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 List spBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
                     arma::colvec betaValue, double sigmaValue,
-                    arma::vec spCoord1, arma::vec spCoord2, double kappa,
-                    double tuneP, double nugget, double priorVar){
+                    arma::vec spCoord1, arma::vec spCoord2, double kappa1value,
+                    double tuneP, double alphaValue, double tuneA,
+                    double priorVar, int refresh, bool quiet, double jitter,
+                    bool includeAlpha, double tuneV, int kMT){
 
  RNGScope scope;
 
  int n = X.n_rows;
  int p = X.n_cols;
 
- double theta, psi2, s0, n0, gama2, aux, aux2, quantEst, lambda,
-          meanModel, sdModel, nTilde, sTilde, zValue, delta2, Cii,
-          alphaValue;
+ double theta, psi2, s0, n0, lambda, nTilde, sTilde, delta2;
 
  NumericVector sigmaSample(itNum), termsSum(n), InfPar(1), LimSup(1);
 
- arma::colvec b0(p), zSample(n), mu(p), resVec(n);
+ arma::colvec b0(p), zSample(n), mu(p), resVec(n), aux(n),
+  Cii(n), gamma2(n);
 
  arma::mat B0(p,p), SigmaMinusOne(p,p), diagU, Sigma,
-  betaSample(itNum, p), vSample(itNum, n);
+  betaSample(itNum, p), vSample(itNum, n), aux2(n, 1);
 
  /* ************************************************* */
 
@@ -51,29 +53,29 @@ List spBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
  s0 = 0.1;
 
  lambda = 0.5;
- InfPar[0] = R_NegInf; LimSup[0] = 0;
  /* *********************** */
 
-arma::mat covMat(n, n, arma::fill::zeros), covMatInv(n, n, arma::fill::zeros),
-  auxCov(n, n, arma::fill::zeros), cholCov(n,n);
+arma::mat covMat(n, n, arma::fill::zeros),
+          covMatInv(n, n, arma::fill::zeros),
+          covMatAux(n, n, arma::fill::zeros),
+          covMat2(n, n, arma::fill::zeros), cholCov(n,n);
 
-arma::colvec kappaSample(itNum, arma::fill::ones);
+arma::colvec kappaSample(itNum, arma::fill::ones),
+  alphaSample(itNum, arma::fill::zeros);
 
-kappaSample[0] = kappa;
+kappaSample[0] = kappa1value;
+if (includeAlpha) alphaSample[0] = alphaValue;
+else alphaValue = 0.0;
 
-double kappa1value = kappa;
-
-auxCov = auxCov.eye();
-
-/* *********************** */
-
-IntegerVector seqRefresh = seq(1, 100)*(itNum/100);
+IntegerVector seqRefresh = seq(1, itNum/refresh)*(refresh);
 
  for(int k = 1; k < itNum; k++) {
     for(int j = 0; j < thin; j++) {
 
-      if(is_true(any(k == seqRefresh))){
-        Rcout << "iter = " << k << std::endl;
+      if(!quiet){
+        if(is_true(any(k+1 == seqRefresh))){
+          Rcout << "Iteration = " << k+1 << std::endl;
+        }
       }
 
       for(int aa = 0; aa < n; aa++)
@@ -82,46 +84,61 @@ IntegerVector seqRefresh = seq(1, 100)*(itNum/100);
             (pow(spCoord1[aa] - spCoord1[bb],2) +
             pow(spCoord2[aa] - spCoord2[bb],2)));
 
-      diagU = diagmat(sqrt(zSample))*(sqrt(psi2));
-      cholCov = chol(covMat + nugget*auxCov.eye());
-      covMatInv = cholCov.i() * cholCov.i().t();
+      diagU = diagmat(1/sqrt(sigmaValue*psi2*zSample));
+      covMatAux.diag().fill(alphaValue + jitter);
 
-      SigmaMinusOne = ((1/sigmaValue) * X.t() * diagU.i().t() *
-        covMatInv * diagU.i() * X) + B0.i();
+      cholCov = chol((1-alphaValue)*covMat + covMatAux).i();
+      covMatInv = cholCov * cholCov.t();
+
+      SigmaMinusOne = X.t() * diagU * covMatInv * diagU * X + B0.i();
       Sigma = SigmaMinusOne.i();
 
-      mu = Sigma * (B0.i()*b0 +
-              (1/(sigmaValue))*(X.t() * diagU.i().t() * covMatInv *
-              diagU.i() * (y - theta*zSample)));
+      mu = Sigma * (B0.i()*b0 + (X.t() * diagU * covMatInv *
+        diagU * (y - theta*zSample)));
 
       betaValue = mvrnormRcpp(mu, Sigma);
 
       resVec = y - theta*zSample - X * betaValue;
       nTilde = n0 + 3*n;
-      sTilde =  arma::as_scalar(s0 + 2*sum(zSample) + resVec.t() *
-        diagU.i().t() * covMatInv * diagU.i() * resVec);
+      sTilde =  arma::as_scalar(s0 + 2*sum(zSample) + (sigmaValue*psi2) *
+        resVec.t() * diagU * covMatInv * diagU * resVec);
 
       sigmaValue = rinvgammaRcpp(nTilde/2,sTilde/2);
 
+      aux = 1/(psi2*sigmaValue)*(y - X * betaValue);
+      aux2 = covMatInv * resVec;
+
+      Cii = covMatInv.diag();
+
+      gamma2 = 2/sigmaValue + (pow(theta,2.0)/(psi2*sigmaValue))*Cii;
+
+      // Rcout << "Cheguei aqui" << std::endl;
+
       for(int o = 0; o < n; o++){
-        Cii = arma::as_scalar(covMatInv(o,o));
-        quantEst = arma::as_scalar(X.row(o) * betaValue);
-        aux = y[o] - quantEst;
-        aux2 = (arma::as_scalar(covMatInv.row(o) * resVec) - resVec[o]*Cii)*aux;
-        delta2 = std::max((pow(aux,2.0)*Cii + aux2)/(psi2*sigmaValue), 1e-10);
-        gama2 = std::max((1/sigmaValue)*(2 + pow(theta,2.0) *
-          (Cii + arma::as_scalar(covMatInv.row(o)*zSample) - Cii*zSample[o])/psi2),
-          1e-10);
-        zSample[o] = rgigRcpp(delta2, gama2, lambda);
+//         delta2 = std::max((aux[o]*aux2(o,0) +
+//           aux[o]*Cii[o]*theta*zSample[o])/(psi2*sigmaValue), 0.01);
+        delta2 = (aux[o]*aux2(o,0) + aux[o]*Cii[o]*theta*zSample[o]);
+//         Rcout << o << std::endl;
+//         Rcout << "delta2 = " << delta2 << std::endl;
+//         Rcout << "gamma2 = " << gamma2[o] << std::endl;
+//         Rcout << "zSample[o] = " << zSample[o] << std::endl;
+        zSample[o] = mtMHRcpp(zSample[o], delta2, gamma2[o], tuneV, kMT);
       }
 
-      kappa1value = mhKappa(kappa1value, X, y, betaValue, sigmaValue,
-                            zSample, tau, psi2, theta, spCoord1, spCoord2,
-                            tuneP, nugget);
+      kappa1value = mhKappa(kappa1value, spCoord1, spCoord2, resVec, diagU,
+                            covMat, covMatInv,
+                            tuneP, alphaValue, jitter);
+
+      if (includeAlpha){
+        alphaValue = mhAlpha(alphaValue, resVec,
+                             diagU, covMat, tuneA, jitter);
+      }
     }
 
     betaSample.row(k) = betaValue.t();
     sigmaSample[k] = sigmaValue;
+    kappaSample[k] = kappa1value;
+    alphaSample[k] = alphaValue;
     vSample.row(k) = zSample.t();
  }
 
@@ -129,5 +146,6 @@ IntegerVector seqRefresh = seq(1, 100)*(itNum/100);
       Rcpp::Named("BetaSample") = betaSample,
       Rcpp::Named("SigmaSample") = sigmaSample,
       Rcpp::Named("vSample") = vSample,
-      Rcpp::Named("kappa1") = kappaSample);
+      Rcpp::Named("kappa1") = kappaSample,
+      Rcpp::Named("alphaSample") = alphaSample);
 }

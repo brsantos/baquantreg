@@ -8,6 +8,7 @@
 #include "helper1.h"
 #include "helperGIG.h"
 #include "helperRD.h"
+#include "helperTN.h"
 
 using namespace Rcpp;
 
@@ -17,7 +18,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
                  arma::colvec betaValue, double sigmaValue, double priorVar,
-                 int refresh){
+                 int refresh, bool quiet, bool tobit){
 
   RNGScope scope;
 
@@ -50,7 +51,7 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
 
   arma::colvec mu(p), aux(n), delta2(n);
 
-  double gama2, lambda= 0.5, meanModel, sdModel, sTilde, zValue, termsSum;
+  double gama2, lambda = 0.5, meanModel, sdModel, sTilde, zValue, termsSum;
 
   int nTilde;
 
@@ -60,11 +61,23 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
 
   IntegerVector seqRefresh = seq(1, itNum/refresh)*(refresh);
 
+  arma::colvec yS = y;
+
   for(int k = 1; k < itNum; k++){
     for(int j = 0; j < thin; j++) {
 
-      if(is_true(any(k+1 == seqRefresh))){
-        Rcout << "Iteration = " << k+1 << std::endl;
+      if(!quiet){
+        if(is_true(any(k+1 == seqRefresh))){
+          Rcout << "Iteration = " << k+1 << std::endl;
+        }
+      }
+
+      if(tobit){
+        for (int aa = 0; aa < n; aa++){
+          meanModel = aux[aa] + theta*zSample(aa);
+          sdModel = sqrt(psi2*sigmaValue*zSample(aa));
+          yS[aa] = rnorm_trunc(meanModel, sdModel, InfPar[0], LimSup[0]);
+        }
       }
 
       diagU = diagmat(zSample)*(psi2*sigmaValue);
@@ -74,23 +87,23 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
       arma::mat sigma = sigmaMinusOne.i();
 
       mu =  sigma * (B0.i()*b0 + (1/(psi2 * sigmaValue)) *
-        (X.t()*diagU1.i() * (y - theta*zSample)));
+        (X.t()*diagU1.i() * (yS - theta*zSample)));
 
       betaValue = mvrnormRcpp(mu, sigma);
 
       aux = X * betaValue;
       gama2 = 2/sigmaValue + pow(theta,2.0)/(psi2*sigmaValue);
 
-      delta2 = diagvec((1/(psi2*sigmaValue)) * diagmat(y - aux) *
-        diagmat(y - aux));
+      delta2 = diagvec((1/(psi2*sigmaValue)) * diagmat(yS - aux) *
+        diagmat(yS - aux));
 
       for(int o = 0; o < n; o++){
         delta2[o] = std::max(delta2[o], 1e-10);
         zSample[o] = rgigRcpp(delta2[o], gama2, lambda);
       }
 
-      termsSum = arma::as_scalar((y - aux - theta*zSample).t() *
-        diagmat(zSample).i() * (y - aux - theta*zSample));
+      termsSum = arma::as_scalar((yS - aux - theta*zSample).t() *
+        diagmat(zSample).i() * (yS - aux - theta*zSample));
 
       nTilde = n0 + 3*n;
       sTilde =  s0 + 2*sum(zSample) + termsSum/psi2;
