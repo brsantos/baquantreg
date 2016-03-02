@@ -1,3 +1,5 @@
 double logPosteriorV(double v, double delta2, double gama2);
 
-double mtMHRcpp(double x, double delta2, double gama2, double tuneV, int k);
+double mtM(arma::vec aux, double theta, double psi2, double sigma,
+                arma::vec vSample, double curV, int indice, arma::mat C,
+                double tuneV, int k);

@@ -10,6 +10,7 @@
 #include "helperGIG2.h"
 #include "helperRD.h"
 #include "helperKappa.h"
+#include "helperAlpha.h"
 
 using namespace Rcpp;
 
@@ -106,11 +107,9 @@ IntegerVector seqRefresh = seq(1, itNum/refresh)*(refresh);
       sigmaValue = rinvgammaRcpp(nTilde/2,sTilde/2);
 
       aux = 1/(psi2*sigmaValue)*(y - X * betaValue);
-      aux2 = covMatInv * resVec;
+      // aux2 = covMatInv * resVec;
 
       Cii = covMatInv.diag();
-
-      gamma2 = 2/sigmaValue + (pow(theta,2.0)/(psi2*sigmaValue))*Cii;
 
       // Rcout << "Cheguei aqui" << std::endl;
 
@@ -122,7 +121,9 @@ IntegerVector seqRefresh = seq(1, itNum/refresh)*(refresh);
 //         Rcout << "delta2 = " << delta2 << std::endl;
 //         Rcout << "gamma2 = " << gamma2[o] << std::endl;
 //         Rcout << "zSample[o] = " << zSample[o] << std::endl;
-        zSample[o] = mtMHRcpp(zSample[o], delta2, gamma2[o], tuneV, kMT);
+        zSample[o] = mtM(y - X * betaValue, theta, psi2,
+                              sigmaValue, zSample, zSample(o), o, covMatInv,
+                              tuneV, kMT);
       }
 
       kappa1value = mhKappa(kappa1value, spCoord1, spCoord2, resVec, diagU,
