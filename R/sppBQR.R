@@ -35,6 +35,8 @@
 #' @param quiet If TRUE, the default, it does not print messages to check if
 #'  the MCMC is actually updating. If FALSE, it will use the value of refresh
 #'  to print messages to control the iteration process.
+#' @param jitter Ammount of jitter added to help in the process for inverting
+#'  the covariance matrix. Default is 1e-10.
 #' @return A list with the chains of all parameters of interest.
 #' @references Lum and Gelfand (2012) - Spatial Quantile Multiple Regression
 #'  Using the Asymmetric Laplace process. Bayesian Analysis.
@@ -49,7 +51,7 @@ sppBQR <- function(formula, tau = 0.5, data, itNum, thin=1,
                       indexes = sample(1:length(spCoord1), size = m),
                       alpha = 0.5, tuneA = 1e3,
                       priorVar = 100,
-                      refresh = 100, quiet = T){
+                      refresh = 100, quiet = T, jitter = 1e-10){
 
   y <- as.numeric(model.extract(model.frame(formula, data), 'response'))
   X <- model.matrix(formula, data)
@@ -64,7 +66,8 @@ sppBQR <- function(formula, tau = 0.5, data, itNum, thin=1,
             spCoord1 = spCoord1, spCoord2 = spCoord2, kappa1value = kappa,
             tuneP = tuneP, indices = indexes, m = m,
             alphaValue = alpha, tuneA = tuneA,
-            priorVar = priorVar, refresh = refresh, quiet = quiet)
+            priorVar = priorVar, quiet = quiet, refresh = refresh,
+            jitter = jitter)
   })
 
   output$acceptRateKappa <- lapply(output$chains, function(b){
