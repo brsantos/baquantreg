@@ -7,7 +7,8 @@
 sppBQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
   sigmaValue = 1, spCoord1, spCoord2, kappa = 1, tuneP = 1, m,
   indexes = sample(1:length(spCoord1), size = m), alpha = 0.5,
-  tuneA = 1000, priorVar = 100, refresh = 100, quiet = T)
+  tuneA = 1000, priorVar = 100, refresh = 100, quiet = T,
+  jitter = 1e-10)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -56,6 +57,9 @@ process. Default is set to 100.}
 \item{quiet}{If TRUE, the default, it does not print messages to check if
 the MCMC is actually updating. If FALSE, it will use the value of refresh
 to print messages to control the iteration process.}
+
+\item{jitter}{Ammount of jitter added to help in the process for inverting
+the covariance matrix. Default is 1e-10.}
 
 \item{gammaValue}{Initial value for the parameter gamma of the discrete
 part.}
