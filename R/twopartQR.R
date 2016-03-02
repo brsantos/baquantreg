@@ -23,6 +23,9 @@
 #' process of the prior variance of the regression parameters.
 #' @param refresh Interval between printing a message during the iteration
 #' process. Default is set to 100.
+#' @param quiet Logical. If FALSE it will print messages depending on the
+#'  refresh parameter to show that the chain is updating. If TRUE it will not
+#'  print messages during the iteration process.
 #' @return A list with the chains of all parameters of interest.
 #' @references Santos and Bolfarine (2015) - Bayesian quantile regression
 #' analysis for continuous data with a discrete component at zero.
@@ -31,11 +34,14 @@
 #' @useDynLib baquantreg
 #' @examples
 #' set.seed(1)
+#' data('BrazilElectricity')
+#' modelo2p <- twopartQR(prop_elec/100 ~ population + income_percap, tau=0.5,
+#'  data=BrazilElectricity, itNum=2000, sigmaGamma=2, quiet = TRUE)
 
 twopartQR <- function(formula, tau = 0.5, data, itNum, thin=1,
                       betaValue = NULL, sigmaValue=1, gammaValue = NULL,
                       sigmaGamma = 0.5, link=1, priorVar = 100,
-                      refresh = 100){
+                      refresh = 100, quiet = FALSE){
 
   y <- as.numeric(model.extract(model.frame(formula, data), 'response'))
   X <- model.matrix(formula, data)
@@ -48,7 +54,8 @@ twopartQR <- function(formula, tau = 0.5, data, itNum, thin=1,
   twoPartModel$chains <- tpBayesQR(tau = tau, y=y, X=X, itNum=itNum, thin=thin,
                           betaValue=betaValue, sigmaValue=sigmaValue,
                           gammaValue = gammaValue, sigmaGamma=sigmaGamma,
-                          link=link, priorVar = priorVar, refresh=refresh)
+                          link=link, priorVar = priorVar, refresh=refresh,
+                          quiet = quiet)
 
   twoPartModel$tau <- tau
   twoPartModel$formula <- formula

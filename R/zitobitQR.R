@@ -22,9 +22,14 @@
 #' process of the prior variance of the regression parameters.
 #' @param refresh Interval between printing a message during the iteration
 #' process. Default is set to 100.
+#' @param quiet Logical. If FALSE (default) it will print messages depending on
+#'  the refresh parameter to show that the Markov chain is updating. If TRUE it
+#'  will not print messages during the iteration process.
 #' @return A list with the chains of all parameters of interest.
-#' @references Santos and Bolfarine (2015) - Bayesian quantile regression analysis for continuous data
-#' with a discrete component at zero. \emph{Preprint}. \url{http://arxiv.org/abs/1511.05925}
+#' @references Santos and Bolfarine (2015) - Bayesian quantile regression
+#'  analysis for continuous data
+#' with a discrete component at zero. \emph{Preprint}.
+#'  \url{http://arxiv.org/abs/1511.05925}
 #' @export
 #' @useDynLib baquantreg
 #' @import RcppArmadillo
@@ -41,7 +46,8 @@
 zitobitQR <- function(formula, tau = 0.5, data, itNum, thin=1,
                       betaValue = NULL, sigmaValue=1,
                       gammaValue = NULL,  sigmaGamma = 0.5,
-                      link=1, priorVar = 100, refresh = 100){
+                      link=1, priorVar = 100, refresh = 100,
+                      quiet = FALSE){
 
   y <- as.numeric(model.extract(model.frame(formula, data), 'response'))
   X <- model.matrix(formula, data)
@@ -54,7 +60,8 @@ zitobitQR <- function(formula, tau = 0.5, data, itNum, thin=1,
   ziTobit$chains <- ziTobitBayesQR(tau = tau, y=y, X=X, itNum=itNum, thin=thin,
                           betaValue=betaValue, sigmaValue=sigmaValue,
                           gammaValue=gammaValue, sigmaGamma=sigmaGamma,
-                          link=link, priorVar=priorVar, refresh=refresh)
+                          link=link, priorVar=priorVar, refresh=refresh,
+                          quiet=quiet)
 
   ziTobit$tau <- tau
   ziTobit$formula <- formula

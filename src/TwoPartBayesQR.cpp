@@ -18,7 +18,7 @@ using namespace Rcpp;   // inline does that for us already
 List tpBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
                       arma::colvec betaValue, double sigmaValue,
                       arma::colvec gammaValue, double sigmaGamma,
-                      int link, double priorVar, int refresh){
+                      int link, double priorVar, int refresh, bool quiet){
 
    RNGScope scope;
 
@@ -85,10 +85,11 @@ List tpBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
    for(int k = 1; k < itNum; k++) {
       for(int j = 0; j < thin; j++) {
 
-        if(is_true(any(k+1 == seqRefresh))){
-          Rcout << "Iteration = " << k+1 << std::endl;
+        if(!quiet){
+          if(is_true(any(k+1 == seqRefresh))){
+            Rcout << "Iteration = " << k+1 << std::endl;
+          }
         }
-
 
         // ***************************************** //
         // Updating the point mass part of the model //
