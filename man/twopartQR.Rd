@@ -6,7 +6,7 @@
 \usage{
 twopartQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
   sigmaValue = 1, gammaValue = NULL, sigmaGamma = 0.5, link = 1,
-  priorVar = 100, refresh = 100)
+  priorVar = 100, refresh = 100, quiet = FALSE)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -38,6 +38,10 @@ process of the prior variance of the regression parameters.}
 
 \item{refresh}{Interval between printing a message during the iteration
 process. Default is set to 100.}
+
+\item{quiet}{Logical. If FALSE it will print messages depending on the
+refresh parameter to show that the chain is updating. If TRUE it will not
+print messages during the iteration process.}
 }
 \value{
 A list with the chains of all parameters of interest.
@@ -50,6 +54,9 @@ discrete-continuous distribution.
 }
 \examples{
 set.seed(1)
+data('BrazilElectricity')
+modelo2p <- twopartQR(prop_elec/100 ~ population + income_percap, tau=0.5,
+ data=BrazilElectricity, itNum=2000, sigmaGamma=2, quiet = TRUE)
 }
 \references{
 Santos and Bolfarine (2015) - Bayesian quantile regression
