@@ -6,7 +6,7 @@ using namespace Rcpp;
 
 double logPriorKappa (double value){
   NumericVector aux(1); aux[0] = value;
-  double output = log(dgamma(aux, 1.5, 2.0)[0]);
+  double output = log(dgamma(aux, 1, 0.2)[0]);
   return output;
 }
 
@@ -22,31 +22,28 @@ double logLikelihoodKappa (double kappa, arma::mat aux, arma::mat diagU,
 
   int n = aux.n_rows;
 
+  arma::mat auxCov(n,n, arma::fill::zeros);
+  auxCov.diag().fill(alpha+jitter);
+
   if(newkappa){
-    arma::mat covMat(n, n, arma::fill::zeros);
+    arma::mat covMatNew(n, n, arma::fill::zeros);
 
     for (int aa = 0; aa < n; aa++)
       for (int bb = 0; bb < n; bb++)
-        covMat(aa,bb) = exp(-kappa * (pow(spCoord1(aa) - spCoord1(bb),2) +
+        covMatNew(aa,bb) = exp(-kappa * (pow(spCoord1(aa) - spCoord1(bb),2) +
           pow(spCoord2(aa) - spCoord2(bb),2)));
 
-    arma::mat auxCov(n,n, arma::fill::zeros);
-    auxCov.diag().fill(alpha+jitter);
+    arma::mat R = chol((1-alpha)*covMatNew + auxCov, "lower");
+    arma::mat covMatInvNew = solve(trimatl(R),diagU*aux);
 
-    arma::mat R = chol((1-alpha)*covMat + auxCov).i();
-    arma::mat covMatInv = R * R.t();
+    arma::log_det(valDet, sign, (1-alpha)*covMatNew + auxCov);
 
-    arma::log_det(valDet, sign, covMat);
-
-    output = -0.5*valDet -0.5*(as_scalar(aux.t()*diagU*covMatInv*diagU*aux));
+    output = -0.5*valDet -0.5*(as_scalar(covMatInvNew.t()*covMatInvNew));
   }
   else {
-    arma::log_det(valDet, sign, (1-alpha)*covMat);
-
-    output = -0.5 * valDet -
-      0.5 * (as_scalar(aux.t() * diagU * covMatInv * diagU * aux));
+    arma::log_det(valDet, sign, (1-alpha)*covMat + auxCov);
+    output = -0.5*valDet -0.5*(as_scalar(aux.t()*diagU*covMatInv*diagU*aux));
   }
-
   return output;
 }
 
@@ -63,43 +60,40 @@ double logLikelihoodKappa2 (double kappa, arma::mat aux, arma::mat diagU,
   int n = aux.n_rows;
 
   if(newkappa){
-    arma::mat covMat(n, n, arma::fill::zeros);
+
     arma::mat auxCov(m, m, arma::fill::zeros);
+    auxCov.diag().fill(alpha + jitter);
+    arma::mat covMatNew(n, n, arma::fill::zeros);
 
     for (int aa = 0; aa < n; aa++)
       for (int bb = 0; bb < n; bb++)
-        covMat(aa,bb) = exp(-kappa * (pow(spCoord1(aa) - spCoord1(bb),2) +
+        covMatNew(aa,bb) = exp(-kappa * (pow(spCoord1(aa) - spCoord1(bb),2) +
           pow(spCoord2(aa) - spCoord2(bb),2)));
 
-    arma::mat covMat2 = covMat.submat(indices, indices);
-    arma::mat covMatAux = covMat.cols(indices);
+    arma::mat covMat2 = covMatNew.submat(indices, indices);
+    arma::mat covMatAux = covMatNew.cols(indices);
 
-    auxCov.diag().fill(alpha + jitter);
+    arma::mat cholCov = arma::chol((1-alpha)*covMat2 + auxCov, "lower");
+    arma::mat covMatInvNew =  solve(trimatl(cholCov), covMatAux.t());
+    arma::mat matAux = covMatInvNew.t()*covMatInvNew;
+    arma::mat sigmaDot = diagmat(1/(alpha +
+      (1-alpha)*(covMatNew.diag() - matAux.diag())));
 
-    arma::mat cholCov = arma::chol((1-alpha)*covMat2 + auxCov).i();
-    arma::mat covMatInv =  cholCov * cholCov.t();
-    arma::mat matAux = covMatAux*covMatInv*covMatAux.t();
-    arma::mat sigmaDot = diagmat(alpha +
-      (1-alpha)*(covMat.diag() - matAux.diag())).i();
+    arma::mat cholCov2 = (1-alpha)*covMat2 + covMatAux.t()*sigmaDot*covMatAux;
 
-    arma::mat cholCov2 = (1-alpha)*covMat2 +
-      covMatAux.t()*sigmaDot*covMatAux;
+    arma::mat matM = arma::chol(cholCov2 + auxCov, "lower");
+    arma::mat matM2 = solve(trimatl(matM),covMatAux.t());
+    arma::mat matM3 = matM2.t() * matM2;
 
-    arma::mat matM = arma::chol(cholCov2 + auxCov).i();
-    arma::mat matM2 = matM * matM.t();
+    arma::mat CovCov = sigmaDot - sigmaDot * matM3 * sigmaDot;
 
-    arma::mat CovCov = sigmaDot -
-      sigmaDot * covMatAux * matM2 * covMatAux.t() * sigmaDot;
-
-    arma::log_det(valDet, sign, matAux + sigmaDot.i());
-
+    arma::log_det(valDet, sign, matAux + diagmat(1/sigmaDot.diag()));
     output = -0.5*valDet -0.5*(as_scalar(aux.t()*diagU*CovCov*diagU*aux));
   }
   else {
-    arma::log_det(valDet, sign, (1-alpha)*covMat);
+    arma::log_det(valDet, sign, covMat);
 
-    output = -0.5 * valDet -
-      0.5 * (as_scalar(aux.t() * diagU * covMatInv * diagU * aux));
+    output = -0.5*valDet -0.5*(as_scalar(aux.t()*diagU*covMatInv*diagU*aux));
   }
 
   return output;
@@ -128,7 +122,7 @@ double mhKappa(double kappa, arma::vec spCoord1, arma::vec spCoord2,
   densCur = dexp(xx, tuneParam)[0];
   densProp = dexp(yy, tuneParam)[0];
 
-  double logAccepProb = postProp/postCur;
+  double logAccepProb = exp(postProp - postCur)*(densCur/densProp);
 
   if(runif(1)[0] < logAccepProb) new_kappa = kappaProp;
   else new_kappa = kappa;
