@@ -24,10 +24,10 @@ update.twopartQR <- function(model, itNum, thin, sigmaGamma, ...){
                          thin, betaValue=tail(model$betaSample,1),
                          sigmaValue=tail(model$sigmaSample, 1),
                          gammaValue=tail(model$gammaSample, 1),
-                         sigmaGamma = sigmaGamma, link=model$link, ...)
+                         sigmaGamma = sigmaGamma, link=model$link)
 
   w1 <- dim(model$betaSample)[1]/(itNum + dim(model$betaSample)[1])
-  w2 <- itNum/(itNum + dim(model$betaSample)[1])
+  w2 <- 1 - w1
 
   newTwopart <- list(formula=model$formula, tau = model$tau,
                      betaSample = rbind(model$betaSample,
