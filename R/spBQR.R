@@ -33,9 +33,9 @@
 #'  the MCMC is actually updating. If FALSE, it will use the value of refresh
 #'  to print messages to control the iteration process.
 #' @param tuneV Tuning parameter to the multiple-try Metropolis to sample for
-#'  the posterior distribution of the latent variables. Default value is 2.
+#'  the posterior distribution of the latent variables. Default value is 0.5.
 #' @param kMT Integer, number of Metropolis samples in the multiple-try
-#'  Metropolis. Default value is 10.
+#'  Metropolis. Default value is 5.
 #' @return A list with the chains of all parameters of interest.
 #' @references Lum and Gelfand (2012) - Spatial Quantile Multiple Regression
 #'  Using the Asymmetric Laplace process. Bayesian Analysis.
@@ -49,7 +49,7 @@ spBQR <- function(formula, tau = 0.5, data, itNum, thin=1,
                       kappa = 1, tuneP = 1, alpha = 0.5, tuneA = 1e3,
                       priorVar = 100,
                       refresh = 100, quiet = T, jitter = 0,
-                      includeAlpha = TRUE, tuneV = 2, kMT = 10){
+                      includeAlpha = TRUE, tuneV = 0.5, kMT = 5){
 
   y <- as.numeric(model.extract(model.frame(formula, data), 'response'))
   X <- model.matrix(formula, data)

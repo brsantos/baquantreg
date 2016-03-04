@@ -37,21 +37,27 @@
 #'  to print messages to control the iteration process.
 #' @param jitter Ammount of jitter added to help in the process for inverting
 #'  the covariance matrix. Default is 1e-10.
+#' @param tuneV Tuning parameter to the multiple-try Metropolis to sample for
+#'  the posterior distribution of the latent variables. Default value is 0.5.
+#' @param kMT Integer, number of Metropolis samples in the multiple-try
+#'  Metropolis. Default value is 5.
 #' @return A list with the chains of all parameters of interest.
 #' @references Lum and Gelfand (2012) - Spatial Quantile Multiple Regression
 #'  Using the Asymmetric Laplace process. Bayesian Analysis.
 #' @export
+#' @importFrom multicore mclapply
 #' @useDynLib baquantreg
 #' @examples
 #' set.seed(1)
 
 sppBQR <- function(formula, tau = 0.5, data, itNum, thin=1,
-                      betaValue = NULL, sigmaValue=1, spCoord1, spCoord2,
-                      kappa = 1, tuneP = 1, m,
-                      indexes = sample(1:length(spCoord1), size = m),
-                      alpha = 0.5, tuneA = 1e3,
-                      priorVar = 100,
-                      refresh = 100, quiet = T, jitter = 1e-10){
+                    betaValue = NULL, sigmaValue=1, spCoord1, spCoord2,
+                    kappa = 1, tuneP = 1, m,
+                    indexes = sample(1:length(spCoord1), size = m),
+                    alpha = 0.5, tuneA = 1e3,
+                    priorVar = 100,
+                    refresh = 100, quiet = T, jitter = 1e-10,
+                    tuneV = 0.5, kMT = 5){
 
   y <- as.numeric(model.extract(model.frame(formula, data), 'response'))
   X <- model.matrix(formula, data)
@@ -67,15 +73,21 @@ sppBQR <- function(formula, tau = 0.5, data, itNum, thin=1,
             tuneP = tuneP, indices = indexes, m = m,
             alphaValue = alpha, tuneA = tuneA,
             priorVar = priorVar, quiet = quiet, refresh = refresh,
-            jitter = jitter)
+            jitter = jitter, tuneV = tuneV, kMT = kMT)
   })
 
   output$acceptRateKappa <- lapply(output$chains, function(b){
-    sum(diff(b$kappa1)==0)/(length(b$kappa1)-1)
+    1-sum(diff(b$kappa1)==0)/(itNum-1)
   })
 
   output$acceptRateAlpha <- lapply(output$chains, function(b){
-    sum(diff(b$alphaSample)==0)/(length(b$alphaSample)-1)
+    1-sum(diff(b$alphaSample)==0)/(itNum-1)
+  })
+
+  output$acceptRateV <- lapply(output$chains, function(b){
+    1-apply(b$vSample, 2, function(bb){
+      sum(diff(bb)==0)/length(diff(bb))
+    })
   })
 
   output$tau <- tau
