@@ -8,7 +8,7 @@ sppBQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
   sigmaValue = 1, spCoord1, spCoord2, kappa = 1, tuneP = 1, m,
   indexes = sample(1:length(spCoord1), size = m), alpha = 0.5,
   tuneA = 1000, priorVar = 100, refresh = 100, quiet = T,
-  jitter = 1e-10)
+  jitter = 1e-10, tuneV = 0.5, kMT = 5)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -60,6 +60,12 @@ to print messages to control the iteration process.}
 
 \item{jitter}{Ammount of jitter added to help in the process for inverting
 the covariance matrix. Default is 1e-10.}
+
+\item{tuneV}{Tuning parameter to the multiple-try Metropolis to sample for
+the posterior distribution of the latent variables. Default value is 0.5.}
+
+\item{kMT}{Integer, number of Metropolis samples in the multiple-try
+Metropolis. Default value is 5.}
 
 \item{gammaValue}{Initial value for the parameter gamma of the discrete
 part.}
