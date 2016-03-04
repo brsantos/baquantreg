@@ -45,7 +45,7 @@ spBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, s
     .Call('baquantreg_spBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, spCoord2, kappa1value, tuneP, alphaValue, tuneA, priorVar, refresh, quiet, jitter, includeAlpha, tuneV, kMT)
 }
 
-sppBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, spCoord2, kappa1value, tuneP, indices, m, alphaValue, tuneA, priorVar, quiet, refresh, jitter) {
-    .Call('baquantreg_sppBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, spCoord2, kappa1value, tuneP, indices, m, alphaValue, tuneA, priorVar, quiet, refresh, jitter)
+sppBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, spCoord2, kappa1value, tuneP, indices, m, alphaValue, tuneA, priorVar, quiet, refresh, jitter, tuneV, kMT) {
+    .Call('baquantreg_sppBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, spCoord2, kappa1value, tuneP, indices, m, alphaValue, tuneA, priorVar, quiet, refresh, jitter, tuneV, kMT)
 }
 
