@@ -34,8 +34,7 @@ List spBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
 
  NumericVector sigmaSample(itNum), termsSum(n), InfPar(1), LimSup(1);
 
- arma::colvec b0(p), zSample(n), mu(p), resVec(n), aux(n),
-  Cii(n), gamma2(n);
+ arma::colvec b0(p), zSample(n), mu(p), resVec(n);
 
  arma::mat B0(p,p), SigmaMinusOne(p,p), diagU, Sigma,
   betaSample(itNum, p), vSample(itNum, n), aux2(n, 1);
@@ -106,21 +105,7 @@ IntegerVector seqRefresh = seq(1, itNum/refresh)*(refresh);
 
       sigmaValue = rinvgammaRcpp(nTilde/2,sTilde/2);
 
-      aux = 1/(psi2*sigmaValue)*(y - X * betaValue);
-      // aux2 = covMatInv * resVec;
-
-      Cii = covMatInv.diag();
-
-      // Rcout << "Cheguei aqui" << std::endl;
-
       for(int o = 0; o < n; o++){
-//         delta2 = std::max((aux[o]*aux2(o,0) +
-//           aux[o]*Cii[o]*theta*zSample[o])/(psi2*sigmaValue), 0.01);
-        delta2 = (aux[o]*aux2(o,0) + aux[o]*Cii[o]*theta*zSample[o]);
-//         Rcout << o << std::endl;
-//         Rcout << "delta2 = " << delta2 << std::endl;
-//         Rcout << "gamma2 = " << gamma2[o] << std::endl;
-//         Rcout << "zSample[o] = " << zSample[o] << std::endl;
         zSample[o] = mtM(y - X * betaValue, theta, psi2,
                               sigmaValue, zSample, zSample(o), o, covMatInv,
                               tuneV, kMT);

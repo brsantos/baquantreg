@@ -7,6 +7,7 @@
 
 #include "helper1.h"
 #include "helperGIG.h"
+#include "helperGIG2.h"
 #include "helperRD.h"
 #include "helperKappa.h"
 #include "helperAlpha.h"
@@ -22,7 +23,8 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
                    arma::vec spCoord1, arma::vec spCoord2, double kappa1value,
                    double tuneP, arma::uvec indices, int m,
                    double alphaValue, double tuneA, double priorVar,
-                   bool quiet, int refresh, double jitter){
+                   bool quiet, int refresh, double jitter,
+                   double tuneV, int kMT){
 
    RNGScope scope;
 
@@ -33,8 +35,7 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
 
    NumericVector sigmaSample(itNum), termsSum(n);
 
-   arma::colvec b0(p), zSample(n), mu(p), resVec(n), Cii(n),
-    gamma2(n), aux(n), aux2(n);
+   arma::colvec b0(p), zSample(n), mu(p), resVec(n);
 
    arma::mat B0(p,p), SigmaMinusOne(p,p), diagU, Sigma,
     betaSample(itNum, p), vSample(itNum, n), sigmaDot(n, n);
@@ -53,10 +54,11 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
    lambda = 0.5;
 
   arma::mat covMatAux(n, m, arma::fill::zeros), covMat(n, n, arma::fill::zeros),
-    covMat2(m, m, arma::fill::zeros), covMatInv(m, m, arma::fill::zeros),
-    auxCov(m, m, arma::fill::zeros), cholCov(m,m), cholCov2(m,m), linPred(n, p),
+    covMat2(m, m, arma::fill::zeros), covMatInv(m, n, arma::fill::zeros),
+    auxCov(m, m, arma::fill::zeros), cholCov(m,m), cholCov2(m,m),
     matAux(n,n, arma::fill::zeros), matM(m, m, arma::fill::zeros),
-    matM2(m, m, arma::fill::zeros), CovCov(n, n, arma::fill::zeros);
+    matM2(m, n, arma::fill::zeros), matM3(n, n, arma::fill::zeros),
+    CovCov(n, n, arma::fill::zeros);
 
   arma::colvec kappaSample(itNum), alphaSample(itNum);
 
@@ -85,34 +87,26 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
 
         auxCov.diag().fill(alphaValue + jitter);
 
-        // Rcout << "Primeira matriz" << std::endl;
-        cholCov = arma::chol((1-alphaValue)*covMat2 + auxCov).i();
-        covMatInv =  cholCov * cholCov.t();
-        matAux = covMatAux*covMatInv*covMatAux.t();
+        cholCov = arma::chol((1-alphaValue)*covMat2 + auxCov, "lower");
+        covMatInv = arma::solve(trimatl(cholCov), covMatAux.t());
+        matAux = covMatInv.t() * covMatInv;
         diagU = diagmat(sqrt(1/zSample));
+
         sigmaDot = diagmat(alphaValue +
           (1-alphaValue)*(covMat.diag() - matAux.diag())).i();
 
-//         sigmaDot.i().print("SigmaDot = ");
-//
-//         Rcout << "Segunda matriz" << std::endl;
-
-//         cholCov2 =  arma::chol((1-alphaValue)*covMat2 +
-//           covMatAux.t()*sigmaDot*covMatAux).i();
-//         matM = cholCov2 * cholCov2.t();
-
         cholCov2 = (1-alphaValue)*covMat2 + covMatAux.t()*sigmaDot*covMatAux;
-        // cholCov2.row(1).print("Primeira linha");
 
-        matM = arma::chol(cholCov2 + auxCov).i();
-        matM2 = matM * matM.t();
+        matM = arma::chol(cholCov2 + auxCov, "lower");
+        matM2 = solve(trimatl(matM), covMatAux.t());
+        matM3 = matM2.t() * matM2;
 
-        CovCov = sigmaDot - sigmaDot * covMatAux * matM2 * covMatAux.t() *
-          sigmaDot;
+        CovCov = sigmaDot - sigmaDot * matM3 * sigmaDot;
 
         SigmaMinusOne = ((1/(sigmaValue*psi2)) * X.t() * diagU * CovCov *
           diagU * X) + B0.i();
         Sigma = SigmaMinusOne.i();
+
 
         mu = Sigma * ((1/(sigmaValue*psi2))*(X.t() * diagU * CovCov *
                 diagU * (y - theta*zSample)));
@@ -127,17 +121,9 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
 
         sigmaValue = rinvgammaRcpp(nTilde/2,sTilde/2);
 
-        Cii = CovCov.diag();
-
-        aux = y - X * betaValue;
-        aux2 = (aux.t() * CovCov * resVec).t();
-
-        gamma2 = 2/sigmaValue + (pow(theta,2.0)/(psi2*sigmaValue))*Cii;
-
         for(int o = 0; o < n; o++){
-          delta2 = std::max((aux2[o] +
-            aux[o]*Cii[o]*theta*zSample[o])/(psi2*sigmaValue), 1e-10);
-          zSample[o] = rgigRcpp(delta2, gamma2[o], lambda);
+          zSample[o] = mtM(y - X * betaValue, theta, psi2, sigmaValue, zSample,
+                           zSample(o), o, CovCov, tuneV, kMT);
         }
 
         kappa1value = mhKappa2(kappa1value, spCoord1, spCoord2, resVec, diagU,
