@@ -87,32 +87,33 @@ IntegerVector seqRefresh = seq(1, itNum/refresh)*(refresh);
       diagU = diagmat(1/sqrt(sigmaValue*psi2*zSample));
       covMatAux.diag().fill(alphaValue + jitter);
 
-      cholCov = chol((1-alphaValue)*covMat + covMatAux).i();
-      covMatInv = cholCov * cholCov.t();
+      cholCov = chol((1-alphaValue)*covMat + covMatAux, "lower");
+      covMatInv = solve(trimatl(cholCov), diagU);
 
-      SigmaMinusOne = X.t() * diagU * covMatInv * diagU * X + B0.i();
+      SigmaMinusOne = X.t() * covMatInv.t() * covMatInv * X + B0.i();
       Sigma = SigmaMinusOne.i();
 
-      mu = Sigma * (B0.i()*b0 + (X.t() * diagU * covMatInv *
-        diagU * (y - theta*zSample)));
+      mu = Sigma * (B0.i()*b0 + (X.t() * covMatInv.t() * covMatInv *
+        (y - theta*zSample)));
 
       betaValue = mvrnormRcpp(mu, Sigma);
 
       resVec = y - theta*zSample - X * betaValue;
       nTilde = n0 + 3*n;
       sTilde =  arma::as_scalar(s0 + 2*sum(zSample) + (sigmaValue*psi2) *
-        resVec.t() * diagU * covMatInv * diagU * resVec);
+        resVec.t() * covMatInv.t() * covMatInv * resVec);
 
       sigmaValue = rinvgammaRcpp(nTilde/2,sTilde/2);
 
       for(int o = 0; o < n; o++){
         zSample[o] = mtM(y - X * betaValue, theta, psi2,
-                              sigmaValue, zSample, zSample(o), o, covMatInv,
+                              sigmaValue, zSample, zSample(o), o,
+                              diagU.i() * covMatInv * diagU.i(),
                               tuneV, kMT);
       }
 
       kappa1value = mhKappa(kappa1value, spCoord1, spCoord2, resVec, diagU,
-                            covMat, covMatInv,
+                            covMat, diagU.i() * covMatInv * diagU.i(),
                             tuneP, alphaValue, jitter);
 
       if (includeAlpha){
