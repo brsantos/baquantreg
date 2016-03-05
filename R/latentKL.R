@@ -18,7 +18,6 @@
 #' @export
 #' @useDynLib baquantreg
 #' @import ggplot2
-#' @importFrom FNN KL.divergence
 
 latentKL <- function(object, burnin = 50, plotKL = TRUE,
                         scales.free = FALSE, all.obs = TRUE, obs){
