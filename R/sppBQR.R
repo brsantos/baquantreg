@@ -45,7 +45,6 @@
 #' @references Lum and Gelfand (2012) - Spatial Quantile Multiple Regression
 #'  Using the Asymmetric Laplace process. Bayesian Analysis.
 #' @export
-#' @importFrom multicore mclapply
 #' @useDynLib baquantreg
 #' @examples
 #' set.seed(1)
