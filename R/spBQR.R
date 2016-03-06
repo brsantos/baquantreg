@@ -76,6 +76,11 @@ spBQR <- function(formula, tau = 0.5, data, itNum, thin=1,
     1-sum(diff(b$alphaSample)==0)/(length(b$alphaSample)-1)
   })
 
+  output$acceptRateV <- lapply(output$chains, function(b){
+    1-sum(diff(b$vSample[,1])==0)/length(diff(b$vSample[,1]))
+  })
+
+
   output$tau <- tau
   output$formula <- formula
   output$data <- data
