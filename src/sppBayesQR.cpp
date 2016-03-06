@@ -1,12 +1,7 @@
 #include <RcppArmadillo.h>
 #include <RcppGSL.h>
 
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_roots.h>
-
 #include "helper1.h"
-#include "helperGIG.h"
 #include "helperGIG2.h"
 #include "helperRD.h"
 #include "helperKappa.h"
@@ -15,7 +10,6 @@
 using namespace Rcpp;
 
 // [[Rcpp::depends(RcppArmadillo)]]
-// [[Rcpp::depends(RcppGSL)]]
 
 // [[Rcpp::export]]
 List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
@@ -121,10 +115,13 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
 
         sigmaValue = rinvgammaRcpp(nTilde/2,sTilde/2);
 
-        for(int o = 0; o < n; o++){
-          zSample[o] = mtM(y - X * betaValue, theta, psi2, sigmaValue, zSample,
-                           zSample(o), o, CovCov, tuneV, kMT);
-        }
+        zSample = mtM2(y - X * betaValue, theta, psi2, sigmaValue, zSample,
+                         n, CovCov, tuneV, kMT);
+
+//         for(int o = 0; o < n; o++){
+//           zSample[o] = mtM(y - X * betaValue, theta, psi2, sigmaValue, zSample,
+//                            zSample(o), o, CovCov, tuneV, kMT);
+//         }
 
         kappa1value = mhKappa2(kappa1value, spCoord1, spCoord2, resVec, diagU,
                                covMat, CovCov,
