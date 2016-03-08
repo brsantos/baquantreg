@@ -5,7 +5,7 @@
 \title{Plot function to analyse the posterior latent variables in a Bayesian
 quantile regression model.}
 \usage{
-plotvfit(object, separate = F, ...)
+plotvfit(object, separate = F, burnin = 0, ...)
 }
 \arguments{
 \item{object}{This is an object of the class "bqr",

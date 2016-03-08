@@ -13,7 +13,7 @@
 #' @useDynLib baquantreg
 #' @import ggplot2
 
-plotvfit <- function(object, separate = F, ...){
+plotvfit <- function(object, separate = F, burnin = 0, ...){
   if (class(object) != "bqr")
     stop("This function is not suited for your model.")
 
@@ -29,11 +29,12 @@ plotvfit <- function(object, separate = F, ...){
   }
 
   plotData <- data.frame(dataV,
-                         taus = rep(taus, each=nobs),
+                         taus = rep(taus, each=sizeChain),
                          sizeChain = rep(1:sizeChain, times=length(taus)))
 
   if (!separate){
-    g <- ggplot(plotData, aes(x=sizeChain)) + theme_bw()
+    g <- ggplot(subset(plotData, sizeChain > burnin),
+                aes(x=sizeChain)) + theme_bw()
     if (length(taus) > 1) g <- g + facet_wrap(~taus, scales='free')
 
     for (i in 1:nobs){
@@ -42,18 +43,19 @@ plotvfit <- function(object, separate = F, ...){
         ylab("Trace for latent variables") +
         xlab("Iteration")
     }
-    g
+    print(g)
   }
   else {
     lapply(taus, function(a){
-      g <- ggplot(subset(plotData, taus==a), aes(x=sizeChain)) + theme_bw()
+      g <- ggplot(subset(plotData, taus==a & sizeChain > burnin),
+                  aes(x=sizeChain)) + theme_bw()
       for (i in 1:nobs){
         g <- g + geom_line(aes_string(y=paste("X", i, sep="")),
                            colour='grey50', alpha=0.1) +
           ylab("Trace for latent variables") +
           xlab("Iteration") + facet_wrap(~taus, scales='free')
       }
-      g
+      print(g)
     })
   }
 }
