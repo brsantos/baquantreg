@@ -2,6 +2,7 @@
 
 S3method(plot,summary.bqr)
 S3method(summary,bqr)
+S3method(update,bqr)
 S3method(update,twopartQR)
 S3method(update,zitobitQR)
 export(bayesQR)
