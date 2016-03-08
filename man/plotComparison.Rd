@@ -4,7 +4,7 @@
 \alias{plotComparison}
 \title{Plot function to compare the posterior distribution for the latent variables}
 \usage{
-plotComparison(object, observation, burnin = 50, plotComp = T, ...)
+plotComparison(object, observation, burnin = 50, plotComp = T)
 }
 \arguments{
 \item{object}{This is an object of the class "bqr", produced by a call

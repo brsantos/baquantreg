@@ -18,7 +18,7 @@
 #' @useDynLib baquantreg
 #' @import ggplot2
 
-plotComparison <- function(object, observation, burnin = 50, plotComp = T, ...){
+plotComparison <- function(object, observation, burnin = 50, plotComp = T){
   if (class(object) != "bqr")
     stop("This function is not suited for your model.")
 
@@ -48,5 +48,6 @@ plotComparison <- function(object, observation, burnin = 50, plotComp = T, ...){
     ylab("Posterior distribution for the latent variables") +
     xlab("") + theme(legend.position = 'bottom')
 
-  g
+  if (plotComp) print(g)
+  return(plotData)
 }
