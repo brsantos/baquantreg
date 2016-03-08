@@ -17,7 +17,7 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
                    arma::vec spCoord1, arma::vec spCoord2, double kappa1value,
                    double tuneP, arma::uvec indices, int m,
                    double alphaValue, double tuneA, double priorVar,
-                   bool quiet, int refresh, double jitter,
+                   bool quiet, int refresh, double jitter, bool includeAlpha,
                    double tuneV, int kMT){
 
    RNGScope scope;
@@ -54,10 +54,11 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
     matM2(m, n, arma::fill::zeros), matM3(n, n, arma::fill::zeros),
     CovCov(n, n, arma::fill::zeros);
 
-  arma::colvec kappaSample(itNum), alphaSample(itNum);
+  arma::colvec kappaSample(itNum), alphaSample(itNum, arma::fill::zeros);
 
   kappaSample[0] = kappa1value;
-  alphaSample[0] = alphaValue;
+  if (includeAlpha) alphaSample[0] = alphaValue;
+  else alphaValue = 0.0;
 
   IntegerVector seqRefresh = seq(1, itNum/refresh)*(refresh);
 
@@ -85,6 +86,8 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
         covMatInv = arma::solve(trimatl(cholCov), covMatAux.t());
         matAux = covMatInv.t() * covMatInv;
         diagU = diagmat(sqrt(1/zSample));
+
+
 
         sigmaDot = diagmat(alphaValue +
           (1-alphaValue)*(covMat.diag() - matAux.diag())).i();
@@ -115,20 +118,20 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
 
         sigmaValue = rinvgammaRcpp(nTilde/2,sTilde/2);
 
-        zSample = mtM2(y - X * betaValue, theta, psi2, sigmaValue, zSample,
-                         n, CovCov, tuneV, kMT);
-
-//         for(int o = 0; o < n; o++){
-//           zSample[o] = mtM(y - X * betaValue, theta, psi2, sigmaValue, zSample,
-//                            zSample(o), o, CovCov, tuneV, kMT);
-//         }
+        for(int o = 0; o < n; o++){
+          zSample[o] = mtM(y - X * betaValue, theta, psi2, sigmaValue, zSample,
+                           zSample(o), o, CovCov, tuneV, kMT);
+        }
 
         kappa1value = mhKappa2(kappa1value, spCoord1, spCoord2, resVec, diagU,
                                covMat, CovCov,
                                tuneP, alphaValue, jitter, indices, m);
 
-        alphaValue = mhAlpha2(alphaValue, resVec, diagU, covMat, covMat2,
-                              covMatAux, tuneA, jitter, indices, m);
+        if (includeAlpha){
+          alphaValue = mhAlpha2(alphaValue, resVec, diagU, covMat, covMat2,
+                                covMatAux, tuneA, jitter, indices, m);
+        }
+
 
       }
 
