@@ -17,8 +17,9 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
-                 arma::colvec betaValue, double sigmaValue, double priorVar,
-                 int refresh, bool quiet, bool tobit){
+                 arma::colvec betaValue, double sigmaValue,
+                 arma::vec vSampleInit, double priorVar, int refresh,
+                 bool quiet, bool tobit){
 
   RNGScope scope;
 
@@ -35,12 +36,10 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
 
   NumericVector sigmaSample(itNum);
 
-  arma::colvec zSample(n);
+  arma::colvec zSample = vSampleInit;
 
   double theta = (1-2*tau)/(tau*(1-tau));
   double psi2 = 2/(tau*(1-tau));
-
-  zSample.fill(1);
 
   int n0 = 3;
   double s0 = 0.1;
@@ -51,7 +50,7 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
 
   arma::colvec mu(p), aux(n), delta2(n);
 
-  double gama2, lambda = 0.5, meanModel, sdModel, sTilde, zValue, termsSum;
+  double gama2, lambda = 0.5, meanModel, sdModel, sTilde, termsSum;
 
   int nTilde;
 
@@ -80,14 +79,14 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
         }
       }
 
-      diagU = diagmat(zSample)*(psi2*sigmaValue);
-      diagU1 = diagmat(zSample);
+      diagU = diagmat(1/zSample)*(1/(psi2*sigmaValue));
+      diagU1 = diagmat(1/zSample);
 
-      sigmaMinusOne = (X.t() * diagU.i() * X) + B0.i();
+      sigmaMinusOne = (X.t() * diagU * X) + B0.i();
       arma::mat sigma = sigmaMinusOne.i();
 
       mu =  sigma * (B0.i()*b0 + (1/(psi2 * sigmaValue)) *
-        (X.t()*diagU1.i() * (yS - theta*zSample)));
+        (X.t()*diagU1 * (yS - theta*zSample)));
 
       betaValue = mvrnormRcpp(mu, sigma);
 
