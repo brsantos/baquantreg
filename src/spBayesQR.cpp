@@ -103,13 +103,6 @@ IntegerVector seqRefresh = seq(1, itNum/refresh)*(refresh);
                     sigmaValue, zSample, n, diagU.i() * covMatInv * diagU.i(),
                     tuneV, kMT);
 
-//       for(int o = 0; o < n; o++){
-//         zSample[o] = mtM(y - X * betaValue, theta, psi2,
-//                               sigmaValue, zSample, zSample(o), o,
-//                               diagU.i() * covMatInv * diagU.i(),
-//                               tuneV, kMT);
-//       }
-
       kappa1value = mhKappa(kappa1value, spCoord1, spCoord2, resVec, diagU,
                             covMat, diagU.i() * covMatInv * diagU.i(),
                             tuneP, alphaValue, jitter);
