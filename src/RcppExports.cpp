@@ -8,8 +8,8 @@
 using namespace Rcpp;
 
 // BayesQR
-List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, double priorVar, int refresh, bool quiet, bool tobit);
-RcppExport SEXP baquantreg_BayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP priorVarSEXP, SEXP refreshSEXP, SEXP quietSEXP, SEXP tobitSEXP) {
+List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::vec vSampleInit, double priorVar, int refresh, bool quiet, bool tobit);
+RcppExport SEXP baquantreg_BayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP vSampleInitSEXP, SEXP priorVarSEXP, SEXP refreshSEXP, SEXP quietSEXP, SEXP tobitSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -20,11 +20,12 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
     Rcpp::traits::input_parameter< arma::colvec >::type betaValue(betaValueSEXP);
     Rcpp::traits::input_parameter< double >::type sigmaValue(sigmaValueSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type vSampleInit(vSampleInitSEXP);
     Rcpp::traits::input_parameter< double >::type priorVar(priorVarSEXP);
     Rcpp::traits::input_parameter< int >::type refresh(refreshSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     Rcpp::traits::input_parameter< bool >::type tobit(tobitSEXP);
-    __result = Rcpp::wrap(BayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, priorVar, refresh, quiet, tobit));
+    __result = Rcpp::wrap(BayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, priorVar, refresh, quiet, tobit));
     return __result;
 END_RCPP
 }
@@ -228,8 +229,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // sppBayesQR
-List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::vec spCoord1, arma::vec spCoord2, double kappa1value, double tuneP, arma::uvec indices, int m, double alphaValue, double tuneA, double priorVar, bool quiet, int refresh, double jitter, double tuneV, int kMT);
-RcppExport SEXP baquantreg_sppBayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP spCoord1SEXP, SEXP spCoord2SEXP, SEXP kappa1valueSEXP, SEXP tunePSEXP, SEXP indicesSEXP, SEXP mSEXP, SEXP alphaValueSEXP, SEXP tuneASEXP, SEXP priorVarSEXP, SEXP quietSEXP, SEXP refreshSEXP, SEXP jitterSEXP, SEXP tuneVSEXP, SEXP kMTSEXP) {
+List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::vec spCoord1, arma::vec spCoord2, double kappa1value, double tuneP, arma::uvec indices, int m, double alphaValue, double tuneA, double priorVar, bool quiet, int refresh, double jitter, bool includeAlpha, double tuneV, int kMT);
+RcppExport SEXP baquantreg_sppBayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP spCoord1SEXP, SEXP spCoord2SEXP, SEXP kappa1valueSEXP, SEXP tunePSEXP, SEXP indicesSEXP, SEXP mSEXP, SEXP alphaValueSEXP, SEXP tuneASEXP, SEXP priorVarSEXP, SEXP quietSEXP, SEXP refreshSEXP, SEXP jitterSEXP, SEXP includeAlphaSEXP, SEXP tuneVSEXP, SEXP kMTSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -252,9 +253,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     Rcpp::traits::input_parameter< int >::type refresh(refreshSEXP);
     Rcpp::traits::input_parameter< double >::type jitter(jitterSEXP);
+    Rcpp::traits::input_parameter< bool >::type includeAlpha(includeAlphaSEXP);
     Rcpp::traits::input_parameter< double >::type tuneV(tuneVSEXP);
     Rcpp::traits::input_parameter< int >::type kMT(kMTSEXP);
-    __result = Rcpp::wrap(sppBayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, spCoord2, kappa1value, tuneP, indices, m, alphaValue, tuneA, priorVar, quiet, refresh, jitter, tuneV, kMT));
+    __result = Rcpp::wrap(sppBayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, spCoord2, kappa1value, tuneP, indices, m, alphaValue, tuneA, priorVar, quiet, refresh, jitter, includeAlpha, tuneV, kMT));
     return __result;
 END_RCPP
 }
