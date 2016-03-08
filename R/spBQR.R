@@ -32,6 +32,8 @@
 #' @param quiet If TRUE, the default, it does not print messages to check if
 #'  the MCMC is actually updating. If FALSE, it will use the value of refresh
 #'  to print messages to control the iteration process.
+#' @param includeAlpha If TRUE, the default, the model will include the alpha
+#'  parameter. If FALSE, alpha is set to zero for all draws of the chain.
 #' @param tuneV Tuning parameter to the multiple-try Metropolis to sample for
 #'  the posterior distribution of the latent variables. Default value is 0.5.
 #' @param kMT Integer, number of Metropolis samples in the multiple-try

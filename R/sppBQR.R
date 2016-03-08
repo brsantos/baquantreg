@@ -37,6 +37,8 @@
 #'  to print messages to control the iteration process.
 #' @param jitter Ammount of jitter added to help in the process for inverting
 #'  the covariance matrix. Default is 1e-10.
+#' @param includeAlpha If TRUE, the default, the model will include the alpha
+#'  parameter. If FALSE, alpha is set to zero for all draws of the chain.
 #' @param tuneV Tuning parameter to the multiple-try Metropolis to sample for
 #'  the posterior distribution of the latent variables. Default value is 0.5.
 #' @param kMT Integer, number of Metropolis samples in the multiple-try
@@ -56,6 +58,7 @@ sppBQR <- function(formula, tau = 0.5, data, itNum, thin=1,
                     alpha = 0.5, tuneA = 1e3,
                     priorVar = 100,
                     refresh = 100, quiet = T, jitter = 1e-10,
+                    includeAlpha = TRUE,
                     tuneV = 0.5, kMT = 5){
 
   y <- as.numeric(model.extract(model.frame(formula, data), 'response'))
@@ -72,7 +75,8 @@ sppBQR <- function(formula, tau = 0.5, data, itNum, thin=1,
             tuneP = tuneP, indices = indexes, m = m,
             alphaValue = alpha, tuneA = tuneA,
             priorVar = priorVar, quiet = quiet, refresh = refresh,
-            jitter = jitter, tuneV = tuneV, kMT = kMT)
+            jitter = jitter, includeAlpha = includeAlpha,
+            tuneV = tuneV, kMT = kMT)
   })
 
   output$acceptRateKappa <- lapply(output$chains, function(b){
