@@ -14,8 +14,7 @@
 #' @param betaValue Initial values for the parameter beta for the continuous
 #' part.
 #' @param sigmaValue Initial value for the scale parameter.
-#' @param gammaValue Initial value for the parameter gamma of the discrete
-#' part.
+#' @param vSampleInit Initial value for the latent variables.
 #' @param priorVar Value that multiplies a identity matrix in the elicition
 #' process of the prior variance of the regression parameters.
 #' @param refresh Interval between printing a message during the iteration
@@ -36,21 +35,23 @@
 #' set.seed(1)
 
 bayesQR <- function(formula, tau = 0.5, data, itNum, thin=1,
-                      betaValue = NULL, sigmaValue=1, priorVar = 100,
-                      refresh = 100, quiet = T, tobit = F){
+                    betaValue = NULL, sigmaValue=1, vSampleInit = NULL,
+                    priorVar = 100,
+                    refresh = 100, quiet = T, tobit = F){
 
   y <- as.numeric(model.extract(model.frame(formula, data), 'response'))
   X <- model.matrix(formula, data)
 
   if (is.null(betaValue)) betaValue <- rep(0, dim(X)[2])
+  if (is.null(vSampleInit)) vSampleInit <- rep(1, length(y))
 
   output <- list()
 
   output$chains <- lapply(tau, function(a){
     BayesQR(tau = a, y = y, X = X, itNum = itNum, thin = thin,
             betaValue = betaValue, sigmaValue = sigmaValue,
-            priorVar = priorVar,  refresh = refresh, quiet = quiet,
-            tobit = tobit)
+            vSampleInit = vSampleInit, priorVar = priorVar,
+            refresh = refresh, quiet = quiet, tobit = tobit)
   })
 
   output$tau <- tau
