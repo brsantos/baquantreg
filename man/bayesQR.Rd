@@ -5,7 +5,8 @@
 \title{Bayesian quantile regression model}
 \usage{
 bayesQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
-  sigmaValue = 1, priorVar = 100, refresh = 100, quiet = T, tobit = F)
+  sigmaValue = 1, vSampleInit = NULL, priorVar = 100, refresh = 100,
+  quiet = T, tobit = F)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -25,6 +26,8 @@ part.}
 
 \item{sigmaValue}{Initial value for the scale parameter.}
 
+\item{vSampleInit}{Initial value for the latent variables.}
+
 \item{priorVar}{Value that multiplies a identity matrix in the elicition
 process of the prior variance of the regression parameters.}
 
@@ -38,9 +41,6 @@ to print messages to control the iteration process.}
 \item{tobit}{If TRUE, it will input the censored value for all observations
 with y = 0, according to the model. If FALSE, the default, it will estimate
 the parameter without this inputation process.}
-
-\item{gammaValue}{Initial value for the parameter gamma of the discrete
-part.}
 }
 \value{
 A list with the chains of all parameters of interest.
