@@ -19,7 +19,7 @@ using namespace Rcpp;   // inline does that for us already
 List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
                     int thin, arma::colvec betaValue, double sigmaValue,
                     arma::colvec gammaValue, double sigmaGamma, int link,
-                    double priorVar, int refresh, bool quiet){
+                    double priorVar, int refresh, bool quiet, int burnin){
 
    RNGScope scope;
 
@@ -52,6 +52,7 @@ List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
 
    arma::mat betaSample(itNum/thin, p, arma::fill::zeros),
     gammaSample(itNum/thin, p, arma::fill::zeros);
+
    arma::colvec sigmaSample(itNum/thin, arma::fill::zeros);
    NumericVector InfPar(1), LimSup(1);
 
@@ -83,7 +84,7 @@ List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
 
    IntegerVector seqRefresh = seq(1, itNum/refresh)*refresh;
 
-   arma::colvec zSample(n, arma::fill::ones), aux(n), aux2;
+   arma::colvec zSample(n, arma::fill::ones), aux(n), aux2, indCens(n);
 
    sigmaSample[0] = sigmaValue;
 
@@ -219,23 +220,24 @@ List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
 
       }
 
-
-      // Saving final values for the chain given the thin parameter.
-      for(int jj = 0; jj < p; jj++){
-        betaSample(k,jj) = betaValue[jj];
-        gammaSample(k,jj) = gammaValue[jj];
-      }
-
+      betaSample.row(k) = betaValue.t();
+      gammaSample.row(k) = gammaValue.t();
       sigmaSample[k] = sigmaValue;
    }
 
    // Calculating the acceptance rate for the M-H algorithm.
    acceptRate = accept/itNum;
 
+   // Calculating the probability of being censored for each zero observation.
+   for (int cc = 0; cc < n; cc++){
+     indCens[cc] = sum(matrizIndCens(arma::span(burnin,itNum-1),cc)) /
+      (itNum - burnin);
+   }
+
    return List::create(
-        Named("betaSample") = betaSample,
-        Named("gammaSample") = gammaSample,
+        Named("BetaSample") = betaSample,
+        Named("GammaSample") = gammaSample,
         Named("acceptRate") = acceptRate,
-        Named("sigmaSample") = sigmaSample,
-        Named("matrizIndCens") = matrizIndCens);
+        Named("SigmaSample") = sigmaSample,
+        Named("indCens") = indCens);
 }

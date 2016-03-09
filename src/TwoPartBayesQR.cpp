@@ -16,9 +16,9 @@ using namespace Rcpp;   // inline does that for us already
 
 // [[Rcpp::export]]
 List tpBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
-                      arma::colvec betaValue, double sigmaValue,
-                      arma::colvec gammaValue, double sigmaGamma,
-                      int link, double priorVar, int refresh, bool quiet){
+              arma::vec betaValue, double sigmaValue, arma::vec vSampleInit,
+              arma::vec gammaValue, double sigmaGamma,
+              int link, double priorVar, int refresh, bool quiet){
 
    RNGScope scope;
 
@@ -44,18 +44,19 @@ List tpBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
      }
    }
 
-   double theta, psi2, s0, n0, gama2, lambda, meanModel, sdModel, nTilde,
-    sTilde, zValue, delta2, postNew, postAnt, probAcceptance, acceptRate,
-    accept, thresholdLik, thetaElip, thetaElip_min, thetaElip_max;
+   double theta, psi2, s0, n0, gama2, lambda, nTilde, sTilde, zValue,
+    postNew, postAnt, probAcceptance, acceptRate, accept, termsSum;
 
-   NumericMatrix betaSample(itNum/thin, p), gammaSample(itNum/thin, p);
-   NumericVector sigmaSample(itNum/thin), termsSum(n), InfPar(1), LimSup(1);
+   NumericVector InfPar(1), LimSup(1);
 
    arma::colvec b0(p), zSample(n2), mu(p), newgammaValue(p),
-    newEllipseValue(p), vetorUm(p), aux(n2), vetorZeros(p, arma::fill::zeros);
+    aux(n2), sigmaSample(itNum/thin), delta2(n2);
 
-   arma::mat B0(p,p), sigmaMinusOne(p,p), diagU, diagU1, sigmaMat(p,p),
-    matIdsigmaGamma(p,p);
+   arma::mat betaSample(itNum/thin, p, arma::fill::zeros),
+   vSample(itNum/thin, n2, arma::fill::zeros),
+   gammaSample(itNum/thin, p, arma::fill::zeros), B0(p,p, arma::fill::zeros),
+    sigmaMinusOne(p,p,arma::fill::zeros), diagU, diagU1,
+    sigmaMat(p,p,arma::fill::zeros), matIdsigmaGamma(p,p,arma::fill::zeros);
 
    // Hyperparameter of the normal prior distribution
    B0 = priorVar * B0.eye(p,p);
@@ -66,7 +67,7 @@ List tpBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
    psi2 = 2/(tau*(1-tau));
 
    /* Initializing values. */
-   zSample.fill(1);
+   zSample = vSampleInit;
 
    n0 = 3;
    s0 = 0.1;
@@ -77,8 +78,7 @@ List tpBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
 
    accept = 0.0;
 
-   vetorUm.fill(1);
-   matIdsigmaGamma = sigmaGamma * diagmat(vetorUm);
+   matIdsigmaGamma.diag().fill(sigmaGamma);
 
    IntegerVector seqRefresh = seq(1, itNum/refresh)*(refresh);
 
@@ -104,37 +104,40 @@ List tpBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
           accept++;
         }
 
-        diagU = diagmat(zSample)*(psi2*sigmaValue);
-        diagU1 = diagmat(zSample);
+        diagU = diagmat(1/zSample)/(psi2*sigmaValue);
+        diagU1 = diagmat(1/zSample);
 
-        sigmaMinusOne = (X2.t() * diagU.i() * X2) + B0.i();
+        sigmaMinusOne = (X2.t() * diagU * X2) + B0.i();
         sigmaMat = sigmaMinusOne.i();
 
         mu = sigmaMat * (B0.i()*b0 + (1/(psi2 * sigmaValue)) *
-          (X2.t()*diagU1.i() * (y2 - theta*zSample)));
+          (X2.t()*diagU1 * (y2 - theta*zSample)));
 
         betaValue = mvrnormRcpp(mu, sigmaMat);
 
         aux = X2 * betaValue;
         gama2 = 2/sigmaValue + pow(theta,2.0)/(psi2*sigmaValue);
 
-        for(int o = 0; o < n2; o++){
-          delta2 = pow(y2[o] - aux[o],2.0)/(psi2*sigmaValue);
+        delta2 = diagvec((1/(psi2*sigmaValue)) * diagmat(y2 - aux) *
+          diagmat(y2 - aux));
 
-          zSample[o] = rgigRcpp(delta2, gama2, lambda);
-          termsSum[o] = pow(y2[o] - aux[o] - theta*zSample[o],2.0)/zSample[o];
+        for(int o = 0; o < n2; o++){
+          delta2[o] = std::max(delta2[o], 1e-10);
+          zSample[o] = rgigRcpp(delta2[o], gama2, lambda);
         }
 
+        termsSum = arma::as_scalar((y2 - aux - theta*zSample).t() *
+          diagmat(zSample).i() * (y2 - aux - theta*zSample));
+
         nTilde = n0 + 3*n2;
-        sTilde =  s0 + 2*sum(zSample) + sum(termsSum)/psi2;
+        sTilde =  s0 + 2*sum(zSample) + termsSum/psi2;
 
         sigmaValue = rinvgammaRcpp(nTilde/2,sTilde/2);
       }
 
-      for(int jj = 0; jj < p; jj++){
-        betaSample(k,jj) = betaValue[jj];
-        gammaSample(k,jj) = gammaValue[jj];
-      }
+      betaSample.row(k) = betaValue.t();
+      gammaSample.row(k) = gammaValue.t();
+      vSample.row(k) = zSample.t();
       sigmaSample[k] = sigmaValue;
    }
 
@@ -142,7 +145,8 @@ List tpBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
 
    return Rcpp::List::create(
         Rcpp::Named("BetaSample") = betaSample,
-        Rcpp::Named("gammaSample") = gammaSample,
+        Rcpp::Named("GammaSample") = gammaSample,
         Rcpp::Named("acceptRate") = acceptRate,
-        Rcpp::Named("sigmaSample") = sigmaSample);
+        Rcpp::Named("SigmaSample") = sigmaSample,
+        Rcpp::Named("vSample") = vSample);
 }
