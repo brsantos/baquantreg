@@ -46,7 +46,6 @@ bayesQR <- function(formula, tau = 0.5, data, itNum, thin=1,
   if (is.null(vSampleInit)) vSampleInit <- rep(1, length(y))
 
   output <- list()
-
   output$chains <- lapply(tau, function(a){
     BayesQR(tau = a, y = y, X = X, itNum = itNum, thin = thin,
             betaValue = betaValue, sigmaValue = sigmaValue,
