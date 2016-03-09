@@ -5,12 +5,12 @@ BayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, 
     .Call('baquantreg_BayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, priorVar, refresh, quiet, tobit)
 }
 
-tpBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, gammaValue, sigmaGamma, link, priorVar, refresh, quiet) {
-    .Call('baquantreg_tpBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, gammaValue, sigmaGamma, link, priorVar, refresh, quiet)
+tpBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, gammaValue, sigmaGamma, link, priorVar, refresh, quiet) {
+    .Call('baquantreg_tpBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, gammaValue, sigmaGamma, link, priorVar, refresh, quiet)
 }
 
-ziTobitBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, gammaValue, sigmaGamma, link, priorVar, refresh, quiet) {
-    .Call('baquantreg_ziTobitBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, gammaValue, sigmaGamma, link, priorVar, refresh, quiet)
+ziTobitBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, gammaValue, sigmaGamma, link, priorVar, refresh, quiet, burnin) {
+    .Call('baquantreg_ziTobitBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, gammaValue, sigmaGamma, link, priorVar, refresh, quiet, burnin)
 }
 
 logLikelihoodAlpha <- function(alpha, aux, diagU, covMat, jitter) {
@@ -41,11 +41,11 @@ mhKappa <- function(kappa, spCoord1, spCoord2, aux, diagU, covMat, covMatInv, tu
     .Call('baquantreg_mhKappa', PACKAGE = 'baquantreg', kappa, spCoord1, spCoord2, aux, diagU, covMat, covMatInv, tuneParam, alpha, jitter)
 }
 
-spBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, spCoord2, kappa1value, tuneP, alphaValue, tuneA, priorVar, refresh, quiet, jitter, includeAlpha, tuneV, kMT) {
-    .Call('baquantreg_spBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, spCoord2, kappa1value, tuneP, alphaValue, tuneA, priorVar, refresh, quiet, jitter, includeAlpha, tuneV, kMT)
+spBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, spCoord2, lambda, tuneP, alphaValue, tuneA, priorVar, refresh, quiet, jitter, includeAlpha, tuneV, kMT) {
+    .Call('baquantreg_spBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, spCoord2, lambda, tuneP, alphaValue, tuneA, priorVar, refresh, quiet, jitter, includeAlpha, tuneV, kMT)
 }
 
-sppBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, spCoord2, kappa1value, tuneP, indices, m, alphaValue, tuneA, priorVar, quiet, refresh, jitter, includeAlpha, tuneV, kMT) {
-    .Call('baquantreg_sppBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, spCoord2, kappa1value, tuneP, indices, m, alphaValue, tuneA, priorVar, quiet, refresh, jitter, includeAlpha, tuneV, kMT)
+sppBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, spCoord2, lambda, tuneP, indices, m, alphaValue, tuneA, priorVar, quiet, refresh, jitter, includeAlpha, tuneV, kMT) {
+    .Call('baquantreg_sppBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, spCoord1, spCoord2, lambda, tuneP, indices, m, alphaValue, tuneA, priorVar, quiet, refresh, jitter, includeAlpha, tuneV, kMT)
 }
 
