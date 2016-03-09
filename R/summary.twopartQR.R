@@ -48,9 +48,9 @@ summary.twopartQR <- function (object, burnin = 500, ci = 0.95, ...)
 
     c(meanSigma, quantilesL, quantilesU)
   })))
-
+  tau <- object$tau
   colnames(output$SigmaPosterior) <- c("Mean", "Lower", "Upper")
-  output$SigmaPosterior <- data.frame(cbind(object$tau, output$SigmaPosterior))
+  output$SigmaPosterior <- data.frame(cbind(tau, output$SigmaPosterior))
 
   output$GammaPosterior <- lapply(object$chains, function(a){
     vnames <- colnames(X)

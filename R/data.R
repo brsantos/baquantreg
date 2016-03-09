@@ -65,7 +65,7 @@
 
 
 #' Results of the Brazilian presidential election in 2014, with percentage of
-#'  votes for Dilma Rousseff in each city of the country.
+#'  votes for Dilma Rousseff by city.
 #'
 #' A dataset containing data about the presidential election of 2014 in the
 #'  total 5501 cities, where a few cities were not included in this dataset,

@@ -49,8 +49,9 @@ summary.spBQR <- function (object, burnin = 1000, ci = 0.95, ...)
     c(meanSigma, quantilesL, quantilesU)
   })))
 
+  tau <- object$tau
   colnames(output$SigmaPosterior) <- c("Mean", "Lower", "Upper")
-  output$SigmaPosterior <- data.frame(cbind(object$tau, output$SigmaPosterior))
+  output$SigmaPosterior <- data.frame(cbind(tau, output$SigmaPosterior))
 
   output$LambdaPosterior <- data.frame(t(sapply(object$chains, function(a){
     meanSigma <- mean(a$LambdaSample[(burnin+1):numIt])
@@ -61,7 +62,7 @@ summary.spBQR <- function (object, burnin = 1000, ci = 0.95, ...)
   })))
 
   colnames(output$LambdaPosterior) <- c("Mean", "Lower", "Upper")
-  output$LambdaPosterior <- data.frame(cbind(object$tau, output$LambdaPosterior))
+  output$LambdaPosterior <- data.frame(cbind(tau, output$LambdaPosterior))
 
   output$AlphaPosterior <- data.frame(t(sapply(object$chains, function(a){
     meanSigma <- mean(a$alphaSample[(burnin+1):numIt])
@@ -72,7 +73,7 @@ summary.spBQR <- function (object, burnin = 1000, ci = 0.95, ...)
   })))
 
   colnames(output$AlphaPosterior) <- c("Mean", "Lower", "Upper")
-  output$AlphaPosterior <- data.frame(cbind(object$tau, output$AlphaPosterior))
+  output$AlphaPosterior <- data.frame(cbind(tau, output$AlphaPosterior))
 
   output$taus <- object$tau
 

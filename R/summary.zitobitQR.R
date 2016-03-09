@@ -48,8 +48,9 @@ summary.zitobitQR <- function (object, burnin = 1000, ci = 0.95, ...)
     c(meanSigma, quantilesL, quantilesU)
   })))
 
+  tau <- object$tau
   colnames(output$SigmaPosterior) <- c("Mean", "Lower", "Upper")
-  output$SigmaPosterior <- data.frame(cbind(object$tau, output$SigmaPosterior))
+  output$SigmaPosterior <- data.frame(cbind(tau, output$SigmaPosterior))
 
   output$GammaPosterior <- lapply(object$chains, function(a){
     vnames <- colnames(X)
@@ -65,7 +66,6 @@ summary.zitobitQR <- function (object, burnin = 1000, ci = 0.95, ...)
   })
 
   names(output$GammaPosterior) <- paste("Tau = ", object$tau)
-
   output$taus <- object$tau
 
   class(output) <- "summary.zitobitQR"
