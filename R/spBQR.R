@@ -16,8 +16,8 @@
 #' @param sigmaValue Initial value for the scale parameter.
 #' @param gammaValue Initial value for the parameter gamma of the discrete
 #'  part.
-#' @param spCoord1 First spatial coordinate, as latitude, for instance.
-#' @param spCoord2 Second spatial coordinate, as longitude, for instance.
+#' @param spCoord1 Name of the first spatial coordinate, as character.
+#' @param spCoord2 Name of the second spatial coordinate, as character.
 #' @param lambda Initial value for the parameter in the covariance matrix.
 #' @param tuneP Tuning parameter for the Metropolis-Hastings algorithm to draw
 #'  samples from the posterior distribution of kappa.
@@ -58,12 +58,15 @@ spBQR <- function(formula, tau = 0.5, data, itNum, thin=1,
 
   if (is.null(betaValue)) betaValue <- rep(0, dim(X)[2])
 
+  spatial1 <- data[,spCoord1]
+  spatial2 <- data[,spCoord2]
+
   output <- list()
 
   output$chains <- lapply(tau, function(a){
     spBayesQR(tau = a, y = y, X = X, itNum = itNum, thin = thin,
             betaValue = betaValue, sigmaValue = sigmaValue,
-            spCoord1 = spCoord1, spCoord2 = spCoord2, lambda = lambda,
+            spCoord1 = spatial1, spCoord2 = spatial2, lambda = lambda,
             tuneP = tuneP, alphaValue = alpha, tuneA = tuneA,
             priorVar = priorVar, refresh = refresh, quiet = quiet,
             jitter = jitter, includeAlpha = includeAlpha,
