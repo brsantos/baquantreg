@@ -5,12 +5,15 @@
 \title{Two part model using Bayesian quantile regression model}
 \usage{
 twopartQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
-  sigmaValue = 1, gammaValue = NULL, sigmaGamma = 0.5, link = 1,
-  priorVar = 100, refresh = 100, quiet = FALSE)
+  sigmaValue = 1, vSampleInit = NULL, gammaValue = NULL,
+  sigmaGamma = 0.5, link = 1, priorVar = 100, refresh = 100,
+  quiet = FALSE)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
-operator, and the terms, separated by + operators, on the right.}
+operator, and the terms, separated by + operators, on the right. If the
+assumed point mass distribution is at 1, then all values equal to 1 should
+be replaced by 0.}
 
 \item{tau}{Quantile of interest.}
 
@@ -31,7 +34,8 @@ part.}
 \item{sigmaGamma}{Tuning parameter for the Metropolis-Hastings step.}
 
 \item{link}{Integer defining the link function used for the probability
-model. Default is 1 for the logit link function.}
+model. Default is 1 for the logit link function. If 0, the probit function
+is used.}
 
 \item{priorVar}{Value that multiplies a identity matrix in the elicition
 process of the prior variance of the regression parameters.}
@@ -60,7 +64,7 @@ modelo2p <- twopartQR(prop_elec/100 ~ population + income_percap, tau=0.5,
 }
 \references{
 Santos and Bolfarine (2015) - Bayesian quantile regression
-analysis for continuous data with a discrete component at zero.
+ analysis for continuous data with a discrete component at zero.
 \emph{Preprint}. \url{http://arxiv.org/abs/1511.05925}
 }
 

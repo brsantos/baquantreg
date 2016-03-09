@@ -5,7 +5,7 @@
 \title{Spatial Bayesian quantile regression models using predictive processes}
 \usage{
 sppBQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
-  sigmaValue = 1, spCoord1, spCoord2, kappa = 1, tuneP = 1, m,
+  sigmaValue = 1, spCoord1, spCoord2, lambda = 0.5, tuneP = 1, m,
   indexes = sample(1:length(spCoord1), size = m), alpha = 0.5,
   tuneA = 1000, priorVar = 100, refresh = 100, quiet = T,
   jitter = 1e-10, includeAlpha = TRUE, tuneV = 0.5, kMT = 5)
@@ -32,7 +32,7 @@ part.}
 
 \item{spCoord2}{Second spatial coordinate, as longitude, for instance.}
 
-\item{kappa}{Initial value for the parameter in the covariance matrix.}
+\item{lambda}{Initial value for the parameter in the covariance matrix.}
 
 \item{tuneP}{Tuning parameter for the Metropolis-Hastings algorithm to draw
 samples from the posterior distribution of kappa.}
