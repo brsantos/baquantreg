@@ -28,9 +28,9 @@ part.}
 
 \item{sigmaValue}{Initial value for the scale parameter.}
 
-\item{spCoord1}{First spatial coordinate, as latitude, for instance.}
+\item{spCoord1}{Name of the first spatial coordinate, as character.}
 
-\item{spCoord2}{Second spatial coordinate, as longitude, for instance.}
+\item{spCoord2}{Name of the second spatial coordinate, as character.}
 
 \item{lambda}{Initial value for the parameter in the covariance matrix.}
 
@@ -69,9 +69,6 @@ the posterior distribution of the latent variables. Default value is 0.5.}
 
 \item{kMT}{Integer, number of Metropolis samples in the multiple-try
 Metropolis. Default value is 5.}
-
-\item{gammaValue}{Initial value for the parameter gamma of the discrete
-part.}
 }
 \value{
 A list with the chains of all parameters of interest.

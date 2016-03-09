@@ -27,9 +27,9 @@ part.}
 
 \item{sigmaValue}{Initial value for the scale parameter.}
 
-\item{spCoord1}{First spatial coordinate, as latitude, for instance.}
+\item{spCoord1}{Name of the first spatial coordinate, as character.}
 
-\item{spCoord2}{Second spatial coordinate, as longitude, for instance.}
+\item{spCoord2}{Name of the second spatial coordinate, as character.}
 
 \item{lambda}{Initial value for the parameter in the covariance matrix.}
 
