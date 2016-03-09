@@ -25,11 +25,13 @@
 #' @param quiet Logical. If FALSE (default) it will print messages depending on
 #'  the refresh parameter to show that the Markov chain is updating. If TRUE it
 #'  will not print messages during the iteration process.
+#' @param burnin Size of the burnin only for the indicator variable of the
+#'  censoring mechanism. For all other chains, this number will not be used.
+#'  Default value is 50.
 #' @return A list with the chains of all parameters of interest.
 #' @references Santos and Bolfarine (2015) - Bayesian quantile regression
-#'  analysis for continuous data
-#' with a discrete component at zero. \emph{Preprint}.
-#'  \url{http://arxiv.org/abs/1511.05925}
+#'  analysis for continuous data with a discrete component at zero.
+#'  \emph{Preprint}. \url{http://arxiv.org/abs/1511.05925}
 #' @export
 #' @useDynLib baquantreg
 #' @import RcppArmadillo
@@ -47,7 +49,7 @@ zitobitQR <- function(formula, tau = 0.5, data, itNum, thin=1,
                       betaValue = NULL, sigmaValue=1,
                       gammaValue = NULL,  sigmaGamma = 0.5,
                       link=1, priorVar = 100, refresh = 100,
-                      quiet = FALSE){
+                      quiet = FALSE, burnin = 50){
 
   y <- as.numeric(model.extract(model.frame(formula, data), 'response'))
   X <- model.matrix(formula, data)
@@ -56,19 +58,20 @@ zitobitQR <- function(formula, tau = 0.5, data, itNum, thin=1,
   if (is.null(gammaValue)) gammaValue <- rep(0, dim(X)[2])
 
   ziTobit <- list()
+  ziTobit$chains <- lapply(tau, function(a){
+    ziTobitBayesQR(tau = a, y=y, X=X, itNum=itNum, thin=thin,
+                   betaValue=betaValue, sigmaValue=sigmaValue,
+                   gammaValue=gammaValue, sigmaGamma=sigmaGamma,
+                   link=link, priorVar=priorVar, refresh=refresh,
+                   quiet=quiet, burnin = burnin)
+  })
 
-  ziTobit$chains <- ziTobitBayesQR(tau = tau, y=y, X=X, itNum=itNum, thin=thin,
-                          betaValue=betaValue, sigmaValue=sigmaValue,
-                          gammaValue=gammaValue, sigmaGamma=sigmaGamma,
-                          link=link, priorVar=priorVar, refresh=refresh,
-                          quiet=quiet)
-
+  ziTobit$y <- y
   ziTobit$tau <- tau
   ziTobit$formula <- formula
   ziTobit$data <- data
   ziTobit$link <- link
 
   class(ziTobit) <- "zitobitQR"
-
   return(ziTobit)
 }
