@@ -14,7 +14,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
                    int thin, arma::colvec betaValue, double sigmaValue,
-                   arma::vec spCoord1, arma::vec spCoord2, double kappa1value,
+                   arma::vec spCoord1, arma::vec spCoord2, double lambda,
                    double tuneP, arma::uvec indices, int m,
                    double alphaValue, double tuneA, double priorVar,
                    bool quiet, int refresh, double jitter, bool includeAlpha,
@@ -25,7 +25,7 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
    int n = X.n_rows;
    int p = X.n_cols;
 
-   double theta, psi2, s0, n0, lambda, nTilde, sTilde, delta2;
+   double theta, psi2, s0, n0, nTilde, sTilde, delta2;
 
    NumericVector sigmaSample(itNum), termsSum(n);
 
@@ -45,8 +45,6 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
    n0 = 3.0;
    s0 = 0.1;
 
-   lambda = 0.5;
-
   arma::mat covMatAux(n, m, arma::fill::zeros), covMat(n, n, arma::fill::zeros),
     covMat2(m, m, arma::fill::zeros), covMatInv(m, n, arma::fill::zeros),
     auxCov(m, m, arma::fill::zeros), cholCov(m,m), cholCov2(m,m),
@@ -54,9 +52,9 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
     matM2(m, n, arma::fill::zeros), matM3(n, n, arma::fill::zeros),
     CovCov(n, n, arma::fill::zeros);
 
-  arma::colvec kappaSample(itNum), alphaSample(itNum, arma::fill::zeros);
+  arma::colvec lambdaSample(itNum), alphaSample(itNum, arma::fill::zeros);
 
-  kappaSample[0] = kappa1value;
+  lambdaSample[0] = lambda;
   if (includeAlpha) alphaSample[0] = alphaValue;
   else alphaValue = 0.0;
 
@@ -73,7 +71,7 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
 
         for(int aa = 0; aa < n; aa++)
           for(int bb = 0; bb < n; bb++)
-            covMat(aa,bb) = exp(-kappa1value *
+            covMat(aa,bb) = exp(-lambda *
               (pow(spCoord1[aa] - spCoord1[bb],2) +
               pow(spCoord2[aa] - spCoord2[bb],2)));
 
@@ -120,10 +118,10 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
 
         for(int o = 0; o < n; o++){
           zSample[o] = mtM(y - X * betaValue, theta, psi2, sigmaValue, zSample,
-                           zSample(o), o, CovCov, tuneV, kMT);
+                           zSample[o], o, CovCov, tuneV, kMT);
         }
 
-        kappa1value = mhKappa2(kappa1value, spCoord1, spCoord2, resVec, diagU,
+        lambda = mhKappa2(lambda, spCoord1, spCoord2, resVec, diagU,
                                covMat, CovCov,
                                tuneP, alphaValue, jitter, indices, m);
 
@@ -138,7 +136,7 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
       betaSample.row(k) = betaValue.t();
       vSample.row(k) = zSample.t();
       sigmaSample[k] = sigmaValue;
-      kappaSample[k] = kappa1value;
+      lambdaSample[k] = lambda;
       alphaSample[k] = alphaValue;
    }
 
@@ -146,6 +144,6 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
         Rcpp::Named("BetaSample") = betaSample,
         Rcpp::Named("SigmaSample") = sigmaSample,
         Rcpp::Named("vSample") = vSample,
-        Rcpp::Named("kappa1") = kappaSample,
+        Rcpp::Named("LambdaSample") = lambdaSample,
         Rcpp::Named("alphaSample") = alphaSample);
 }

@@ -18,7 +18,7 @@
 #'  part.
 #' @param spCoord1 First spatial coordinate, as latitude, for instance.
 #' @param spCoord2 Second spatial coordinate, as longitude, for instance.
-#' @param kappa Initial value for the parameter in the covariance matrix.
+#' @param lambda Initial value for the parameter in the covariance matrix.
 #' @param tuneP Tuning parameter for the Metropolis-Hastings algorithm to draw
 #'  samples from the posterior distribution of kappa.
 #' @param m Number of knots.
@@ -53,7 +53,7 @@
 
 sppBQR <- function(formula, tau = 0.5, data, itNum, thin=1,
                     betaValue = NULL, sigmaValue=1, spCoord1, spCoord2,
-                    kappa = 1, tuneP = 1, m,
+                    lambda = 0.5, tuneP = 1, m,
                     indexes = sample(1:length(spCoord1), size = m),
                     alpha = 0.5, tuneA = 1e3,
                     priorVar = 100,
@@ -71,7 +71,7 @@ sppBQR <- function(formula, tau = 0.5, data, itNum, thin=1,
   output$chains <- lapply(tau, function(a){
     sppBayesQR(tau = a, y = y, X = X, itNum = itNum, thin = thin,
             betaValue = betaValue, sigmaValue = sigmaValue,
-            spCoord1 = spCoord1, spCoord2 = spCoord2, kappa1value = kappa,
+            spCoord1 = spCoord1, spCoord2 = spCoord2, lambda = lambda,
             tuneP = tuneP, indices = indexes, m = m,
             alphaValue = alpha, tuneA = tuneA,
             priorVar = priorVar, quiet = quiet, refresh = refresh,

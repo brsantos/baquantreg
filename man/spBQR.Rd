@@ -5,9 +5,9 @@
 \title{Spatial Bayesian quantile regression models}
 \usage{
 spBQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
-  sigmaValue = 1, spCoord1, spCoord2, kappa = 1, tuneP = 1, alpha = 0.5,
-  tuneA = 1000, priorVar = 100, refresh = 100, quiet = T, jitter = 0,
-  includeAlpha = TRUE, tuneV = 0.5, kMT = 5)
+  sigmaValue = 1, spCoord1, spCoord2, lambda = 0.5, tuneP = 1,
+  alpha = 0.5, tuneA = 1000, priorVar = 100, refresh = 100, quiet = T,
+  jitter = 0, includeAlpha = TRUE, tuneV = 0.5, kMT = 5)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -31,7 +31,7 @@ part.}
 
 \item{spCoord2}{Second spatial coordinate, as longitude, for instance.}
 
-\item{kappa}{Initial value for the parameter in the covariance matrix.}
+\item{lambda}{Initial value for the parameter in the covariance matrix.}
 
 \item{tuneP}{Tuning parameter for the Metropolis-Hastings algorithm to draw
 samples from the posterior distribution of kappa.}
