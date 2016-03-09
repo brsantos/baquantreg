@@ -3,7 +3,7 @@
 #' Returns a ggplot of the estimates of the models and their respective
 #'  credible intervals.
 #'
-#' @param object This is an object of the class "summary.bqrs",
+#' @param object This is an object of the class "summary.bqr",
 #' produced by a call to the summary.bqr function.
 #' @param separate if FALSE, all plots are returned in the same output, and
 #'  if TRUE the plot for each variable is returned separately. Default value
