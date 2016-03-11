@@ -1,7 +1,6 @@
 #include <RcppArmadillo.h>
 #include <RcppGSL.h>
 
-#include "helper1.h"
 #include "helperGIG2.h"
 #include "helperRD.h"
 #include "helperKappa.h"
