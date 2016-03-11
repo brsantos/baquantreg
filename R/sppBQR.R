@@ -52,7 +52,7 @@
 sppBQR <- function(formula, tau = 0.5, data, itNum, thin=1,
                     betaValue = NULL, sigmaValue=1, spCoord1, spCoord2,
                     lambda = 0.5, tuneP = 1, m,
-                    indexes = sample(1:length(spCoord1), size = m),
+                    indexes = sample(1:dim(data)[1], size = m),
                     alpha = 0.5, tuneA = 1e3,
                     priorVar = 100,
                     refresh = 100, quiet = T, jitter = 1e-10,
@@ -81,7 +81,7 @@ sppBQR <- function(formula, tau = 0.5, data, itNum, thin=1,
   })
 
   output$acceptRateKappa <- lapply(output$chains, function(b){
-    1-sum(diff(b$kappa1)==0)/(itNum-1)
+    1-sum(diff(b$LambdaSample)==0)/(itNum-1)
   })
 
   output$acceptRateAlpha <- lapply(output$chains, function(b){
