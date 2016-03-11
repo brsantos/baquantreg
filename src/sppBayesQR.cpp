@@ -1,9 +1,8 @@
 #include <RcppArmadillo.h>
 #include <RcppGSL.h>
 
-#include "helperGIG2.h"
+#include "helperLV.h"
 #include "helperRD.h"
-#include "helperKappa.h"
 #include "helperAlpha.h"
 
 using namespace Rcpp;
@@ -13,7 +12,9 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
                    int thin, arma::colvec betaValue, double sigmaValue,
-                   arma::vec spCoord1, arma::vec spCoord2, double lambda,
+                   arma::mat matDist,
+                   NumericVector lambdaVec, double lambda,
+                   double shapeL, double rateL,
                    double tuneP, arma::uvec indices, int m,
                    double alphaValue, double tuneA, double priorVar,
                    bool quiet, int refresh, double jitter, bool includeAlpha,
@@ -57,6 +58,8 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
   if (includeAlpha) alphaSample[0] = alphaValue;
   else alphaValue = 0.0;
 
+  NumericVector lambdaPrior = logPriorKappa2(lambdaVec, shapeL, rateL);
+
   IntegerVector seqRefresh = seq(1, itNum/refresh)*(refresh);
 
    for(int k = 1; k < itNum; k++) {
@@ -68,23 +71,23 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
           }
         }
 
-        for(int aa = 0; aa < n; aa++)
-          for(int bb = 0; bb < n; bb++)
-            covMat(aa,bb) = exp(-lambda *
-              (pow(spCoord1[aa] - spCoord1[bb],2) +
-              pow(spCoord2[aa] - spCoord2[bb],2)));
+        covMat = exp(-lambda*matDist);
+
+//         for(int aa = 0; aa < n; aa++)
+//           for(int bb = 0; bb < n; bb++)
+//             covMat(aa,bb) = exp(-lambda *
+//               (pow(spCoord1[aa] - spCoord1[bb],2) +
+//               pow(spCoord2[aa] - spCoord2[bb],2)));
 
         covMat2 = covMat.submat(indices, indices);
         covMatAux = covMat.cols(indices);
 
-        auxCov.diag().fill(alphaValue + jitter);
+        auxCov.diag().fill(jitter);
 
         cholCov = arma::chol((1-alphaValue)*covMat2 + auxCov, "lower");
         covMatInv = arma::solve(trimatl(cholCov), covMatAux.t());
         matAux = covMatInv.t() * covMatInv;
         diagU = diagmat(sqrt(1/zSample));
-
-
 
         sigmaDot = diagmat(alphaValue +
           (1-alphaValue)*(covMat.diag() - matAux.diag())).i();
@@ -100,7 +103,6 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
         SigmaMinusOne = ((1/(sigmaValue*psi2)) * X.t() * diagU * CovCov *
           diagU * X) + B0.i();
         Sigma = SigmaMinusOne.i();
-
 
         mu = Sigma * ((1/(sigmaValue*psi2))*(X.t() * diagU * CovCov *
                 diagU * (y - theta*zSample)));
@@ -120,9 +122,13 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
                            zSample[o], o, CovCov, tuneV, kMT);
         }
 
-        lambda = mhKappa2(lambda, spCoord1, spCoord2, resVec, diagU,
-                               covMat, CovCov,
-                               tuneP, alphaValue, jitter, indices, m);
+//         lambda = mhKappa2(lambda, spCoord1, spCoord2, resVec, diagU,
+//                                covMat, CovCov,
+//                                tuneP, alphaValue, jitter, indices, m);
+
+        lambda = discKappa2(lambdaVec, lambdaPrior, matDist,
+                            resVec, diagU, covMat, CovCov, alphaValue,
+                            jitter, indices, m);
 
         if (includeAlpha){
           alphaValue = mhAlpha2(alphaValue, resVec, diagU, covMat, covMat2,

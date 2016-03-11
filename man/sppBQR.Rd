@@ -5,10 +5,11 @@
 \title{Spatial Bayesian quantile regression models using predictive processes}
 \usage{
 sppBQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
-  sigmaValue = 1, spCoord1, spCoord2, lambda = 0.5, tuneP = 1, m,
-  indexes = sample(1:dim(data)[1], size = m), alpha = 0.5, tuneA = 1000,
-  priorVar = 100, refresh = 100, quiet = T, jitter = 1e-10,
-  includeAlpha = TRUE, tuneV = 0.5, kMT = 5)
+  sigmaValue = 1, spCoord1, spCoord2, lambdaVec, lambda = sample(lambdaVec,
+  1), shapeL = 1, rateL = 0.1, tuneP = 1, m,
+  indexes = sample((1:dim(data)[1] - 1), size = m), alpha = 0.5,
+  tuneA = 1000, priorVar = 100, refresh = 100, quiet = T,
+  jitter = 1e-10, includeAlpha = TRUE, tuneV = 0.5, kMT = 5)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -31,6 +32,8 @@ part.}
 \item{spCoord1}{Name of the first spatial coordinate, as character.}
 
 \item{spCoord2}{Name of the second spatial coordinate, as character.}
+
+\item{lambdaVec}{Vector of lambdas to be used in the estimation process.}
 
 \item{lambda}{Initial value for the parameter in the covariance matrix.}
 
