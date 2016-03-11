@@ -71,5 +71,5 @@ latentKL <- function(object, burnin = 50, plotKL = TRUE,
     if (plotKL) print(g)
   }
 
-  return(plotData)
+  return(invisible(plotData))
 }

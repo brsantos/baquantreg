@@ -49,5 +49,5 @@ plotComparison <- function(object, observation, burnin = 50, plotComp = T){
     xlab("") + theme(legend.position = 'bottom')
 
   if (plotComp) print(g)
-  return(plotData)
+  return(invisible(plotData))
 }
