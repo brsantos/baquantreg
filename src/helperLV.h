@@ -6,7 +6,7 @@ double mtM(arma::vec aux, double theta, double psi2, double sigma,
            double tuneV, int k);
 
 
-double logPriorKappa (double value);
+double logPriorKappa (double value, double shapeL, double rateL);
 
 Rcpp::NumericVector logPriorKappa2 (Rcpp::NumericVector value, double shape, double rate);
 
@@ -20,6 +20,17 @@ double logLikelihoodKappa2 (double kappa, arma::mat aux, arma::mat diagU,
                             arma::mat matDist,
                             double alpha, double jitter, bool newkappa,
                             arma::uvec indices, int m);
+
+double mhKappa(double kappa, arma::mat matDist,
+               arma::mat aux, arma::mat diagU,
+               arma::mat covMat, arma::mat covMatInv, double tuneParam,
+               double alpha, double jitter, double shapeL, double rateL);
+
+double mhKappa2(double kappa, arma::mat matDist,
+                arma::mat aux, arma::mat diagU,
+                arma::mat covMat, arma::mat covMatInv, double tuneParam,
+                double alpha, double jitter, arma::uvec indices, int m,
+                double shapeL, double rateL);
 
 double discKappa2(Rcpp::NumericVector lambda, Rcpp::NumericVector lambdaPrior,
                   arma::mat matDist,

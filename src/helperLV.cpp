@@ -57,9 +57,9 @@ double mtM(arma::vec aux, double theta, double psi2, double sigma,
   return output;
 }
 
-double logPriorKappa (double value){
+double logPriorKappa (double value, double shapeL, double rateL){
   NumericVector aux(1); aux[0] = value;
-  double output = log(dgamma(aux, 1, 0.5)[0]);
+  double output = log(dgamma(aux, shapeL, rateL)[0]);
   return output;
 }
 
@@ -94,7 +94,7 @@ double logLikelihoodKappa (double kappa, arma::mat aux, arma::mat diagU,
     output = -0.5*valDet -0.5*(as_scalar(covMatInvNew.t()*covMatInvNew));
   }
   else {
-    arma::log_det(valDet, sign, (1-alpha)*covMat + auxCov);
+    arma::log_det(valDet, sign, (1-alpha)*covMat);
     output = -0.5*valDet -0.5*(as_scalar(aux.t()*diagU*covMatInv*diagU*aux));
   }
   return output;
@@ -107,7 +107,7 @@ double logLikelihoodKappa2 (double kappa, arma::mat aux, arma::mat diagU,
                             arma::uvec indices, int m){
 
   double output;
-  double valDet;
+  double valDet, valDet1;
   double sign;
 
   int n = aux.n_rows;
@@ -137,8 +137,10 @@ double logLikelihoodKappa2 (double kappa, arma::mat aux, arma::mat diagU,
 
     arma::mat CovCov = sigmaDot - sigmaDot * matM3 * sigmaDot;
 
-    arma::log_det(valDet, sign, matAux + diagmat(1/sigmaDot.diag()));
-    output = -0.5*valDet -0.5*(as_scalar(aux.t()*diagU*CovCov*diagU*aux));
+    arma::log_det(valDet, sign, cholCov2);
+    arma::log_det(valDet1, sign, covMat2);
+    output = -0.5*valDet/(prod(sigmaDot.diag())*valDet1) -
+      0.5*(as_scalar(aux.t()*diagU*CovCov*diagU*aux));
   }
   else {
     arma::log_det(valDet, sign, covMat);
@@ -149,6 +151,68 @@ double logLikelihoodKappa2 (double kappa, arma::mat aux, arma::mat diagU,
   return output;
 }
 
+double mhKappa(double kappa, arma::mat matDist,
+               arma::mat aux, arma::mat diagU,
+               arma::mat covMat, arma::mat covMatInv, double tuneParam,
+               double alpha, double jitter, double shapeL, double rateL){
+
+  double postCur, postProp, kappaProp, densCur, densProp, new_kappa;
+
+  kappaProp = rexp(1, tuneParam)[0];
+
+  postCur = logLikelihoodKappa(kappa, aux, diagU, covMat, covMatInv,
+                               matDist, alpha, jitter, false) +
+                                 logPriorKappa(kappa, shapeL, rateL);
+  postProp = logLikelihoodKappa(kappaProp, aux, diagU, covMat, covMatInv,
+                                matDist, alpha, jitter, true) +
+                                  logPriorKappa(kappaProp, shapeL, rateL);
+
+  NumericVector xx(1); xx[0] = kappa;
+  NumericVector yy(1); yy[0] = kappaProp;
+
+  densCur = dexp(xx, tuneParam)[0];
+  densProp = dexp(yy, tuneParam)[0];
+
+  double logAccepProb = exp(postProp - postCur)*(densCur/densProp);
+
+  if(runif(1)[0] < logAccepProb) new_kappa = kappaProp;
+  else new_kappa = kappa;
+
+  return new_kappa;
+}
+
+double mhKappa2(double kappa, arma::mat matDist,
+                arma::mat aux, arma::mat diagU,
+                arma::mat covMat, arma::mat covMatInv, double tuneParam,
+                double alpha, double jitter, arma::uvec indices, int m,
+                double shapeL, double rateL){
+
+  double postCur, postProp, kappaProp, densCur, densProp, new_kappa;
+
+  kappaProp = rgamma(1, 2*kappa, 1/2)[0];
+
+  postCur = logLikelihoodKappa2(kappa, aux, diagU, covMat, covMatInv,
+                                matDist, alpha, jitter, false,
+                                indices, m) +
+                                  logPriorKappa(kappa, shapeL, rateL);
+  postProp = logLikelihoodKappa2(kappaProp, aux, diagU, covMat, covMatInv,
+                                 matDist, alpha, jitter, true,
+                                 indices, m) +
+                                   logPriorKappa(kappaProp, shapeL, rateL);
+
+  NumericVector xx(1); xx[0] = kappa;
+  NumericVector yy(1); yy[0] = kappaProp;
+
+  densCur = dgamma(xx, kappa, 1.0)[0];
+  densProp = dgamma(yy, kappa, 1.0)[0];
+
+  double logAccepProb = exp(postProp-postCur)*densCur/densProp;
+
+  if(runif(1)[0] < logAccepProb) new_kappa = kappaProp;
+  else new_kappa = kappa;
+
+  return new_kappa;
+}
 
 double discKappa2(NumericVector lambda, NumericVector lambdaPrior,
                   arma::mat matDist,
@@ -169,7 +233,6 @@ double discKappa2(NumericVector lambda, NumericVector lambdaPrior,
   }
 
   NumericVector weights = calcLogWeights(logPost);
-
   double output = RcppArmadillo::sample(lambda, 1, false, weights)[0];
 
   return output;
