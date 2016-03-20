@@ -18,7 +18,7 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
                    double tuneP, arma::uvec indices, int m,
                    double alphaValue, double tuneA, double priorVar,
                    bool quiet, int refresh, double jitter, bool includeAlpha,
-                   double tuneV, int kMT){
+                   double tuneV, int kMT, bool discLambda){
 
    RNGScope scope;
 
@@ -126,9 +126,17 @@ List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
 //                                covMat, CovCov,
 //                                tuneP, alphaValue, jitter, indices, m);
 
-        lambda = discKappa2(lambdaVec, lambdaPrior, matDist,
-                            resVec, diagU, covMat, CovCov, alphaValue,
-                            jitter, indices, m);
+        if (discLambda) {
+          lambda = discKappa2(lambdaVec, lambdaPrior, matDist,
+                              resVec, diagU, covMat, CovCov, alphaValue,
+                              jitter, indices, m);
+        }
+        else {
+          lambda = mhKappa2(lambda, matDist, resVec, diagU,
+                           covMat, CovCov,
+                           tuneP, alphaValue, jitter, indices, m,
+                           shapeL, rateL);
+        }
 
         if (includeAlpha){
           alphaValue = mhAlpha2(alphaValue, resVec, diagU, covMat, covMat2,
