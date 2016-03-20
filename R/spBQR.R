@@ -61,12 +61,15 @@ spBQR <- function(formula, tau = 0.5, data, itNum, thin=1,
   spatial1 <- data[,spCoord1]
   spatial2 <- data[,spCoord2]
 
+  matDist <- outer(spatial1, spatial1, "-")^2 +
+    outer(spatial2, spatial2, "-")^2
+
   output <- list()
 
   output$chains <- lapply(tau, function(a){
     spBayesQR(tau = a, y = y, X = X, itNum = itNum, thin = thin,
             betaValue = betaValue, sigmaValue = sigmaValue,
-            spCoord1 = spatial1, spCoord2 = spatial2, lambda = lambda,
+            matDist = matDist, lambda = lambda,
             tuneP = tuneP, alphaValue = alpha, tuneA = tuneA,
             priorVar = priorVar, refresh = refresh, quiet = quiet,
             jitter = jitter, includeAlpha = includeAlpha,

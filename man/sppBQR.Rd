@@ -6,10 +6,11 @@
 \usage{
 sppBQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
   sigmaValue = 1, spCoord1, spCoord2, lambdaVec, lambda = sample(lambdaVec,
-  1), shapeL = 1, rateL = 0.1, tuneP = 1, m,
+  1), shapeL = 1, rateL = 50, tuneP = 1, m,
   indexes = sample((1:dim(data)[1] - 1), size = m), alpha = 0.5,
   tuneA = 1000, priorVar = 100, refresh = 100, quiet = T,
-  jitter = 1e-10, includeAlpha = TRUE, tuneV = 0.5, kMT = 5)
+  jitter = 1e-10, includeAlpha = TRUE, tuneV = 0.5, kMT = 5,
+  discLambda = FALSE)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
