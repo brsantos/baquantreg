@@ -1,3 +1,4 @@
+
 #' Probability of being an outlier given the Bayesian quantile regression fits.
 #'
 #' Returns the probability that each observation is an outlier given the
