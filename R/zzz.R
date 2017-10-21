@@ -1,0 +1,1 @@
+globalVariables(c("..density..", "Mean", "Lower", "Upper", "values"))
