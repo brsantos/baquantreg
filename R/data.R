@@ -1,7 +1,7 @@
 #' Expenditures with durable goods in Brazil.
 #'
 #' A dataset containing the expenditures with durable goods for the state of
-#' Maranhão, in Brazil, from the "Consumer Expenditure Survey", which took
+#' Maranhao, in Brazil, from the "Consumer Expenditure Survey", which took
 #' place between 2008 and 2009.
 #'
 #' @format A data frame with 2240 rows and 6 variables:
@@ -79,6 +79,7 @@
 #'   \item{UF_name}{Code of two letters for the state.}
 #'   \item{Region}{Region of the city: 1 = North, 2 = Northeast,
 #'   3 = Southeast, 4 = South, 5 = Midwest.}
+#'   \item{percVotes}{Percentage of votes to Dilma Rouseff}
 #'   \item{income_delta}{Relative difference between income per capita in 2010
 #'    and 2000.}
 #'   \item{Gini_delta}{Relative difference between the Gini index in 2010 and
@@ -91,5 +92,5 @@
 #'   \item{latitude}{Latitude.}
 #'   \item{longitude}{Longitude.}
 #' }
-#' @source \url{}
+#' @source \url{http://www.tse.jus.br/eleicoes/estatisticas/repositorio-de-dados-eleitorais}
 "BrazilElection2014"

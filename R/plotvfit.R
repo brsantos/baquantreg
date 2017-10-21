@@ -8,6 +8,8 @@
 #' @param separate if FALSE, all plots are returned in the same output, and
 #'  if TRUE the plot for each variable is returned separately. Default value
 #'  is FALSE.
+#' @param burnin burnin
+#' @param ... other plot params (currently not used)
 #' @return A ggplot of the posterior trace for all latent variables.
 #' @export
 #' @useDynLib baquantreg

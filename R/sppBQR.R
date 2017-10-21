@@ -18,6 +18,10 @@
 #' @param spCoord2 Name of the second spatial coordinate, as character.
 #' @param lambdaVec Vector of lambdas to be used in the estimation process.
 #' @param lambda Initial value for the parameter in the covariance matrix.
+#' @param shapeL Shape hyperparameter value for Gamma prior for the lambda
+#'   parameter.
+#' @param rateL Rate hyperparameter value for Gamma prior for the lambda
+#'   parameter.
 #' @param tuneP Tuning parameter for the Metropolis-Hastings algorithm to draw
 #'  samples from the posterior distribution of kappa.
 #' @param m Number of knots.
@@ -42,6 +46,7 @@
 #'  the posterior distribution of the latent variables. Default value is 0.5.
 #' @param kMT Integer, number of Metropolis samples in the multiple-try
 #'  Metropolis. Default value is 5.
+#' @param discLambda use discretization for the lambda parameter
 #' @return A list with the chains of all parameters of interest.
 #' @references Lum and Gelfand (2012) - Spatial Quantile Multiple Regression
 #'  Using the Asymmetric Laplace process. Bayesian Analysis.

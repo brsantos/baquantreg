@@ -3,7 +3,7 @@
 #' Returns a ggplot of the estimates of the models and their respective
 #'  credible intervals.
 #'
-#' @param object This is an object of the class "summary.spBQR",
+#' @param x This is an object of the class "summary.spBQR",
 #' produced by a call to the summary.spBQR function.
 #' @param separate if FALSE, all plots are returned in the same output, and
 #'  if TRUE the plot for each variable is returned separately. Default value
@@ -16,31 +16,32 @@
 #'  Default is set to FALSE.
 #' @param alpha If TRUE, it plots the posterior estimates for alpha.
 #'  Default is set to FALSE.
+#' @param ... other plot params (currently not used)
 #' @return A ggplot of the posterior estimates with their credible intervals.
 #' @export
 #' @useDynLib baquantreg
 #' @import ggplot2
 
-plot.summary.spBQR <- function(object, separate = FALSE, beta = TRUE,
+plot.summary.spBQR <- function(x, separate = FALSE, beta = TRUE,
                                sigma = FALSE, lambda = FALSE,
                                alpha = FALSE, ...){
-  if (class(object) != "summary.spBQR")
+  if (class(x) != "summary.spBQR")
     stop("Look for the correct method for your model.")
 
-  ntaus <- length(object$BetaPosterior)
-  nvar <- dim(object$BetaPosterior[[1]])[1]
+  ntaus <- length(x$BetaPosterior)
+  nvar <- dim(x$BetaPosterior[[1]])[1]
 
-  vnames <- object$BetaPosterior[[1]][,1]
+  vnames <- x$BetaPosterior[[1]][,1]
 
-  estimates <- as.numeric(sapply(object$BetaPosterior, function(a) a[,2]))
-  lowerQ <- as.numeric(sapply(object$BetaPosterior, function(a) a[,3]))
-  upperQ <- as.numeric(sapply(object$BetaPosterior, function(a) a[,4]))
+  postEst <- as.numeric(sapply(x$BetaPosterior, function(a) a[,2]))
+  lowerQ <- as.numeric(sapply(x$BetaPosterior, function(a) a[,3]))
+  upperQ <- as.numeric(sapply(x$BetaPosterior, function(a) a[,4]))
 
-  taus <- object$taus
+  taus <- x$taus
 
   plotData <- data.frame(vnames = rep(vnames, times=ntaus),
                          taus = rep(taus, each=nvar),
-                         postEst = estimates,
+                         postEst = postEst,
                          lowerQ = lowerQ,
                          upperQ = upperQ)
 
@@ -65,7 +66,7 @@ plot.summary.spBQR <- function(object, separate = FALSE, beta = TRUE,
   }
 
   if (sigma){
-    g1 <- ggplot(object$SigmaPosterior, aes(x=tau)) + theme_bw()
+    g1 <- ggplot(x$SigmaPosterior, aes(x=tau)) + theme_bw()
     g1 <- g1 + geom_line(aes(y=Mean)) +
       geom_line(aes(y=Lower), linetype=2) +
       geom_line(aes(y=Upper), linetype=2) +
@@ -73,7 +74,7 @@ plot.summary.spBQR <- function(object, separate = FALSE, beta = TRUE,
       xlab(expression(tau))
   }
   if (lambda){
-    g2 <- ggplot(object$LambdaPosterior, aes(x=tau)) + theme_bw()
+    g2 <- ggplot(x$LambdaPosterior, aes(x=tau)) + theme_bw()
     g2 <- g2 + geom_line(aes(y=Mean)) +
       geom_line(aes(y=Lower), linetype=2) +
       geom_line(aes(y=Upper), linetype=2) +
@@ -81,7 +82,7 @@ plot.summary.spBQR <- function(object, separate = FALSE, beta = TRUE,
       xlab(expression(tau))
   }
   if (alpha){
-    g3 <- ggplot(object$AlphaPosterior, aes(x=tau)) + theme_bw()
+    g3 <- ggplot(x$AlphaPosterior, aes(x=tau)) + theme_bw()
     g3 <- g3 + geom_line(aes(y=Mean)) +
       geom_line(aes(y=Lower), linetype=2) +
       geom_line(aes(y=Upper), linetype=2) +

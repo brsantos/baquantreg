@@ -7,11 +7,14 @@
 #'  to the bayesQR function.
 #' @param burnin Initial part of the chain, which is to be discarded. Default
 #'  value is 50.
-#' @param plotProb If TRUE, the function prints the plot with all probabilities.
+#' @param plotKL If TRUE, the function prints the plot with all probabilities.
 #'  Default is set to TRUE.
 #' @param scales.free If FALSE, the default, then all plots will use the same
 #'  y scale. If TRUE, for each tau the plot will use the best possible scale
 #'  in order to visualize the probability information for all observations.
+#' @param all.obs if TRUE, calculates KL divergence for all observations
+#' @param obs if \code{all.obs} is FALSE, specifies the observation to
+#'   calculate the KL divergence.
 #' @return Prints a plot of the posterior probability of being an outlier for
 #'  all observations and returns a data.frame with all values of the
 #'  probabilities.
@@ -20,7 +23,7 @@
 #' @import ggplot2
 
 latentKL <- function(object, burnin = 50, plotKL = TRUE,
-                        scales.free = FALSE, all.obs = TRUE, obs){
+                     scales.free = FALSE, all.obs = TRUE, obs = 1) {
 
   if (class(object) != "bqr")
     stop("This function is not suited for your model.")

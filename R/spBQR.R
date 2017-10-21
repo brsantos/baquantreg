@@ -14,8 +14,6 @@
 #' @param betaValue Initial values for the parameter beta for the continuous
 #' part.
 #' @param sigmaValue Initial value for the scale parameter.
-#' @param gammaValue Initial value for the parameter gamma of the discrete
-#'  part.
 #' @param spCoord1 Name of the first spatial coordinate, as character.
 #' @param spCoord2 Name of the second spatial coordinate, as character.
 #' @param lambda Initial value for the parameter in the covariance matrix.
@@ -32,6 +30,7 @@
 #' @param quiet If TRUE, the default, it does not print messages to check if
 #'  the MCMC is actually updating. If FALSE, it will use the value of refresh
 #'  to print messages to control the iteration process.
+#' @param jitter add a small value to invert spatial correlation matrix
 #' @param includeAlpha If TRUE, the default, the model will include the alpha
 #'  parameter. If FALSE, alpha is set to zero for all draws of the chain.
 #' @param tuneV Tuning parameter to the multiple-try Metropolis to sample for
