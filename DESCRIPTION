@@ -9,12 +9,16 @@ Description: This package estimates different models of Bayesian quantile
 	      regression based in the asymmetric Laplace distribution 
 	      in the likelihood.
 License: GPL-2 | GPL-3
+Depends:
+    R (>= 2.10)
 LazyData: TRUE
-Imports: 
+Imports:
     Rcpp (>= 0.12.2), 
     RcppGSL, 
-    RcppArmadillo (>= 0.4.100.2.1)
-LinkingTo: 
+    RcppArmadillo (>= 0.4.100.2.1),
+    ggplot2
+LinkingTo:
     Rcpp, 
     RcppArmadillo,
     RcppGSL
+RoxygenNote: 6.0.1
