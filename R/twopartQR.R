@@ -16,6 +16,7 @@
 #' @param thin Thinning parameter.
 #' @param betaValue Initial values for the parameter beta for the continuous part.
 #' @param sigmaValue Initial value for the scale parameter.
+#' @param vSampleInit ?
 #' @param gammaValue Initial value for the parameter gamma of the discrete
 #'  part.
 #' @param sigmaGamma Tuning parameter for the Metropolis-Hastings step.

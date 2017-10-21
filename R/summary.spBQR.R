@@ -8,6 +8,7 @@
 #' @param burnin Initial part of the chain, which is to be discarded. Default
 #'  value is 1000.
 #' @param ci Credible interval coefficient. Default value is 0.95.
+#' @param ... other summary parameters (currently not used)
 #' @return A data frame with summary information about the quantile regression
 #'  parameters.
 #' @export

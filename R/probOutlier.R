@@ -12,6 +12,9 @@
 #' @param scales.free If FALSE, the default, then all plots will use the same
 #'  y scale. If TRUE, for each tau the plot will use the best possible scale
 #'  in order to visualize the probability information for all observations.
+#' @param all.obs if TRUE, calculates KL divergence for all observations
+#' @param obs if \code{all.obs} is FALSE, specifies the observation to
+#'   calculate the KL divergence.
 #' @return Prints a plot of the posterior probability of being an outlier for
 #'  all observations and returns a data.frame with all values of the
 #'  probabilities.
