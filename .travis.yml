@@ -7,4 +7,4 @@ cache: packages
 addons:
   apt:
     packages:
-      - libgsl10-dev
+      - libgsl0-dev
