@@ -50,7 +50,6 @@
 #' @return A list with the chains of all parameters of interest.
 #' @references Lum and Gelfand (2012) - Spatial Quantile Multiple Regression
 #'  Using the Asymmetric Laplace process. Bayesian Analysis.
-#' @export
 #' @useDynLib baquantreg
 #' @examples
 #' set.seed(1)
