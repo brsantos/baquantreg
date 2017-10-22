@@ -97,3 +97,4 @@ set.seed(1)
 Lum and Gelfand (2012) - Spatial Quantile Multiple Regression
  Using the Asymmetric Laplace process. Bayesian Analysis.
 }
+

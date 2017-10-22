@@ -32,3 +32,4 @@ Santos and Bolfarine (2015). Bayesian analysis for zero-or-one
  /doi/abs/10.1080/00949655.2014.986733}
 }
 \keyword{datasets}
+

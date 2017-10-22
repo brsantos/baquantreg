@@ -58,3 +58,4 @@ Kozumi and Kobayashi (2011) - Gibbs sampling methods for
  Bayesian quantile regression. Journal of Statistical Computation and
  Simulation.
 }
+

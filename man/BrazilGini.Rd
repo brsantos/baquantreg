@@ -29,3 +29,4 @@ Santos and Bolfarine (2016). On Bayesian quantile regression
  and outliers. \url{http://arxiv.org/abs/1601.07344}
 }
 \keyword{datasets}
+

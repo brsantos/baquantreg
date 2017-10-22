@@ -36,3 +36,4 @@ A ggplot of the posterior estimates with their credible intervals.
 Returns a ggplot of the estimates of the models and their respective
  credible intervals.
 }
+
