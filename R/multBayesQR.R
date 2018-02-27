@@ -32,7 +32,7 @@ multBayesQR <- function(formula, directionPoint, tau = 0.5, data, itNum = 2000,
                         thin = 1,
                         betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
                         priorVar = 100, refresh = 100,
-                        quiet = T, tobit = F){
+                        quiet = T, tobit = F, numCores = 10, ...){
 
   if (length(directionPoint) > 1){
     vectorDir <- directionPoint
@@ -44,7 +44,7 @@ multBayesQR <- function(formula, directionPoint, tau = 0.5, data, itNum = 2000,
     numbDir <- directionPoint
   }
 
-  objects <- lapply(1:numbDir, function(a){
+  objects <- parallel::mclapply(1:numbDir, function(a){
     if (length(directionPoint) > 1) u <- directionPoint
     else u <- vectorDir[a,]
 
@@ -85,7 +85,7 @@ multBayesQR <- function(formula, directionPoint, tau = 0.5, data, itNum = 2000,
     output$orthBasis = x.qr[,2]
     class(output) <- "bqr"
     return(output)
-  })
+  }, mc.cores = numCores)
 
   class(objects) <- "multBQR"
 
