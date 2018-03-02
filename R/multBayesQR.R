@@ -27,6 +27,8 @@
 #' @references
 #' @export
 #' @useDynLib baquantreg
+#' @examples
+
 
 multBayesQR <- function(formula, directionPoint, tau = 0.5, data, itNum = 2000,
                         thin = 1,
@@ -44,7 +46,7 @@ multBayesQR <- function(formula, directionPoint, tau = 0.5, data, itNum = 2000,
     numbDir <- directionPoint
   }
 
-  objects <- parallel::mclapply(1:numbDir, function(a){
+  objects <- lapply(1:numbDir, function(a){
     if (length(directionPoint) > 1) u <- directionPoint
     else u <- vectorDir[a,]
 
@@ -85,7 +87,7 @@ multBayesQR <- function(formula, directionPoint, tau = 0.5, data, itNum = 2000,
     output$orthBasis = x.qr[,2]
     class(output) <- "bqr"
     return(output)
-  }, mc.cores = numCores)
+  })
 
   class(objects) <- "multBQR"
 

@@ -25,6 +25,8 @@
 #' @param tobit If TRUE, it will input the censored value for all observations
 #'  with y = 0, according to the model. If FALSE, the default, it will estimate
 #'  the parameter without this inputation process.
+#' @param recordLat If TRUE, it will keep the Markov chain samples for the
+#'  latent variable. Default is FALSE.
 #' @return A list with the chains of all parameters of interest.
 #' @references Kozumi and Kobayashi (2011) - Gibbs sampling methods for
 #'  Bayesian quantile regression. Journal of Statistical Computation and
@@ -36,8 +38,8 @@
 
 bayesQR <- function(formula, tau = 0.5, data, itNum, thin=1,
                     betaValue = NULL, sigmaValue=1, vSampleInit = NULL,
-                    priorVar = 100,
-                    refresh = 100, quiet = T, tobit = F){
+                    priorVar = 100, refresh = 100, quiet = T,
+                    tobit = FALSE, recordLat = FALSE){
 
   y <- as.numeric(model.extract(model.frame(formula, data), 'response'))
   X <- model.matrix(formula, data)
@@ -50,7 +52,8 @@ bayesQR <- function(formula, tau = 0.5, data, itNum, thin=1,
     BayesQR(tau = a, y = y, X = X, itNum = itNum, thin = thin,
             betaValue = betaValue, sigmaValue = sigmaValue,
             vSampleInit = vSampleInit, priorVar = priorVar,
-            refresh = refresh, quiet = quiet, tobit = tobit)
+            refresh = refresh, quiet = quiet, tobit = tobit,
+            recordLat = recordLat)
   })
 
   output$tau <- tau

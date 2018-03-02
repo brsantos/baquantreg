@@ -19,7 +19,7 @@ using namespace Rcpp;
 List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
                  arma::colvec betaValue, double sigmaValue,
                  arma::vec vSampleInit, double priorVar, int refresh,
-                 bool quiet, bool tobit){
+                 bool quiet, bool tobit, bool recordLat){
 
   RNGScope scope;
 
@@ -114,8 +114,19 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
     vSample.row(k) = zSample.t();
   }
 
-  return Rcpp::List::create(
-    Rcpp::Named("BetaSample") = betaSample,
-    Rcpp::Named("SigmaSample") = sigmaSample,
-    Rcpp::Named("vSample") = vSample);
+  Rcpp::List output;
+
+  if (recordLat){
+    output = Rcpp::List::create(
+      Rcpp::Named("BetaSample") = betaSample,
+      Rcpp::Named("SigmaSample") = sigmaSample,
+      Rcpp::Named("vSample") = vSample);
+  }
+  else{
+    output = Rcpp::List::create(
+      Rcpp::Named("BetaSample") = betaSample,
+      Rcpp::Named("SigmaSample") = sigmaSample);
+  }
+
+  return output;
 }

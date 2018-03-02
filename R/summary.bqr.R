@@ -8,6 +8,8 @@
 #' @param burnin Initial part of the chain, which is to be discarded. Default
 #'  value is 1000.
 #' @param ci Credible interval coefficient. Default value is 0.95.
+#' @param mult Defining whether this function will be used for multiple-output
+#'  Bayesian quantile regression or not. Default is FALSE.
 #' @param ... other summary parameters (not used)
 #' @return A data frame with summary information about the quantile regression
 #'  parameters.
@@ -17,7 +19,7 @@
 #' set.seed(1)
 
 
-summary.bqr <- function (object, burnin = 1000, ci = 0.95, ...)
+summary.bqr <- function (object, burnin = 1000, ci = 0.95, mult = FALSE, ...)
 {
   if (class(object) != "bqr")
     stop("Use the correct summary method for your model")
@@ -28,7 +30,9 @@ summary.bqr <- function (object, burnin = 1000, ci = 0.95, ...)
 
   output <- list()
   output$BetaPosterior <- lapply(object$chains, function(a){
-    vnames <- colnames(X)
+
+    if (!mult) vnames <- colnames(X)
+    else vnames <- c(colnames(X), 'directionX')
 
     coef <- apply(a$BetaSample[(burnin+1):numIt, ], 2, mean)
     quantilesL <- apply(a$BetaSample[(burnin+1):numIt, ], 2, quantile, (1-ci)/2)
