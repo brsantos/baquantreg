@@ -23,6 +23,8 @@
 #' @param tobit If TRUE, it will input the censored value for all observations
 #'  with y = 0, according to the model. If FALSE, the default, it will estimate
 #'  the parameter without this inputation process.
+#' @param recordLat If TRUE, it will keep the Markov chain samples for the
+#'  latent variable. Default is FALSE.
 #' @return A list with the chains of all parameters of interest.
 #' @references
 #' @export
@@ -34,7 +36,7 @@ multBayesQR <- function(formula, directionPoint, tau = 0.5, data, itNum = 2000,
                         thin = 1,
                         betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
                         priorVar = 100, refresh = 100,
-                        quiet = T, tobit = F, numCores = 10, ...){
+                        quiet = T, tobit = F, numCores = 10, recordLat, ...){
 
   if (length(directionPoint) > 1){
     vectorDir <- directionPoint
@@ -77,7 +79,7 @@ multBayesQR <- function(formula, directionPoint, tau = 0.5, data, itNum = 2000,
       BayesQR(tau = a, y = yResp, X = X, itNum = itNum, thin = thin,
               betaValue = betaValue, sigmaValue = sigmaValue, vSampleInit = vSampleInit,
               priorVar = priorVar, refresh = refresh, quiet = quiet,
-              tobit = tobit)
+              tobit = tobit, recordLat = recordLat)
     })
 
     output$tau <- tau
