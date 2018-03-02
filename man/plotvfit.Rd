@@ -25,4 +25,3 @@ A ggplot of the posterior trace for all latent variables.
 \description{
 Returns a ggplot of the posterior trace of the latent variables
 }
-

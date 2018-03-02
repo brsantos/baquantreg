@@ -65,8 +65,8 @@ sppBQR <- function(formula, tau = 0.5, data, itNum, thin=1,
                     includeAlpha = TRUE,
                     tuneV = 0.5, kMT = 5, discLambda = FALSE){
 
-  y <- as.numeric(model.extract(model.frame(formula, data), 'response'))
-  X <- model.matrix(formula, data)
+  y <- as.numeric(stats::model.extract(stats::model.frame(formula, data), 'response'))
+  X <- stats::model.matrix(formula, data)
 
   if (is.null(betaValue)) betaValue <- rep(0, dim(X)[2])
 

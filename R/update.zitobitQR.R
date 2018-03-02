@@ -24,13 +24,13 @@
 #' model <- update(model, 100, thin=1, sigmaGamma = 0.10, refresh=10)
 #' }
 update.zitobitQR <- function(object, itNum, thin=1, sigmaGamma, ...){
-  if(class(model)!='zitobitQR')
+  if(class(object)!='zitobitQR')
     stop("Class different of 'zitobitQR'. Use a different update function.")
 
-  newChains <- zitobitQR(object$formula, object$tau, object$data, itNum=itNum,
-                         thin=thin, betaValue=tail(object$betaSample,1),
-                         sigmaValue=tail(object$sigmaSample, 1),
-                         gammaValue=tail(object$gammaSample, 1),
+  newChains <- zitobitQR(object$formula, object$tau, object$data, itNum = itNum,
+                         thin = thin, betaValue = utils::tail(object$betaSample,1),
+                         sigmaValue = utils::tail(object$sigmaSample, 1),
+                         gammaValue = utils::tail(object$gammaSample, 1),
                          sigmaGamma = sigmaGamma, link=object$link, ...)
 
   w1 <- dim(object$betaSample)[1]/(itNum + dim(object$betaSample)[1])

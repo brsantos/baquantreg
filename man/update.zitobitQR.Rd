@@ -40,4 +40,3 @@ model <- update(model, 100, thin=1, sigmaGamma = 0.10, refresh=10)
 \seealso{
 \code{\link{zitobitQR}}
 }
-

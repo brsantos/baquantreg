@@ -28,4 +28,3 @@ Returns a summary data.frame for a Bayesian quantile regression fit for more
 \examples{
 set.seed(1)
 }
-

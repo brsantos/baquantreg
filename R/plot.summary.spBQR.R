@@ -49,7 +49,7 @@ plot.summary.spBQR <- function(x, separate = FALSE, beta = TRUE,
     if (!separate){
       g <- ggplot(plotData, aes(x=taus)) + theme_bw()
       g <- g + geom_line(aes(y=postEst)) + geom_line(aes(y=lowerQ), linetype=2) +
-        ylab("Posterior estimates") + xlab(expression(tau)) +
+        ylab("Posterior estimates") + xlab(expression(taus)) +
         geom_line(aes(y=upperQ), linetype=2) + facet_wrap(~vnames, scales='free')
 
     }
@@ -66,7 +66,7 @@ plot.summary.spBQR <- function(x, separate = FALSE, beta = TRUE,
   }
 
   if (sigma){
-    g1 <- ggplot(x$SigmaPosterior, aes(x=tau)) + theme_bw()
+    g1 <- ggplot(x$SigmaPosterior, aes(x=taus)) + theme_bw()
     g1 <- g1 + geom_line(aes(y=Mean)) +
       geom_line(aes(y=Lower), linetype=2) +
       geom_line(aes(y=Upper), linetype=2) +
@@ -74,7 +74,7 @@ plot.summary.spBQR <- function(x, separate = FALSE, beta = TRUE,
       xlab(expression(tau))
   }
   if (lambda){
-    g2 <- ggplot(x$LambdaPosterior, aes(x=tau)) + theme_bw()
+    g2 <- ggplot(x$LambdaPosterior, aes(x=taus)) + theme_bw()
     g2 <- g2 + geom_line(aes(y=Mean)) +
       geom_line(aes(y=Lower), linetype=2) +
       geom_line(aes(y=Upper), linetype=2) +
@@ -82,7 +82,7 @@ plot.summary.spBQR <- function(x, separate = FALSE, beta = TRUE,
       xlab(expression(tau))
   }
   if (alpha){
-    g3 <- ggplot(x$AlphaPosterior, aes(x=tau)) + theme_bw()
+    g3 <- ggplot(x$AlphaPosterior, aes(x=taus)) + theme_bw()
     g3 <- g3 + geom_line(aes(y=Mean)) +
       geom_line(aes(y=Lower), linetype=2) +
       geom_line(aes(y=Upper), linetype=2) +

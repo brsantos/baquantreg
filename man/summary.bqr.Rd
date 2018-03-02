@@ -4,7 +4,7 @@
 \alias{summary.bqr}
 \title{Summary methods for Bayesian quantile regression models.}
 \usage{
-\method{summary}{bqr}(object, burnin = 1000, ci = 0.95, ...)
+\method{summary}{bqr}(object, burnin = 1000, ci = 0.95, mult = FALSE, ...)
 }
 \arguments{
 \item{object}{This is an object of class "bqr", produced by a call to the
@@ -14,6 +14,9 @@ bayesQR function.}
 value is 1000.}
 
 \item{ci}{Credible interval coefficient. Default value is 0.95.}
+
+\item{mult}{Defining whether this function will be used for multiple-output
+Bayesian quantile regression or not. Default is FALSE.}
 
 \item{...}{other summary parameters (not used)}
 }
@@ -28,4 +31,3 @@ Returns a summary data.frame for a Bayesian quantile regression fit for more
 \examples{
 set.seed(1)
 }
-

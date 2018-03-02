@@ -50,7 +50,7 @@ probOutlier <- function(object, burnin = 50, plotProb = TRUE,
                            taus = rep(taus, each=length(seqObs)))
 
   if (all.obs){
-    maxProb <- which.max(aggregate(values ~ nobs,
+    maxProb <- which.max(stats::aggregate(values ~ nobs,
                                    data=plotData, mean)$values)
     print(paste("The observation with greater mean probability is:",
                 maxProb))

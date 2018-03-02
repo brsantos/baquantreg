@@ -35,4 +35,3 @@ Prints a plot of the posterior probability of being an outlier for
 Returns the probability that each observation is an outlier given the
  Bayesian quantile regression fits.
 }
-

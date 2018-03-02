@@ -26,7 +26,7 @@ summary.bqr <- function (object, burnin = 1000, ci = 0.95, mult = FALSE, ...)
 
   numIt <- dim(object$chains[[1]]$BetaSample)[1]
 
-  X <- model.matrix(object$formula, object$data)
+  X <- stats::model.matrix(object$formula, object$data)
 
   output <- list()
   output$BetaPosterior <- lapply(object$chains, function(a){
@@ -35,8 +35,8 @@ summary.bqr <- function (object, burnin = 1000, ci = 0.95, mult = FALSE, ...)
     else vnames <- c(colnames(X), 'directionX')
 
     coef <- apply(a$BetaSample[(burnin+1):numIt, ], 2, mean)
-    quantilesL <- apply(a$BetaSample[(burnin+1):numIt, ], 2, quantile, (1-ci)/2)
-    quantilesU <- apply(a$BetaSample[(burnin+1):numIt, ], 2, quantile, 1-(1-ci)/2)
+    quantilesL <- apply(a$BetaSample[(burnin+1):numIt, ], 2, stats::quantile, (1-ci)/2)
+    quantilesU <- apply(a$BetaSample[(burnin+1):numIt, ], 2, stats::quantile, 1-(1-ci)/2)
 
     data.frame(variable = vnames,
                coef = coef,
@@ -48,8 +48,8 @@ summary.bqr <- function (object, burnin = 1000, ci = 0.95, mult = FALSE, ...)
 
   output$SigmaPosterior <- data.frame(t(sapply(object$chains, function(a){
     meanSigma <- mean(a$SigmaSample[(burnin+1):numIt])
-    quantilesL <- quantile(a$SigmaSample[(burnin+1):numIt], (1-ci)/2)
-    quantilesU <- quantile(a$SigmaSample[(burnin+1):numIt], 1-(1-ci)/2)
+    quantilesL <- stats::quantile(a$SigmaSample[(burnin+1):numIt], (1-ci)/2)
+    quantilesU <- stats::quantile(a$SigmaSample[(burnin+1):numIt], 1-(1-ci)/2)
 
     c(meanSigma, quantilesL, quantilesU)
   })))

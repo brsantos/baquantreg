@@ -69,4 +69,3 @@ Santos and Bolfarine (2015) - Bayesian quantile regression
  analysis for continuous data with a discrete component at zero.
 \emph{Preprint}. \url{http://arxiv.org/abs/1511.05925}
 }
-

@@ -38,4 +38,3 @@ A dataset containing data about the presidential election of 2014 in the
  other predictor variables.
 }
 \keyword{datasets}
-

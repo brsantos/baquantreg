@@ -38,13 +38,13 @@ plotComparison <- function(object, observation, burnin = 50, plotComp = T){
   plotData <- data.frame(values = c(dataAll, dataObs),
                          taus = c(rep(taus, each=t1),
                                   rep(taus, each=t2)),
-                         type = c(rep("Others", times=length(dataAll)),
+                         typeObs = c(rep("Others", times=length(dataAll)),
                                   rep("Observation", times=length(dataObs))))
 
   g <- ggplot(subset(plotData), aes(y=..density..)) + theme_bw()
   if (length(taus) > 1) g <- g + facet_wrap(~taus, scales='free')
 
-  g <- g + geom_density(aes(linetype=type, x=values)) +
+  g <- g + geom_density(aes(linetype = typeObs, x=values)) +
     ylab("Posterior distribution for the latent variables") +
     xlab("") + theme(legend.position = 'bottom')
 

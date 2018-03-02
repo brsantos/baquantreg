@@ -53,7 +53,7 @@ plot.summary.twopartQR <- function(x, separate = FALSE, beta = TRUE,
                          upperQ = upperQ_g)
 
   if (sigma){
-    g1 <- ggplot(x$SigmaPosterior, aes(x=tau)) + theme_bw()
+    g1 <- ggplot(x$SigmaPosterior, aes(x=taus)) + theme_bw()
     g1 <- g1 + geom_line(aes(y=Mean)) +
       geom_line(aes(y=Lower), linetype=2) +
       geom_line(aes(y=Upper), linetype=2) +

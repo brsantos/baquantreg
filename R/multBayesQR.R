@@ -2,9 +2,14 @@
 #'
 #' This function estimates a multiple-output Bayesian quantile regression model
 #'
-#' @param formula
+#' @param formula a formula object, with the response on the left of a ~
+#'  operator, and the terms, separated by + operators, on the right. The response
+#'  should be multivariate, where the number of columns define its dimension.
 #' @param tau Quantile of interest.
-#' @param directionPoint
+#' @param directionPoint Either a vector with the same number of dimensions of
+#'  response variable, indicating a direction, or a integer indicating the
+#'  number of directions equally spaced in the unit circle one should
+#'  estimate.
 #' @param data A data.frame from which to find the variables defined in the
 #' formula
 #' @param itNum Number of iterations.
@@ -23,20 +28,19 @@
 #' @param tobit If TRUE, it will input the censored value for all observations
 #'  with y = 0, according to the model. If FALSE, the default, it will estimate
 #'  the parameter without this inputation process.
+#' @param numCores The number of cores that could be used for estimating
+#'  parallel models when more than one direction is considered.
 #' @param recordLat If TRUE, it will keep the Markov chain samples for the
 #'  latent variable. Default is FALSE.
 #' @return A list with the chains of all parameters of interest.
-#' @references
 #' @export
 #' @useDynLib baquantreg
-#' @examples
-
 
 multBayesQR <- function(formula, directionPoint, tau = 0.5, data, itNum = 2000,
                         thin = 1,
                         betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
                         priorVar = 100, refresh = 100,
-                        quiet = T, tobit = F, numCores = 10, recordLat, ...){
+                        quiet = T, tobit = FALSE, numCores = 1, recordLat = FALSE){
 
   if (length(directionPoint) > 1){
     vectorDir <- directionPoint
@@ -48,7 +52,7 @@ multBayesQR <- function(formula, directionPoint, tau = 0.5, data, itNum = 2000,
     numbDir <- directionPoint
   }
 
-  objects <- lapply(1:numbDir, function(a){
+  objects <- parallel::mclapply(1:numbDir, function(a){
     if (length(directionPoint) > 1) u <- directionPoint
     else u <- vectorDir[a,]
 
@@ -57,14 +61,14 @@ multBayesQR <- function(formula, directionPoint, tau = 0.5, data, itNum = 2000,
     A <- cbind(u, u_1)
     x.qr <- qr.Q(qr(A))
 
-    Y <- model.extract(model.frame(formula, data),
+    Y <- stats::model.extract(stats::model.frame(formula, data),
                                   "response")
 
     yResp <- t(u) %*% t(Y)
 
     directionX <- matrix(t(x.qr[,2]) %*% t(Y), ncol = 1)
 
-    X <- model.matrix(formula, data)
+    X <- stats::model.matrix(formula, data)
 
     X <- cbind(X, directionX)
 
@@ -89,7 +93,7 @@ multBayesQR <- function(formula, directionPoint, tau = 0.5, data, itNum = 2000,
     output$orthBasis = x.qr[,2]
     class(output) <- "bqr"
     return(output)
-  })
+  }, mc.cores = numCores)
 
   class(objects) <- "multBQR"
 

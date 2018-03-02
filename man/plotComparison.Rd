@@ -28,4 +28,3 @@ A plot of the posterior density of the latent variable of a selected
 Returns a plot comparing the posterior distribution for an observation and
  the distribution for all other observations.
 }
-

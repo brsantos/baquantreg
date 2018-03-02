@@ -33,4 +33,3 @@ set.seed(1)
 \seealso{
 \code{\link{twopartQR}}
 }
-

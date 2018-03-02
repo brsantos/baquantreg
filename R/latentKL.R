@@ -42,12 +42,12 @@ latentKL <- function(object, burnin = 50, plotKL = TRUE,
       mean(sapply(1:(nobs-1), function(c){
         minV <- min(vSample, otherV[,c])
         maxV <- max(vSample, otherV[,c])
-        g1 <- density(otherV[,c], from = minV, to = maxV)$y
-        g2 <- density(vSample, from = minV, to = maxV)$y
+        g1 <- stats::density(otherV[,c], from = minV, to = maxV)$y
+        g2 <- stats::density(vSample, from = minV, to = maxV)$y
         g1[g1 == 0] <- .Machine$double.eps
         g2[g2 == 0] <- .Machine$double.eps
         valF <- g2 * (log(g2) - log(g1))
-        tail(cumsum(.5 * (valF[-1] + valF[-length(valF)])), 1)
+        utils::tail(cumsum(.5 * (valF[-1] + valF[-length(valF)])), 1)
       }))
     })
   })
@@ -57,7 +57,7 @@ latentKL <- function(object, burnin = 50, plotKL = TRUE,
                          taus = rep(taus, each=length(seqObs)))
 
   if (all.obs){
-    maxKL <- which.max(aggregate(values ~ nobs, data=plotData, mean)$values)
+    maxKL <- which.max(stats::aggregate(values ~ nobs, data=plotData, mean)$values)
 
     print(paste("The observation with greater Kullback-Leibler divergence from the others is:",
                 maxKL))

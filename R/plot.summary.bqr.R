@@ -39,7 +39,7 @@ plot.summary.bqr <- function(x, separate = F, sigma = F, ...){
                          upperQ = upperQ)
 
   if (sigma){
-    g1 <- ggplot(x$SigmaPosterior, aes(x=tau)) + theme_bw()
+    g1 <- ggplot(x$SigmaPosterior, aes(x=taus)) + theme_bw()
     g1 + geom_line(aes(y=Mean)) +
       geom_line(aes(y=Lower), linetype=2) +
       geom_line(aes(y=Upper), linetype=2) +

@@ -23,9 +23,9 @@ update.twopartQR <- function(object, itNum, thin, sigmaGamma, ...){
 
   newChains <- lapply(1:length(object$tau), function(a){
     modelFit <- twopartQR(object$formula, object$tau[a], object$data, itNum+1,
-                        betaValue=tail(object$chains[[a]]$BetaSample,1),
-                        sigmaValue=tail(object$chains[[a]]$SigmaSample, 1),
-                        vSampleInit=tail(object$chains[[a]]$vSample, 1),
+                        betaValue = utils::tail(object$chains[[a]]$BetaSample,1),
+                        sigmaValue = utils::tail(object$chains[[a]]$SigmaSample, 1),
+                        vSampleInit = utils::tail(object$chains[[a]]$vSample, 1),
                         link = object$link, quiet = T)$chains
 
     list(BetaSample = modelFit[[1]]$BetaSample,

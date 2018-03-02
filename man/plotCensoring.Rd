@@ -20,4 +20,3 @@ A plot of the posterior density of the probability of being censored
 \description{
 Returns a plot comparing the posterior distribution for
 }
-
