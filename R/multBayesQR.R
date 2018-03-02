@@ -33,7 +33,6 @@
 #' @param recordLat If TRUE, it will keep the Markov chain samples for the
 #'  latent variable. Default is FALSE.
 #' @return A list with the chains of all parameters of interest.
-#' @export
 #' @useDynLib baquantreg
 
 multBayesQR <- function(formula, directionPoint, tau = 0.5, data, itNum = 2000,
