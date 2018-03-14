@@ -1,4 +1,4 @@
-plot.summary.multBQR <- function(allEstimates){
+plot.summary.multBQR <- function(allEstimates, sameScale = TRUE){
 
   getResults <- function(varName, summary_multBQR){
     position <- summary_multBQR[[1]]$BetaPosterior[[1]][,1] == varName
@@ -20,7 +20,7 @@ plot.summary.multBQR <- function(allEstimates){
   }
 
   namesVariables <- allEstimates[[1]]$BetaPosterior[[1]]$variable
-  namesVariables <- namesVariables[namesVariables != 'directionX']
+  # namesVariables <- namesVariables[namesVariables != 'directionX']
 
   lapply(namesVariables, function(b){
     estimatesVar <- getResults(b, allEstimates)
@@ -28,10 +28,12 @@ plot.summary.multBQR <- function(allEstimates){
     numDirection <- length(allEstimates)
     angles <- (0:(numDirection-1))*2*pi/numDirection
 
+    if (sameScale) maxValue <- max(abs(estimatesVar$estimates))*1.05
+
     lapply(levels(estimatesVar$taus), function(a){
       subData <- subset(estimatesVar, taus == a)
 
-      maxValue <- max(abs(subData$estimates))*1.05
+      if (!sameScale) maxValue <- max(abs(subData$estimates))*1.05
 
       subData$newEstimate <- abs(subData$estimates)/maxValue
 
@@ -43,7 +45,40 @@ plot.summary.multBQR <- function(allEstimates){
       cosines <- cos(c((0:(100-1))*2*pi/100, 0))
       sines <- sin(c((0:(100-1))*2*pi/100, 0))
 
-      ggplot() + theme_bw() + ggtitle(label = paste("Variable = ", b, ", ", a, sep = "")) +
+      ggplot() + theme_bw() + theme(panel.grid.major = element_blank(),
+                                    panel.grid.minor = element_blank(),
+                                    panel.border = element_blank()) +
+        ggtitle(label = paste("Variable = ", b, ", ", a, sep = "")) +
+        geom_path(data = data.frame(cosines = cos(c((0:100)*2*pi/100, 0)),
+                                    sines = sin(c((0:100)*2*pi/100, 0))),
+                  aes(x = cosines, y = sines), color = 'grey90') +
+        geom_path(data = data.frame(cosines = 0.9 * cos(c((0:100)*2*pi/100, 0)),
+                                    sines = 0.9 * sin(c((0:100)*2*pi/100, 0))),
+                  aes(x = cosines, y = sines), color = 'grey95') +
+        geom_path(data = data.frame(cosines = 0.8 * cos(c((0:100)*2*pi/100, 0)),
+                                    sines = 0.8 * sin(c((0:100)*2*pi/100, 0))),
+                  aes(x = cosines, y = sines), color = 'grey90') +
+        geom_path(data = data.frame(cosines = 0.7 * cos(c((0:100)*2*pi/100, 0)),
+                                    sines = 0.7 * sin(c((0:100)*2*pi/100, 0))),
+                  aes(x = cosines, y = sines), color = 'grey95') +
+        geom_path(data = data.frame(cosines = 0.6 * cos(c((0:100)*2*pi/100, 0)),
+                                    sines = 0.6 * sin(c((0:100)*2*pi/100, 0))),
+                  aes(x = cosines, y = sines), color = 'grey90') +
+        geom_path(data = data.frame(cosines = 0.5 * cos(c((0:100)*2*pi/100, 0)),
+                                    sines = 0.5 * sin(c((0:100)*2*pi/100, 0))),
+                  aes(x = cosines, y = sines), color = 'grey95') +
+        geom_path(data = data.frame(cosines =  0.4 * cos(c((0:100)*2*pi/100, 0)),
+                                    sines =  0.4 * sin(c((0:100)*2*pi/100, 0))),
+                  aes(x = cosines, y = sines), color = 'grey90') +
+        geom_path(data = data.frame(cosines = 0.3 * cos(c((0:100)*2*pi/100, 0)),
+                                    sines = 0.3 * sin(c((0:100)*2*pi/100, 0))),
+                  aes(x = cosines, y = sines), color = 'grey95') +
+        geom_path(data = data.frame(cosines = 0.2 * cos(c((0:100)*2*pi/100, 0)),
+                                    sines = 0.2 * sin(c((0:100)*2*pi/100, 0))),
+                  aes(x = cosines, y = sines), color = 'grey90') +
+        geom_path(data = data.frame(cosines = 0.1 * cos(c((0:100)*2*pi/100, 0)),
+                                    sines = 0.1 * sin(c((0:100)*2*pi/100, 0))),
+                  aes(x = cosines, y = sines), color = 'grey95') +
         geom_segment(data = data.frame(x = subset(subData, typeEstimate == 'lower')$xCoord,
                                        y = subset(subData, typeEstimate == 'lower')$yCoord,
                                        xend = subset(subData, typeEstimate == 'upper')$xCoord,
