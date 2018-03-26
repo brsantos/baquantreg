@@ -7,7 +7,7 @@
 multBayesQR(formula, directionPoint, tau = 0.5, data, itNum = 2000,
   thin = 1, betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
   priorVar = 100, refresh = 100, quiet = T, tobit = FALSE,
-  numCores = 1, recordLat = FALSE)
+  numCores = 1, recordLat = FALSE, blocksV = 0)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~

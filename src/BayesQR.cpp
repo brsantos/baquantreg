@@ -106,8 +106,8 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
         }
       }
       else{
-        NumericVector tempVec = floor(seq_len(blocksV) * n/blocksV);
-        IntegerVector tempVec2 = as<IntegerVector>(tempVec);
+        NumericVector tempVec2 = floor(seq_len(blocksV) * n/blocksV);
+        IntegerVector tempVec = as<IntegerVector>(tempVec2);
 
         // Reordering terms.
         arma::uvec sortRes = arma::sort_index(delta2);
@@ -119,19 +119,26 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
         for(int kk = 0; kk < blocksV; kk++){
           double zSampleAux;
           double delta_aux = 0.0;
-          int oo;
-          if (kk == 0)  oo = 0;
-          else oo = tempVec2[kk - 1];
-          while (oo < tempVec2[kk]){
-            delta_aux = delta_aux + std::max(delta2[oo], 1e-8);
+          int oo, beg_span;
+          if (kk == 0){
+            oo = 0;
+            beg_span = 0;
+          }
+          else{
+            oo = tempVec[kk - 1];
+            beg_span = tempVec[kk - 1];
+          }
+
+          int range = tempVec[kk] - beg_span;
+
+          while (oo < tempVec[kk]){
+            delta_aux = delta_aux + std::max(delta2(sortRes(kk)), 1e-8);
             oo++;
           }
-          int beg_span;
-          if (kk == 0)  beg_span = 0;
-          else beg_span = tempVec2[kk - 1];
-          int range = tempVec2[kk] - beg_span;
+
           zSampleAux = rgigRcpp(delta_aux/range, gama2, lambda);
-          zSample(arma::span(beg_span, tempVec2[kk] - 1)) = arma::ones<arma::vec>(range) * zSampleAux;
+          zSample.elem(sortRes(arma::span(beg_span, tempVec[kk]-1))).fill(zSampleAux);
+          // zSample(sortRes(arma::span(beg_span, tempVec2[kk] - 1))) = arma::ones<arma::vec>(range) * zSampleAux;
         }
       }
 
