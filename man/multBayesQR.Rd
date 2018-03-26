@@ -54,6 +54,10 @@ parallel models when more than one direction is considered.}
 
 \item{recordLat}{If TRUE, it will keep the Markov chain samples for the
 latent variable. Default is FALSE.}
+
+\item{blocksV}{Number of blocks used to sample in the posterior distribution
+of the latent variable. If 0, then blocking is not used and all latent
+observations are sampled from. Default value is 0.}
 }
 \value{
 A list with the chains of all parameters of interest.

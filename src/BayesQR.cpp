@@ -111,10 +111,10 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
 
         // Reordering terms.
         arma::uvec sortRes = arma::sort_index(delta2);
-        X = X.rows(sortRes);
-        yS = yS(sortRes);
-        delta2 = delta2(sortRes);
-        aux = aux(sortRes);
+        // X = X.rows(sortRes);
+        // yS = yS(sortRes);
+        // delta2 = delta2(sortRes);
+        // aux = aux(sortRes);
 
         for(int kk = 0; kk < blocksV; kk++){
           double zSampleAux;

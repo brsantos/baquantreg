@@ -6,7 +6,7 @@
 \usage{
 bayesQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
   sigmaValue = 1, vSampleInit = NULL, priorVar = 100, refresh = 100,
-  quiet = T, tobit = FALSE, recordLat = FALSE)
+  quiet = T, tobit = FALSE, recordLat = FALSE, blocksV = 0)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -44,6 +44,10 @@ the parameter without this inputation process.}
 
 \item{recordLat}{If TRUE, it will keep the Markov chain samples for the
 latent variable. Default is FALSE.}
+
+\item{blocksV}{Number of blocks used to sample in the posterior distribution
+of the latent variable. If 0, then blocking is not used and all latent
+observations are sampled from. Default value is 0.}
 }
 \value{
 A list with the chains of all parameters of interest.
