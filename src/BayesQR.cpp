@@ -19,7 +19,8 @@ using namespace Rcpp;
 List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
                  arma::colvec betaValue, double sigmaValue,
                  arma::vec vSampleInit, double priorVar, int refresh,
-                 bool quiet, bool tobit, bool recordLat){
+                 bool quiet, bool tobit, bool recordLat,
+                 int blocksV){
 
   RNGScope scope;
 
@@ -73,9 +74,11 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
 
       if(tobit){
         for (int aa = 0; aa < n; aa++){
-          meanModel = aux[aa] + theta*zSample(aa);
-          sdModel = sqrt(psi2*sigmaValue*zSample(aa));
-          yS[aa] = rnorm_trunc(meanModel, sdModel, InfPar[0], LimSup[0]);
+          if (yS[aa] <= 0){
+            meanModel = aux[aa] + theta*zSample(aa);
+            sdModel = sqrt(psi2*sigmaValue*zSample(aa));
+            yS[aa] = rnorm_trunc(meanModel, sdModel, InfPar[0], LimSup[0]);
+          }
         }
       }
 
@@ -96,9 +99,40 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
       delta2 = diagvec((1/(psi2*sigmaValue)) * diagmat(yS - aux) *
         diagmat(yS - aux));
 
-      for(int o = 0; o < n; o++){
-        delta2[o] = std::max(delta2[o], 1e-10);
-        zSample[o] = rgigRcpp(delta2[o], gama2, lambda);
+      if(blocksV == 0){
+        for(int o = 0; o < n; o++){
+          delta2[o] = std::max(delta2[o], 1e-8);
+          zSample[o] = rgigRcpp(delta2[o], gama2, lambda);
+        }
+      }
+      else{
+        NumericVector tempVec = floor(seq_len(blocksV) * n/blocksV);
+        IntegerVector tempVec2 = as<IntegerVector>(tempVec);
+
+        // Reordering terms.
+        arma::uvec sortRes = arma::sort_index(delta2);
+        X = X.rows(sortRes);
+        yS = yS(sortRes);
+        delta2 = delta2(sortRes);
+        aux = aux(sortRes);
+
+        for(int kk = 0; kk < blocksV; kk++){
+          double zSampleAux;
+          double delta_aux = 0.0;
+          int oo;
+          if (kk == 0)  oo = 0;
+          else oo = tempVec2[kk - 1];
+          while (oo < tempVec2[kk]){
+            delta_aux = delta_aux + std::max(delta2[oo], 1e-8);
+            oo++;
+          }
+          int beg_span;
+          if (kk == 0)  beg_span = 0;
+          else beg_span = tempVec2[kk - 1];
+          int range = tempVec2[kk] - beg_span;
+          zSampleAux = rgigRcpp(delta_aux/range, gama2, lambda);
+          zSample(arma::span(beg_span, tempVec2[kk] - 1)) = arma::ones<arma::vec>(range) * zSampleAux;
+        }
       }
 
       termsSum = arma::as_scalar((yS - aux - theta*zSample).t() *

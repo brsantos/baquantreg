@@ -8,8 +8,8 @@
 using namespace Rcpp;
 
 // BayesQR
-List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::vec vSampleInit, double priorVar, int refresh, bool quiet, bool tobit, bool recordLat);
-RcppExport SEXP _baquantreg_BayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP vSampleInitSEXP, SEXP priorVarSEXP, SEXP refreshSEXP, SEXP quietSEXP, SEXP tobitSEXP, SEXP recordLatSEXP) {
+List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::vec vSampleInit, double priorVar, int refresh, bool quiet, bool tobit, bool recordLat, int blocksV);
+RcppExport SEXP _baquantreg_BayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP vSampleInitSEXP, SEXP priorVarSEXP, SEXP refreshSEXP, SEXP quietSEXP, SEXP tobitSEXP, SEXP recordLatSEXP, SEXP blocksVSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -26,7 +26,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     Rcpp::traits::input_parameter< bool >::type tobit(tobitSEXP);
     Rcpp::traits::input_parameter< bool >::type recordLat(recordLatSEXP);
-    rcpp_result_gen = Rcpp::wrap(BayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, priorVar, refresh, quiet, tobit, recordLat));
+    Rcpp::traits::input_parameter< int >::type blocksV(blocksVSEXP);
+    rcpp_result_gen = Rcpp::wrap(BayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, priorVar, refresh, quiet, tobit, recordLat, blocksV));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -159,7 +160,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_baquantreg_BayesQR", (DL_FUNC) &_baquantreg_BayesQR, 13},
+    {"_baquantreg_BayesQR", (DL_FUNC) &_baquantreg_BayesQR, 14},
     {"_baquantreg_rgigRcpp", (DL_FUNC) &_baquantreg_rgigRcpp, 3},
     {"_baquantreg_spBayesQR", (DL_FUNC) &_baquantreg_spBayesQR, 21},
     {"_baquantreg_sppBayesQR", (DL_FUNC) &_baquantreg_sppBayesQR, 25},

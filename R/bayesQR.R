@@ -27,6 +27,9 @@
 #'  the parameter without this inputation process.
 #' @param recordLat If TRUE, it will keep the Markov chain samples for the
 #'  latent variable. Default is FALSE.
+#' @param blocksV Number of blocks used to sample in the posterior distribution
+#'  of the latent variable. If 0, then blocking is not used and all latent
+#'  observations are sampled from. Default value is 0.
 #' @return A list with the chains of all parameters of interest.
 #' @references Kozumi and Kobayashi (2011) - Gibbs sampling methods for
 #'  Bayesian quantile regression. Journal of Statistical Computation and
@@ -39,7 +42,7 @@
 bayesQR <- function(formula, tau = 0.5, data, itNum, thin=1,
                     betaValue = NULL, sigmaValue=1, vSampleInit = NULL,
                     priorVar = 100, refresh = 100, quiet = T,
-                    tobit = FALSE, recordLat = FALSE){
+                    tobit = FALSE, recordLat = FALSE, blocksV = 0){
 
   y <- as.numeric(stats::model.extract(stats::model.frame(formula, data), 'response'))
   X <- stats::model.matrix(formula, data)
@@ -53,7 +56,7 @@ bayesQR <- function(formula, tau = 0.5, data, itNum, thin=1,
             betaValue = betaValue, sigmaValue = sigmaValue,
             vSampleInit = vSampleInit, priorVar = priorVar,
             refresh = refresh, quiet = quiet, tobit = tobit,
-            recordLat = recordLat)
+            recordLat = recordLat, blocksV = blocksV)
   })
 
   output$tau <- tau

@@ -32,6 +32,9 @@
 #'  parallel models when more than one direction is considered.
 #' @param recordLat If TRUE, it will keep the Markov chain samples for the
 #'  latent variable. Default is FALSE.
+#' @param blocksV Number of blocks used to sample in the posterior distribution
+#'  of the latent variable. If 0, then blocking is not used and all latent
+#'  observations are sampled from. Default value is 0.
 #' @return A list with the chains of all parameters of interest.
 #' @useDynLib baquantreg
 
@@ -82,7 +85,7 @@ multBayesQR <- function(formula, directionPoint, tau = 0.5, data, itNum = 2000,
       BayesQR(tau = a, y = yResp, X = X, itNum = itNum, thin = thin,
               betaValue = betaValue, sigmaValue = sigmaValue, vSampleInit = vSampleInit,
               priorVar = priorVar, refresh = refresh, quiet = quiet,
-              tobit = tobit, recordLat = recordLat)
+              tobit = tobit, recordLat = recordLat, blocksV = blocksV)
     })
 
     output$tau <- tau
