@@ -30,6 +30,15 @@
 #' @param blocksV Number of blocks used to sample in the posterior distribution
 #'  of the latent variable. If 0, then blocking is not used and all latent
 #'  observations are sampled from. Default value is 0.
+#' @param stopOrdering If TRUE, it will stop ordering the weighted residuals
+#'  in order to update the states of the latent variables, and will consider
+#'  the ordering of some particular state of the chain; if FALSE, for every
+#'  iteration of the MCMC procedure, it will keep reordering these residual
+#'  terms. Default is FALSE.
+#' @param numOrdered The number of iterations that will be used to order
+#'  the weighted residuals needed for the update of the posterior
+#'  distribution of the latent variables. Default is half the size of
+#'  the MCMC chain.
 #' @return A list with the chains of all parameters of interest.
 #' @references Kozumi and Kobayashi (2011) - Gibbs sampling methods for
 #'  Bayesian quantile regression. Journal of Statistical Computation and
@@ -42,7 +51,8 @@
 bayesQR <- function(formula, tau = 0.5, data, itNum, thin=1,
                     betaValue = NULL, sigmaValue=1, vSampleInit = NULL,
                     priorVar = 100, refresh = 100, quiet = T,
-                    tobit = FALSE, recordLat = FALSE, blocksV = 0){
+                    tobit = FALSE, recordLat = FALSE, blocksV = 0,
+                    stopOrdering = FALSE, numOrdered = itNum/2){
 
   y <- as.numeric(stats::model.extract(stats::model.frame(formula, data), 'response'))
   X <- stats::model.matrix(formula, data)

@@ -20,7 +20,7 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
                  arma::colvec betaValue, double sigmaValue,
                  arma::vec vSampleInit, double priorVar, int refresh,
                  bool quiet, bool tobit, bool recordLat,
-                 int blocksV){
+                 int blocksV, bool stopOrdering, int numOrdered){
 
   RNGScope scope;
 
@@ -62,6 +62,8 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
   IntegerVector seqRefresh = seq(1, itNum/refresh)*(refresh);
 
   arma::colvec yS = y;
+
+  arma::uvec sortRes(n);
 
   for(int k = 1; k < itNum; k++){
     for(int j = 0; j < thin; j++) {
@@ -110,7 +112,8 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
         IntegerVector tempVec = as<IntegerVector>(tempVec2);
 
         // Reordering terms.
-        arma::uvec sortRes = arma::sort_index(delta2);
+        if (!stopOrdering) sortRes = arma::sort_index(delta2);
+        else if (stopOrdering && k < numOrdered) sortRes = arma::sort_index(delta2);
         // X = X.rows(sortRes);
         // yS = yS(sortRes);
         // delta2 = delta2(sortRes);
