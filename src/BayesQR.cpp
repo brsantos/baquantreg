@@ -132,7 +132,7 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
           int range = tempVec[kk] - beg_span;
 
           while (oo < tempVec[kk]){
-            delta_aux = delta_aux + std::max(delta2(sortRes(kk)), 1e-8);
+            delta_aux = delta_aux + std::max(delta2(sortRes(oo)), 1e-8);
             oo++;
           }
 
