@@ -66,7 +66,8 @@ bayesQR <- function(formula, tau = 0.5, data, itNum, thin=1,
             betaValue = betaValue, sigmaValue = sigmaValue,
             vSampleInit = vSampleInit, priorVar = priorVar,
             refresh = refresh, quiet = quiet, tobit = tobit,
-            recordLat = recordLat, blocksV = blocksV)
+            recordLat = recordLat, blocksV = blocksV,
+            stopOrdering = stopOrdering, numOrdered = numOrdered)
   })
 
   output$tau <- tau

@@ -95,7 +95,8 @@ multBayesQR <- function(formula, directionPoint, tau = 0.5, data, itNum = 2000,
       BayesQR(tau = a, y = yResp, X = X, itNum = itNum, thin = thin,
               betaValue = betaValue, sigmaValue = sigmaValue, vSampleInit = vSampleInit,
               priorVar = priorVar, refresh = refresh, quiet = quiet,
-              tobit = tobit, recordLat = recordLat, blocksV = blocksV)
+              tobit = tobit, recordLat = recordLat, blocksV = blocksV,
+              stopOrdering = stopOrdering, numOrdered = numOrdered)
     })
 
     output$tau <- tau
