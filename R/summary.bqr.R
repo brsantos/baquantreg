@@ -3,14 +3,14 @@
 #' Returns a summary data.frame for a Bayesian quantile regression fit for more
 #'  than one quantile.
 #'
-#' @param object This is an object of class "bqr", produced by a call to the
-#'  bayesQR function.
+#' @param object This is an object of class \code{bqr}, produced by a call to the
+#'  \code{bayesQR} function.
 #' @param burnin Initial part of the chain, which is to be discarded. Default
 #'  value is 1000.
 #' @param ci Credible interval coefficient. Default value is 0.95.
 #' @param mult Defining whether this function will be used for multiple-output
 #'  Bayesian quantile regression or not. Default is FALSE.
-#' @param ... other summary parameters (not used)
+#' @param ... other summary parameters (currently not used).
 #' @return A data frame with summary information about the quantile regression
 #'  parameters.
 #' @export

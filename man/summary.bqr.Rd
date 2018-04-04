@@ -7,8 +7,8 @@
 \method{summary}{bqr}(object, burnin = 1000, ci = 0.95, mult = FALSE, ...)
 }
 \arguments{
-\item{object}{This is an object of class "bqr", produced by a call to the
-bayesQR function.}
+\item{object}{This is an object of class \code{bqr}, produced by a call to the
+\code{bayesQR} function.}
 
 \item{burnin}{Initial part of the chain, which is to be discarded. Default
 value is 1000.}
@@ -18,7 +18,7 @@ value is 1000.}
 \item{mult}{Defining whether this function will be used for multiple-output
 Bayesian quantile regression or not. Default is FALSE.}
 
-\item{...}{other summary parameters (not used)}
+\item{...}{other summary parameters (currently not used).}
 }
 \value{
 A data frame with summary information about the quantile regression

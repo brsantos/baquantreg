@@ -7,7 +7,7 @@
 \method{plot}{summary.bqr}(x, separate = F, sigma = F, ...)
 }
 \arguments{
-\item{x}{This is an object of the class "summary.bqr",
+\item{x}{This is an object of the class \code{summary.bqr},
 produced by a call to the summary.bqr function.}
 
 \item{separate}{if FALSE, all plots are returned in the same output, and
@@ -18,7 +18,7 @@ is FALSE.}
 regression parameters, and if TRUE, it plots the posterior estimates only
 for sigma. Default is set to FALSE.}
 
-\item{...}{other plot params (currently not used)}
+\item{...}{other plot params (currently not used).}
 }
 \value{
 A ggplot of the posterior estimates with their credible intervals.

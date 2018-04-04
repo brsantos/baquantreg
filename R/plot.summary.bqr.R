@@ -3,7 +3,7 @@
 #' Returns a ggplot of the estimates of the models and their respective
 #'  credible intervals.
 #'
-#' @param x This is an object of the class "summary.bqr",
+#' @param x This is an object of the class \code{summary.bqr},
 #' produced by a call to the summary.bqr function.
 #' @param separate if FALSE, all plots are returned in the same output, and
 #'  if TRUE the plot for each variable is returned separately. Default value
@@ -11,7 +11,7 @@
 #' @param sigma if FALSE, it does the plot the posterior estimates for quantile
 #'  regression parameters, and if TRUE, it plots the posterior estimates only
 #'  for sigma. Default is set to FALSE.
-#' @param ... other plot params (currently not used)
+#' @param ... other plot params (currently not used).
 #' @return A ggplot of the posterior estimates with their credible intervals.
 #' @export
 #' @useDynLib baquantreg

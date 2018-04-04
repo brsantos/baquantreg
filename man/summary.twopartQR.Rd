@@ -15,7 +15,7 @@ value is 1000.}
 
 \item{ci}{Credible interval coefficient. Default is 0.95.}
 
-\item{...}{other summary parameters (currently not used)}
+\item{...}{other summary parameters (currently not used).}
 }
 \value{
 A data frame with summary information about the quantile regression

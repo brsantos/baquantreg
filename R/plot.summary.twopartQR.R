@@ -14,7 +14,7 @@
 #'  Default is set to FALSE.
 #' @param gamma If TRUE, it plots the posterior estimates for gamma.
 #'  Default is set to FALSE.
-#' @param ... other plot params (currently not used)
+#' @param ... other plot params (currently not used).
 #' @return A ggplot of the posterior estimates with their credible intervals.
 #' @export
 #' @useDynLib baquantreg

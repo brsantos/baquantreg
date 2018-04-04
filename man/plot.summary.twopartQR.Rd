@@ -24,7 +24,7 @@ Default is set to FALSE.}
 \item{gamma}{If TRUE, it plots the posterior estimates for gamma.
 Default is set to FALSE.}
 
-\item{...}{other plot params (currently not used)}
+\item{...}{other plot params (currently not used).}
 }
 \value{
 A ggplot of the posterior estimates with their credible intervals.
