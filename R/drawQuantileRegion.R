@@ -18,8 +18,8 @@
 #' @return A ggplot with the quantile regions based on Bayesian quantile regression
 #' model estimates.
 #' @useDynLib baquantreg
-#' @export
-#' @importFrom dplyr group_by summarize
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarise
 
 
 drawQuantileRegion <- function(model, ngridpoints = 100, xValue, paintedArea = TRUE, ...){
@@ -61,12 +61,12 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue, paintedArea = T
     }
     else{
       linPredictor <- matrix(rep(betaDifDirections[[a]][1,], ngridpoints^2), ncol = ncol(directions), byrow = TRUE) +
-        matrix(rep(betaDifDirections[[a]][2:(dim(betaDifDirections[[a]])[1] - 1),]*xValue, ngridpoints^2),
+        matrix(rep(t(betaDifDirections[[a]][2:(dim(betaDifDirections[[a]])[1] - 1), ]) %*% xValue,
+                   ngridpoints^2),
                ncol = ncol(directions), byrow = TRUE) +
         Xdirection * matrix(rep(betaDifDirections[[a]][dim(betaDifDirections[[a]])[1], ], ngridpoints^2),
                             ncol = ncol(directions), byrow = TRUE)
     }
-
 
     matIndices <- YResp > linPredictor
     indices <- apply(matIndices, 1, all)
@@ -74,7 +74,7 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue, paintedArea = T
     dataRegion <- data.frame(y1 = Yseq[indices, 1],
                              y2 = Yseq[indices, 2])
 
-    dplyr::summarize(dplyr::group_by(dataRegion, y1), min = min(y2),
+    summarize(group_by(dataRegion, y1), min = min(y2),
                      max = max(y2))
 
   })
@@ -99,9 +99,9 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue, paintedArea = T
 
     g <- ggplot(dataPlot) + theme_bw()
     g + geom_path(aes(x, y, linetype = factor(taus))) +
-      theme(legend.position = 'bottom') +
       scale_linetype_discrete(name = expression(tau)) +
       xlab(colnames(Y)[1]) +
-      ylab(colnames(Y)[2])
+      ylab(colnames(Y)[2]) +
+      theme(legend.position = 'none') + xlim(y1range) + ylim(y2range)
   }
 }

@@ -11,7 +11,7 @@
 #' @param sigma if FALSE, it does the plot the posterior estimates for quantile
 #'  regression parameters, and if TRUE, it plots the posterior estimates only
 #'  for sigma. Default is set to FALSE.
-#' @param ... other plot params (currently not used).
+#' @param ... other plot params (currently not used)
 #' @return A ggplot of the posterior estimates with their credible intervals.
 #' @export
 #' @useDynLib baquantreg

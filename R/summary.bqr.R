@@ -10,7 +10,7 @@
 #' @param ci Credible interval coefficient. Default value is 0.95.
 #' @param mult Defining whether this function will be used for multiple-output
 #'  Bayesian quantile regression or not. Default is FALSE.
-#' @param ... other summary parameters (currently not used).
+#' @param ... other plot params (currently not used)
 #' @return A data frame with summary information about the quantile regression
 #'  parameters.
 #' @export

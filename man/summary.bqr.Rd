@@ -4,7 +4,7 @@
 \alias{summary.bqr}
 \title{Summary methods for Bayesian quantile regression models.}
 \usage{
-\method{summary}{bqr}(object, burnin = 1000, ci = 0.95, mult = FALSE, ...)
+\method{summary}{bqr}(object, burnin = 1000, ci = 0.95, mult = FALSE)
 }
 \arguments{
 \item{object}{This is an object of class \code{bqr}, produced by a call to the
@@ -17,8 +17,6 @@ value is 1000.}
 
 \item{mult}{Defining whether this function will be used for multiple-output
 Bayesian quantile regression or not. Default is FALSE.}
-
-\item{...}{other summary parameters (currently not used).}
 }
 \value{
 A data frame with summary information about the quantile regression
