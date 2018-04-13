@@ -74,7 +74,7 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue, paintedArea = T
     dataRegion <- data.frame(y1 = Yseq[indices, 1],
                              y2 = Yseq[indices, 2])
 
-    summarize(group_by(dataRegion, y1), min = min(y2),
+    dplyr::summarize(dplyr::group_by(dataRegion, y1), min = min(y2),
                      max = max(y2))
 
   })

@@ -26,24 +26,36 @@ probOutlier <- function(object, burnin = 50, plotProb = TRUE,
                         scales.free = FALSE, all.obs = TRUE,
                         obs){
 
-  if (class(object) != "bqr")
-    stop("This function is not suited for your model.")
-
   taus <- object$tau
   nobs <- dim(object$chains[[1]]$vSample)[2]
 
   if (all.obs) seqObs <- 1:nobs
   else seqObs <- obs
 
+  print("I'm using this function")
+
+  # prob <- sapply(object$chains, function(a){
+  #   sapply(seqObs, function(b){
+  #     maxValues <- apply(a$vSample[-c(1:burnin),-b], 2, max)
+  #     vSample <- a$vSample[-c(1:burnin), b]
+  #     mean(sapply(maxValues, function(c){
+  #       sum(vSample > c)/length(vSample)
+  #     }))
+  #   })
+  # })
+
+  ## Changing way of calculating probability
   prob <- sapply(object$chains, function(a){
     sapply(seqObs, function(b){
-      maxValues <- apply(a$vSample[-c(1:burnin),-b], 2, max)
+      chainOthers <- a$vSample[-c(1:burnin),-b]
       vSample <- a$vSample[-c(1:burnin), b]
-      mean(sapply(maxValues, function(c){
-        sum(vSample > c)/length(vSample)
-      }))
+      sizeChain <- length(vSample)
+      mean(sapply(1:dim(chainOthers)[2], function(aaa) sum(vSample > chainOthers[,aaa])/sizeChain))
     })
   })
+
+  print(prob[1])
+
 
   plotData <- data.frame(nobs = rep(seqObs, times=length(taus)),
                            values = as.numeric(prob),

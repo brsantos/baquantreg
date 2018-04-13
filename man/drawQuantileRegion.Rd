@@ -22,6 +22,8 @@ with only the intercept.}
 \item{paintedArea}{If TRUE, it will plot the data points and the quantile region layer
 over the points, for each tau, in different plots. If FALSE, it will produce one
 plot showing showing all quantile regions for the different quantiles.}
+
+\item{...}{Other parameters for \code{summary.multBQR}.}
 }
 \value{
 A ggplot with the quantile regions based on Bayesian quantile regression
