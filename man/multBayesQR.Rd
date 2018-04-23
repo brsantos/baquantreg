@@ -4,16 +4,17 @@
 \alias{multBayesQR}
 \title{Multiple-output Bayesian quantile regression model}
 \usage{
-multBayesQR(formula, directionPoint, tau = 0.5, data, itNum = 2000,
-  thin = 1, betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
-  priorVar = 100, refresh = 100, quiet = T, tobit = FALSE,
-  numCores = 1, recordLat = FALSE, blocksV = 0, stopOrdering = FALSE,
-  numOrdered = itNum/2)
+multBayesQR(response, formulaPred, directionPoint, tau = 0.5, dataFile,
+  itNum = 2000, burnin, thin = 1, betaValue = NULL, sigmaValue = 1,
+  vSampleInit = NULL, priorVar = 100, refresh = 100, quiet = T,
+  tobit = FALSE, numCores = 1, recordLat = FALSE, blocksV = 0,
+  stopOrdering = FALSE, numOrdered = itNum/2)
 }
 \arguments{
-\item{formula}{a formula object, with the response on the left of a ~
-operator, and the terms, separated by + operators, on the right. The response
-should be multivariate, where the number of columns define its dimension.}
+\item{response}{Names of response variables}
+
+\item{formulaPred}{a formula object, with . on the left side of a ~ operator,
+and the predictor terms, separated by + operators, on the right.}
 
 \item{directionPoint}{Either a vector with the same number of dimensions of
 response variable, indicating a direction, or a integer indicating the
@@ -22,10 +23,12 @@ estimate.}
 
 \item{tau}{Quantile of interest.}
 
-\item{data}{A data.frame from which to find the variables defined in the
+\item{dataFile}{A data.frame from which to find the variables defined in the
 formula}
 
 \item{itNum}{Number of iterations.}
+
+\item{burnin}{Size of the initial to be discarded.}
 
 \item{thin}{Thinning parameter. Default value is 1.}
 
