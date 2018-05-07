@@ -45,6 +45,7 @@
 #'  the weighted residuals needed for the update of the posterior
 #'  distribution of the latent variables. Default is half the size of
 #'  the MCMC chain.
+#' @param ... Options to be passed to \code{bayesx} call.
 #' @return A list with the chains of all parameters of interest.
 #' @useDynLib baquantreg
 #' @importFrom R2BayesX bayesx
@@ -55,7 +56,7 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
                         betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
                         priorVar = 100, refresh = 100,
                         quiet = T, tobit = FALSE, numCores = 1, recordLat = FALSE,
-                        blocksV = 0, stopOrdering = FALSE, numOrdered = itNum/2){
+                        blocksV = 0, stopOrdering = FALSE, numOrdered = itNum/2, ...){
 
   if (length(directionPoint) > 1){
     vectorDir <- directionPoint
@@ -107,12 +108,12 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
     dataFile$y <- as.numeric(yResp)
     dataFile$directionX <- as.numeric(directionX)
 
-    output$bayesX <- lapply(tau, function(a) {
+    output <- lapply(tau, function(a) {
       R2BayesX::bayesx(stats::update(Formula::Formula(formulaPred),
                                                y ~ . + directionX),
                        data = dataFile,
                        iter = itNum, burnin = burnin, step = thin,
-                       method = "MCMC", family = "quantreg", quantile = a)
+                       method = "MCMC", family = "quantreg", quantile = a, ...)
 
       # BayesQR(tau = a, y = yResp, X = X, itNum = itNum, thin = thin,
       #         betaValue = betaValue, sigmaValue = sigmaValue, vSampleInit = vSampleInit,
@@ -124,9 +125,9 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
     # output$tau <- tau
     # output$formula <- formula
     # output$data <- dataFile
-    output$direction <- u
-    output$orthBasis = x.qr[,2]
-    class(output) <- "bqr"
+    # output$direction <- u
+    # output$orthBasis = x.qr[,2]
+    # class(output) <- "bqr"
     return(output)
   }, mc.cores = numCores)
 

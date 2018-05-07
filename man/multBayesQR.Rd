@@ -8,7 +8,7 @@ multBayesQR(response, formulaPred, directionPoint, tau = 0.5, dataFile,
   itNum = 2000, burnin, thin = 1, betaValue = NULL, sigmaValue = 1,
   vSampleInit = NULL, priorVar = 100, refresh = 100, quiet = T,
   tobit = FALSE, numCores = 1, recordLat = FALSE, blocksV = 0,
-  stopOrdering = FALSE, numOrdered = itNum/2)
+  stopOrdering = FALSE, numOrdered = itNum/2, ...)
 }
 \arguments{
 \item{response}{Names of response variables}
@@ -73,6 +73,8 @@ terms. Default is FALSE.}
 the weighted residuals needed for the update of the posterior
 distribution of the latent variables. Default is half the size of
 the MCMC chain.}
+
+\item{...}{Options to be passed to \code{bayesx} call.}
 }
 \value{
 A list with the chains of all parameters of interest.
