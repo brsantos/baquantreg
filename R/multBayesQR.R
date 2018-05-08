@@ -125,8 +125,8 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
     # output$tau <- tau
     # output$formula <- formula
     # output$data <- dataFile
-    # output$direction <- u
-    # output$orthBasis = x.qr[,2]
+    output$direction <- u
+    output$orthBasis = x.qr[,2]
     # class(output) <- "bqr"
     return(output)
   }, mc.cores = numCores)
