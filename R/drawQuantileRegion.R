@@ -10,10 +10,14 @@
 #' for several directions. Default is 100, that will produce a grid with 10.000 points
 #' in the observed range of the data.
 #' @param xValue Fixed value of the predictor variables. It is not necessary for models
-#' with only the intercept.
+#'  with only the intercept. If there is the interest in comparing the quantile regions
+#'  for different values of predictors, it must used with a list of values for the
+#'  predictors.
 #' @param paintedArea If TRUE, it will plot the data points and the quantile region layer
 #' over the points, for each tau, in different plots. If FALSE, it will produce one
 #' plot showing showing all quantile regions for the different quantiles.
+#' @param comparison Only considered when \code{paintedArea = TRUE}, if TRUE then
+#'  it will plot comparisons of quantile regions for different values of \code{xvalue}.
 #' @param ... Other parameters for \code{summary.multBQR}.
 #' @return A ggplot with the quantile regions based on Bayesian quantile regression
 #' model estimates.
@@ -22,7 +26,8 @@
 #' @importFrom dplyr summarise
 
 
-drawQuantileRegion <- function(model, ngridpoints = 100, xValue, paintedArea = TRUE, ...){
+drawQuantileRegion <- function(model, ngridpoints = 100, xValue, paintedArea = TRUE,
+                               comparison = FALSE, ...){
   estimates <- summary.multBQR(model, ...)
 
   taus <- model[[1]]$tau
@@ -47,7 +52,7 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue, paintedArea = T
   })
 
   betaDifDirections <- lapply(1:ntaus, function(a){
-    sapply(betaEstimates, function(b) b[,a])
+    sapply(betaEstimates, function(b) b[, a])
   })
 
   YResp <- Yseq %*% directions
@@ -55,28 +60,48 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue, paintedArea = T
   Xdirection <- Yseq %*% orthBases
 
   pointsPlot <-  lapply(1:ntaus, function(a){
-    if(dim(betaDifDirections[[a]])[1] == 2){
-      linPredictor <- matrix(rep(betaDifDirections[[a]][1,], ngridpoints^2), ncol = ncol(directions), byrow = TRUE) +
-        Xdirection * matrix(rep(betaDifDirections[[a]][2,], ngridpoints^2), ncol = ncol(directions), byrow = TRUE)
+    if (comparison == FALSE){
+      if(dim(betaDifDirections[[a]])[1] == 2){
+        linPredictor <- matrix(rep(betaDifDirections[[a]][1,], ngridpoints^2), ncol = ncol(directions), byrow = TRUE) +
+          Xdirection * matrix(rep(betaDifDirections[[a]][2,], ngridpoints^2), ncol = ncol(directions), byrow = TRUE)
+      }
+      else{
+        linPredictor <- matrix(rep(betaDifDirections[[a]][1,], ngridpoints^2), ncol = ncol(directions), byrow = TRUE) +
+          matrix(rep(t(betaDifDirections[[a]][2:(dim(betaDifDirections[[a]])[1] - 1), ]) %*% xValue,
+                     ngridpoints^2),
+                 ncol = ncol(directions), byrow = TRUE) +
+          Xdirection * matrix(rep(betaDifDirections[[a]][dim(betaDifDirections[[a]])[1], ], ngridpoints^2),
+                              ncol = ncol(directions), byrow = TRUE)
+      }
+
+      matIndices <- YResp > linPredictor
+      indices <- apply(matIndices, 1, all)
+
+      dataRegion <- data.frame(y1 = Yseq[indices, 1],
+                               y2 = Yseq[indices, 2])
+
+      dplyr::summarize(dplyr::group_by(dataRegion, y1), min = min(y2),
+                       max = max(y2))
     }
     else{
-      linPredictor <- matrix(rep(betaDifDirections[[a]][1,], ngridpoints^2), ncol = ncol(directions), byrow = TRUE) +
-        matrix(rep(t(betaDifDirections[[a]][2:(dim(betaDifDirections[[a]])[1] - 1), ]) %*% xValue,
-                   ngridpoints^2),
-               ncol = ncol(directions), byrow = TRUE) +
-        Xdirection * matrix(rep(betaDifDirections[[a]][dim(betaDifDirections[[a]])[1], ], ngridpoints^2),
-                            ncol = ncol(directions), byrow = TRUE)
+      lapply(xValue, function(aaa){
+        linPredictor <- matrix(rep(betaDifDirections[[a]][1,], ngridpoints^2), ncol = ncol(directions), byrow = TRUE) +
+          matrix(rep(t(betaDifDirections[[a]][2:(dim(betaDifDirections[[a]])[1] - 1), ]) %*% aaa,
+                     ngridpoints^2),
+                 ncol = ncol(directions), byrow = TRUE) +
+          Xdirection * matrix(rep(betaDifDirections[[a]][dim(betaDifDirections[[a]])[1], ], ngridpoints^2),
+                              ncol = ncol(directions), byrow = TRUE)
+
+        matIndices <- YResp > linPredictor
+        indices <- apply(matIndices, 1, all)
+
+        dataRegion <- data.frame(y1 = Yseq[indices, 1],
+                                 y2 = Yseq[indices, 2])
+
+        dplyr::summarize(dplyr::group_by(dataRegion, y1), min = min(y2),
+                         max = max(y2))
+      })
     }
-
-    matIndices <- YResp > linPredictor
-    indices <- apply(matIndices, 1, all)
-
-    dataRegion <- data.frame(y1 = Yseq[indices, 1],
-                             y2 = Yseq[indices, 2])
-
-    dplyr::summarize(dplyr::group_by(dataRegion, y1), min = min(y2),
-                     max = max(y2))
-
   })
 
   if (paintedArea){
@@ -89,19 +114,48 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue, paintedArea = T
     })
   }
   else{
-    dataPlot <- data.frame(x = as.numeric(unlist(sapply(pointsPlot, function(a){
-      c(a$y1, rev(a$y1), a$y1[1])}))),
-      y = as.numeric(unlist(sapply(pointsPlot, function(a){
-        c(a$min, rev(a$max), a$min[1])}))),
-      taus = as.numeric(unlist(sapply(1:ntaus, function(a){
-        rep(taus[a],  2*dim(pointsPlot[[a]])[1] + 1)
-      }))))
+    if (comparison == FALSE){
+      dataPlot <- data.frame(x = as.numeric(unlist(sapply(pointsPlot, function(a){
+        c(a$y1, rev(a$y1), a$y1[1])}))),
+        y = as.numeric(unlist(sapply(pointsPlot, function(a){
+          c(a$min, rev(a$max), a$min[1])}))),
+        taus = as.numeric(unlist(sapply(1:ntaus, function(a){
+          rep(taus[a],  2*dim(pointsPlot[[a]])[1] + 1)
+        }))))
 
-    g <- ggplot(dataPlot) + theme_bw()
-    g + geom_path(aes(x, y, linetype = factor(taus))) +
-      scale_linetype_discrete(name = expression(tau)) +
-      xlab(colnames(Y)[1]) +
-      ylab(colnames(Y)[2]) +
-      theme(legend.position = 'none') + xlim(y1range) + ylim(y2range)
+      g <- ggplot(dataPlot) + theme_bw()
+      g + geom_path(aes(x, y, linetype = factor(taus))) +
+        scale_linetype_discrete(name = expression(tau)) +
+        xlab(colnames(Y)[1]) +
+        ylab(colnames(Y)[2]) +
+        theme(legend.position = 'none')
+    }
+    else{
+      xPoints <- as.numeric(unlist(sapply(pointsPlot, sapply, function(a){
+        c(a$y1, rev(a$y1), a$y1[1])
+        })))
+      yPoints <- as.numeric(unlist(sapply(pointsPlot, sapply, function(a){
+        c(a$min, rev(a$max), a$min[1])})))
+      tausPoints <- as.numeric(unlist(lapply(1:ntaus, function(a){
+        sapply(1:length(xValue), function(b){
+          rep(taus[a], 2*dim(pointsPlot[[a]][[b]])[1] + 1)
+        })})))
+      predictorsType <- as.numeric(unlist(lapply(1:ntaus, function(a){
+        sapply(1:length(xValue), function(b){
+          rep(b, 2*dim(pointsPlot[[a]][[b]])[1] + 1)
+        })})))
+
+      dataPlot <- data.frame(x = xPoints,
+        y = yPoints,
+        taus = tausPoints,
+        predictors = predictorsType)
+
+      g <- ggplot(dataPlot) + theme_bw()
+      g + geom_path(aes(x, y, linetype = factor(taus), color = factor(predictors))) +
+        scale_linetype_discrete(name = expression(tau)) +
+        xlab(colnames(Y)[1]) +
+        ylab(colnames(Y)[2]) +
+        theme(legend.position = 'none')
+    }
   }
 }

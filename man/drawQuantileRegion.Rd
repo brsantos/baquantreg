@@ -5,7 +5,7 @@
 \title{Multiple-output Bayesian quantile regression model}
 \usage{
 drawQuantileRegion(model, ngridpoints = 100, xValue, paintedArea = TRUE,
-  ...)
+  comparison = FALSE, ...)
 }
 \arguments{
 \item{model}{This is an object of the class \code{multBQR}, produced by a call to the
@@ -17,11 +17,16 @@ for several directions. Default is 100, that will produce a grid with 10.000 poi
 in the observed range of the data.}
 
 \item{xValue}{Fixed value of the predictor variables. It is not necessary for models
-with only the intercept.}
+with only the intercept. If there is the interest in comparing the quantile regions
+for different values of predictors, it must used with a list of values for the
+predictors.}
 
 \item{paintedArea}{If TRUE, it will plot the data points and the quantile region layer
 over the points, for each tau, in different plots. If FALSE, it will produce one
 plot showing showing all quantile regions for the different quantiles.}
+
+\item{comparison}{Only considered when \code{paintedArea = TRUE}, if TRUE then
+it will plot comparisons of quantile regions for different values of \code{xvalue}.}
 
 \item{...}{Other parameters for \code{summary.multBQR}.}
 }
