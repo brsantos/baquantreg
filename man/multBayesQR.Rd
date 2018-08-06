@@ -6,9 +6,9 @@
 \usage{
 multBayesQR(response, formulaPred, directionPoint, tau = 0.5, dataFile,
   itNum = 2000, burnin, thin = 1, betaValue = NULL, sigmaValue = 1,
-  vSampleInit = NULL, priorVar = 100, refresh = 100, quiet = T,
-  tobit = FALSE, numCores = 1, recordLat = FALSE, blocksV = 0,
-  stopOrdering = FALSE, numOrdered = itNum/2, ...)
+  vSampleInit = NULL, priorVar = 100, refresh = 100, bayesx = TRUE,
+  quiet = T, tobit = FALSE, numCores = 1, recordLat = FALSE,
+  blocksV = 0, stopOrdering = FALSE, numOrdered = itNum/2, ...)
 }
 \arguments{
 \item{response}{Names of response variables}
@@ -44,6 +44,10 @@ process of the prior variance of the regression parameters.}
 
 \item{refresh}{Interval between printing a message during the iteration
 process. Default is set to 100.}
+
+\item{bayesx}{If TRUE, the default, it uses bayesX software to estimate
+the quantile regression oarameters, which can be faster. If FALSE, it
+uses a Rcpp implementation of the MCMC sampler.}
 
 \item{quiet}{If TRUE, the default, it does not print messages to check if
 the MCMC is actually updating. If FALSE, it will use the value of refresh

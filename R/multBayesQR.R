@@ -11,18 +11,21 @@
 #'  number of directions equally spaced in the unit circle one should
 #'  estimate.
 #' @param dataFile A data.frame from which to find the variables defined in the
-#' formula
+#'  formula
 #' @param itNum Number of iterations.
 #' @param burnin Size of the initial to be discarded.
 #' @param thin Thinning parameter. Default value is 1.
 #' @param betaValue Initial values for the parameter beta for the continuous
-#' part.
+#'  part.
 #' @param sigmaValue Initial value for the scale parameter.
 #' @param vSampleInit Initial value for the latent variables.
 #' @param priorVar Value that multiplies a identity matrix in the elicition
-#' process of the prior variance of the regression parameters.
+#'  process of the prior variance of the regression parameters.
 #' @param refresh Interval between printing a message during the iteration
-#' process. Default is set to 100.
+#'  process. Default is set to 100.
+#' @param bayesx If TRUE, the default, it uses bayesX software to estimate
+#'  the quantile regression oarameters, which can be faster. If FALSE, it
+#'  uses a Rcpp implementation of the MCMC sampler.
 #' @param quiet If TRUE, the default, it does not print messages to check if
 #'  the MCMC is actually updating. If FALSE, it will use the value of refresh
 #'  to print messages to control the iteration process.
@@ -54,7 +57,7 @@
 multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFile, itNum = 2000,
                         burnin, thin = 1,
                         betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
-                        priorVar = 100, refresh = 100,
+                        priorVar = 100, refresh = 100, bayesx = TRUE,
                         quiet = T, tobit = FALSE, numCores = 1, recordLat = FALSE,
                         blocksV = 0, stopOrdering = FALSE, numOrdered = itNum/2, ...){
 
@@ -86,48 +89,45 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
 
     directionX <- matrix(t(x.qr[,2]) %*% t(Y), ncol = 1)
 
-    # X <- stats::model.matrix(formula, dataFile)
-    #
-    # X <- cbind(X, directionX)
-    #
-    # if (is.null(betaValue))
-    #   betaValue <- rep(0, dim(X)[2])
-    # if (is.null(vSampleInit))
-    #   vSampleInit <- rep(1, length(yResp))
+    if(!bayesx){
+      X <- stats::model.matrix(formulaPred, dataFile)
+      X <- cbind(X, directionX)
+    }
+
+
+    if (is.null(betaValue))
+      betaValue <- rep(0, dim(X)[2])
+    if (is.null(vSampleInit))
+      vSampleInit <- rep(1, length(yResp))
 
     output <- list()
-
-    # output$chains <- lapply(tau, function(a) {
-    #   BayesQR(tau = a, y = yResp, X = X, itNum = itNum, thin = thin,
-    #           betaValue = betaValue, sigmaValue = sigmaValue, vSampleInit = vSampleInit,
-    #           priorVar = priorVar, refresh = refresh, quiet = quiet,
-    #           tobit = tobit, recordLat = recordLat, blocksV = blocksV,
-    #           stopOrdering = stopOrdering, numOrdered = numOrdered)
-    # })
 
     dataFile$y <- as.numeric(yResp)
     dataFile$directionX <- as.numeric(directionX)
 
     output <- lapply(tau, function(a) {
-      R2BayesX::bayesx(stats::update(Formula::Formula(formulaPred),
-                                               y ~ . + directionX),
-                       data = dataFile,
-                       iter = itNum, burnin = burnin, step = thin,
-                       method = "MCMC", family = "quantreg", quantile = a, ...)
-
-      # BayesQR(tau = a, y = yResp, X = X, itNum = itNum, thin = thin,
-      #         betaValue = betaValue, sigmaValue = sigmaValue, vSampleInit = vSampleInit,
-      #         priorVar = priorVar, refresh = refresh, quiet = quiet,
-      #         tobit = tobit, recordLat = recordLat, blocksV = blocksV,
-      #         stopOrdering = stopOrdering, numOrdered = numOrdered)
+      if (bayesx){
+        R2BayesX::bayesx(stats::update(Formula::Formula(formulaPred),
+                                                 y ~ . + directionX),
+                         data = dataFile,
+                         iter = itNum, burnin = burnin, step = thin,
+                         method = "MCMC", family = "quantreg", quantile = a, ...)
+      }
+      else {
+        BayesQR(tau = a, y = yResp, X = X, itNum = itNum, thin = thin,
+                betaValue = betaValue, sigmaValue = sigmaValue, vSampleInit = vSampleInit,
+                priorVar = priorVar, refresh = refresh, quiet = quiet,
+                tobit = tobit, recordLat = recordLat, blocksV = blocksV,
+                stopOrdering = stopOrdering, numOrdered = numOrdered)
+      }
     })
 
-    # output$tau <- tau
-    # output$formula <- formula
-    # output$data <- dataFile
+    output$tau <- tau
+    output$formula <- formulaPred
+    output$data <- dataFile
     output$direction <- u
     output$orthBasis = x.qr[,2]
-    # class(output) <- "bqr"
+    class(output) <- "bqr"
     return(output)
   }, mc.cores = numCores)
 
