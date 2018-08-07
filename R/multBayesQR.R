@@ -4,8 +4,8 @@
 #'
 #' @param response Names of response variables
 #' @param formulaPred a formula object, with . on the left side of a ~ operator,
-#'  and the predictor terms, separated by + operators, on the right.
-#' @param tau Quantile of interest.
+#'  and the predictor terms, separated by + operators, on the right side.
+#' @param tau Quantiles of interest. Default is th median, \code{tau = 0.5}.
 #' @param directionPoint Either a vector with the same number of dimensions of
 #'  response variable, indicating a direction, or a integer indicating the
 #'  number of directions equally spaced in the unit circle one should
@@ -89,37 +89,46 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
 
     directionX <- matrix(t(x.qr[,2]) %*% t(Y), ncol = 1)
 
-    if(!bayesx){
-      X <- stats::model.matrix(formulaPred, dataFile)
-      X <- cbind(X, directionX)
-    }
-
-
-    if (is.null(betaValue))
-      betaValue <- rep(0, dim(X)[2])
-    if (is.null(vSampleInit))
-      vSampleInit <- rep(1, length(yResp))
-
-    output <- list()
-
     dataFile$y <- as.numeric(yResp)
     dataFile$directionX <- as.numeric(directionX)
 
-    output <- lapply(tau, function(a) {
+    formulaUpdated <- stats::update(Formula::Formula(formulaPred),
+                                    y ~ . + directionX)
+
+    if(!bayesx){
+      X <- stats::model.matrix(formulaUpdated, dataFile)
+      X <- cbind(X, directionX)
+
+      if (is.null(betaValue))
+        betaValue <- rep(0, dim(X)[2])
+      if (is.null(vSampleInit))
+        vSampleInit <- rep(1, length(yResp))
+    }
+
+
+    output <- list()
+
+    output$models <- lapply(tau, function(a) {
       if (bayesx){
-        R2BayesX::bayesx(stats::update(Formula::Formula(formulaPred),
-                                                 y ~ . + directionX),
-                         data = dataFile,
-                         iter = itNum, burnin = burnin, step = thin,
-                         method = "MCMC", family = "quantreg", quantile = a, ...)
+        check_NA_values <- TRUE
+        while (check_NA_values){
+          result <- R2BayesX::bayesx(formulaUpdated,
+                           data = dataFile,
+                           iter = itNum, burnin = burnin, step = thin,
+                           method = "MCMC", family = "quantreg", quantile = a, ...)
+
+          dimeff <- dim(result$fixed.effects)
+          if (!any(is.na(result$fixed.effects[1:dimeff[1], 1:dimeff[2]]))) check_NA_values <- FALSE
+        }
       }
       else {
-        BayesQR(tau = a, y = yResp, X = X, itNum = itNum, thin = thin,
+        result <- BayesQR(tau = a, y = yResp, X = X, itNum = itNum, thin = thin,
                 betaValue = betaValue, sigmaValue = sigmaValue, vSampleInit = vSampleInit,
                 priorVar = priorVar, refresh = refresh, quiet = quiet,
                 tobit = tobit, recordLat = recordLat, blocksV = blocksV,
                 stopOrdering = stopOrdering, numOrdered = numOrdered)
       }
+      result
     })
 
     output$tau <- tau
@@ -127,7 +136,10 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
     output$data <- dataFile
     output$direction <- u
     output$orthBasis = x.qr[,2]
+    output$method <- ifelse(bayesx, 'bayesx', 'rcpp')
+
     class(output) <- "bqr"
+
     return(output)
   }, mc.cores = numCores)
 
