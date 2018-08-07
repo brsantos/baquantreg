@@ -12,8 +12,8 @@ have_gsl=yes
 local=`"${R_HOME}/bin/R" CMD config LOCAL_SOFT`
 GSL_VER=2.4
 GSL_URL=https://github.com/rwinlib/gsl/archive/v${GSL_VER}.zip
-if [ ! -e "${local}/include/gsl/gsl_rng.h" ]; then
-    if [ ! -e src/gsl/include/gsl/gsl_rng.h ]; then
+if [ ! -e "${local}/include/gsl/gsl_errno.h" ]; then
+    if [ ! -e src/gsl/include/gsl/gsl_errno.h ]; then
         if [ ! -e gsl.zip ]; then
             echo "  cannot find gsl files"
             echo "  attempting to download them"
@@ -24,7 +24,7 @@ if [ ! -e "${local}/include/gsl/gsl_rng.h" ]; then
         else
 	    echo "  unpacking gsl files from 'gsl.zip'"
             "${R_SCRIPT}" -e "unzip('gsl.zip', exdir = 'src'); file.rename('src/gsl-${GSL_VER}', 'src/gsl')"
-            if [ ! -e src/gsl/include/gsl/gsl_rng.h ]; then
+            if [ ! -e src/gsl/include/gsl/gsl_errno.h ]; then
 	        have_gsl=no
 	    fi
         fi
