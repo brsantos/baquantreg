@@ -6,8 +6,8 @@
 \usage{
 bayesQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
   sigmaValue = 1, vSampleInit = NULL, priorVar = 100, refresh = 100,
-  quiet = T, tobit = FALSE, recordLat = FALSE, blocksV = 0,
-  stopOrdering = FALSE, numOrdered = itNum/2)
+  sigmaSampling = TRUE, quiet = T, tobit = FALSE, recordLat = FALSE,
+  blocksV = 0, stopOrdering = FALSE, numOrdered = itNum/2)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~

@@ -7,21 +7,22 @@
 multBayesQR(response, formulaPred, directionPoint, tau = 0.5, dataFile,
   itNum = 2000, burnin, thin = 1, betaValue = NULL, sigmaValue = 1,
   vSampleInit = NULL, priorVar = 100, refresh = 100, bayesx = TRUE,
-  quiet = T, tobit = FALSE, numCores = 1, recordLat = FALSE,
-  blocksV = 0, stopOrdering = FALSE, numOrdered = itNum/2, ...)
+  sigmaSampling = TRUE, quiet = T, tobit = FALSE, numCores = 1,
+  recordLat = FALSE, blocksV = 0, stopOrdering = FALSE,
+  numOrdered = itNum/2, ...)
 }
 \arguments{
 \item{response}{Names of response variables}
 
 \item{formulaPred}{a formula object, with . on the left side of a ~ operator,
-and the predictor terms, separated by + operators, on the right.}
+and the predictor terms, separated by + operators, on the right side.}
 
 \item{directionPoint}{Either a vector with the same number of dimensions of
 response variable, indicating a direction, or a integer indicating the
 number of directions equally spaced in the unit circle one should
 estimate.}
 
-\item{tau}{Quantile of interest.}
+\item{tau}{Quantiles of interest. Default is th median, \code{tau = 0.5}.}
 
 \item{dataFile}{A data.frame from which to find the variables defined in the
 formula}
@@ -48,6 +49,10 @@ process. Default is set to 100.}
 \item{bayesx}{If TRUE, the default, it uses bayesX software to estimate
 the quantile regression oarameters, which can be faster. If FALSE, it
 uses a Rcpp implementation of the MCMC sampler.}
+
+\item{sigmaSampling}{If TRUE, the default, it will sample from the posterior
+distribution of the scale parameter. If FALSE, all values will be fixed to
+1.}
 
 \item{quiet}{If TRUE, the default, it does not print messages to check if
 the MCMC is actually updating. If FALSE, it will use the value of refresh

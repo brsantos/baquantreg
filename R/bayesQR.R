@@ -49,8 +49,9 @@
 #' set.seed(1)
 
 bayesQR <- function(formula, tau = 0.5, data, itNum, thin=1,
-                    betaValue = NULL, sigmaValue=1, vSampleInit = NULL,
-                    priorVar = 100, refresh = 100, quiet = T,
+                    betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
+                    priorVar = 100, refresh = 100, sigmaSampling = TRUE,
+                    quiet = T,
                     tobit = FALSE, recordLat = FALSE, blocksV = 0,
                     stopOrdering = FALSE, numOrdered = itNum/2){
 
@@ -65,7 +66,8 @@ bayesQR <- function(formula, tau = 0.5, data, itNum, thin=1,
     BayesQR(tau = a, y = y, X = X, itNum = itNum, thin = thin,
             betaValue = betaValue, sigmaValue = sigmaValue,
             vSampleInit = vSampleInit, priorVar = priorVar,
-            refresh = refresh, quiet = quiet, tobit = tobit,
+            refresh = refresh, sigmaSampling = sigmaSampling,
+            quiet = quiet, tobit = tobit,
             recordLat = recordLat, blocksV = blocksV,
             stopOrdering = stopOrdering, numOrdered = numOrdered)
   })

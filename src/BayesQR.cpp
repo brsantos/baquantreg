@@ -19,6 +19,7 @@ using namespace Rcpp;
 List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
                  arma::colvec betaValue, double sigmaValue,
                  arma::vec vSampleInit, double priorVar, int refresh,
+                 bool sigmaSampling,
                  bool quiet, bool tobit, bool recordLat,
                  int blocksV, bool stopOrdering, int numOrdered){
 
@@ -145,12 +146,14 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
         }
       }
 
-      termsSum = arma::as_scalar((yS - aux - theta*zSample).t() *
-        diagmat(zSample).i() * (yS - aux - theta*zSample));
+      if (sigmaSampling){
+        termsSum = arma::as_scalar((yS - aux - theta*zSample).t() *
+          diagmat(zSample).i() * (yS - aux - theta*zSample));
 
-      nTilde = n0 + 3*n;
-      sTilde =  s0 + 2*sum(zSample) + termsSum/psi2;
-      sigmaValue = rinvgammaRcpp(nTilde/2,sTilde/2);
+        nTilde = n0 + 3*n;
+        sTilde =  s0 + 2*sum(zSample) + termsSum/psi2;
+        sigmaValue = rinvgammaRcpp(nTilde/2,sTilde/2);
+      }
     }
 
     betaSample.row(k) = betaValue.t();

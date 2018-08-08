@@ -26,6 +26,9 @@
 #' @param bayesx If TRUE, the default, it uses bayesX software to estimate
 #'  the quantile regression oarameters, which can be faster. If FALSE, it
 #'  uses a Rcpp implementation of the MCMC sampler.
+#' @param sigmaSampling If TRUE, the default, it will sample from the posterior
+#'  distribution of the scale parameter. If FALSE, all values will be fixed to
+#'  1.
 #' @param quiet If TRUE, the default, it does not print messages to check if
 #'  the MCMC is actually updating. If FALSE, it will use the value of refresh
 #'  to print messages to control the iteration process.
@@ -58,6 +61,7 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
                         burnin, thin = 1,
                         betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
                         priorVar = 100, refresh = 100, bayesx = TRUE,
+                        sigmaSampling = TRUE,
                         quiet = T, tobit = FALSE, numCores = 1, recordLat = FALSE,
                         blocksV = 0, stopOrdering = FALSE, numOrdered = itNum/2, ...){
 
@@ -73,7 +77,7 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
 
   objects <- list()
 
-  objects$models <- parallel::mclapply(1:numbDir, function(a){
+  objects$modelsDir <- parallel::mclapply(1:numbDir, function(a){
     if (length(directionPoint) > 1) u <- directionPoint
     else u <- vectorDir[a,]
 
@@ -110,7 +114,7 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
 
     output <- list()
 
-    output$models <- lapply(tau, function(a) {
+    output$modelsTau <- lapply(tau, function(a) {
       if (bayesx){
         check_NA_values <- TRUE
         while (check_NA_values){
@@ -126,7 +130,8 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
       else {
         result <- BayesQR(tau = a, y = yResp, X = X, itNum = itNum, thin = thin,
                 betaValue = betaValue, sigmaValue = sigmaValue, vSampleInit = vSampleInit,
-                priorVar = priorVar, refresh = refresh, quiet = quiet,
+                priorVar = priorVar, refresh = refresh, sigmaSampling = sigmaSampling,
+                quiet = quiet,
                 tobit = tobit, recordLat = recordLat, blocksV = blocksV,
                 stopOrdering = stopOrdering, numOrdered = numOrdered)
       }
