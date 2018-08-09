@@ -35,6 +35,10 @@ process of the prior variance of the regression parameters.}
 \item{refresh}{Interval between printing a message during the iteration
 process. Default is set to 100.}
 
+\item{sigmaSampling}{If TRUE, the default, the MCMC procedure will draw values
+from the posterior distribution of sigma. Otherwise, it will fix the
+value to 1 for all values of the chain.}
+
 \item{quiet}{If TRUE, the default, it does not print messages to check if
 the MCMC is actually updating. If FALSE, it will use the value of refresh
 to print messages to control the iteration process.}
