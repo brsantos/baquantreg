@@ -21,6 +21,10 @@
 #' @param vSampleInit Initial value for the latent variables.
 #' @param priorVar Value that multiplies a identity matrix in the elicition
 #'  process of the prior variance of the regression parameters.
+#' @param hyperSigma Vector of size containing the hyperparameters of the
+#'  inverse gamma distribution for the sigma parameter of the asymmetric
+#'  Laplace distribution. Default is c(0.1, 0.1), which gives a noninformative
+#'  prior for sigma.
 #' @param refresh Interval between printing a message during the iteration
 #'  process. Default is set to 100.
 #' @param bayesx If TRUE, the default, it uses bayesX software to estimate
@@ -60,8 +64,8 @@
 multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFile, itNum = 2000,
                         burnin, thin = 1,
                         betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
-                        priorVar = 100, refresh = 100, bayesx = TRUE,
-                        sigmaSampling = TRUE,
+                        priorVar = 100, hyperSigma = c(0.1, 0.1),
+                        refresh = 100, bayesx = TRUE, sigmaSampling = TRUE,
                         quiet = T, tobit = FALSE, numCores = 1, recordLat = FALSE,
                         blocksV = 0, stopOrdering = FALSE, numOrdered = itNum/2, ...){
 
@@ -130,7 +134,8 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
       else {
         result <- BayesQR(tau = a, y = yResp, X = X, itNum = itNum, thin = thin,
                 betaValue = betaValue, sigmaValue = sigmaValue, vSampleInit = vSampleInit,
-                priorVar = priorVar, refresh = refresh, sigmaSampling = sigmaSampling,
+                priorVar = priorVar, hyperSigma = hyperSigma,
+                refresh = refresh, sigmaSampling = sigmaSampling,
                 quiet = quiet,
                 tobit = tobit, recordLat = recordLat, blocksV = blocksV,
                 stopOrdering = stopOrdering, numOrdered = numOrdered)

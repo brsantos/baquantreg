@@ -18,7 +18,8 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
                  arma::colvec betaValue, double sigmaValue,
-                 arma::vec vSampleInit, double priorVar, int refresh,
+                 arma::vec vSampleInit, double priorVar,
+                 NumericVector hyperSigma, int refresh,
                  bool sigmaSampling,
                  bool quiet, bool tobit, bool recordLat,
                  int blocksV, bool stopOrdering, int numOrdered){
@@ -43,8 +44,8 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
   double theta = (1-2*tau)/(tau*(1-tau));
   double psi2 = 2/(tau*(1-tau));
 
-  int n0 = 3;
-  double s0 = 0.1;
+  double n0 = hyperSigma[0];
+  double s0 = hyperSigma[1];
 
   arma::mat sigmaMinusOne(p,p), vSample(itNum, n), betaSample(itNum, p);
 
@@ -54,7 +55,7 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
 
   double gama2, lambda = 0.5, meanModel, sdModel, sTilde, termsSum;
 
-  int nTilde;
+  double nTilde;
 
   NumericVector InfPar(1), LimSup(1); InfPar[0] = R_NegInf; LimSup[0] = 0;
 

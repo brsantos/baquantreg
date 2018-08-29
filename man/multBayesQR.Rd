@@ -6,10 +6,10 @@
 \usage{
 multBayesQR(response, formulaPred, directionPoint, tau = 0.5, dataFile,
   itNum = 2000, burnin, thin = 1, betaValue = NULL, sigmaValue = 1,
-  vSampleInit = NULL, priorVar = 100, refresh = 100, bayesx = TRUE,
-  sigmaSampling = TRUE, quiet = T, tobit = FALSE, numCores = 1,
-  recordLat = FALSE, blocksV = 0, stopOrdering = FALSE,
-  numOrdered = itNum/2, ...)
+  vSampleInit = NULL, priorVar = 100, hyperSigma = c(0.1, 0.1),
+  refresh = 100, bayesx = TRUE, sigmaSampling = TRUE, quiet = T,
+  tobit = FALSE, numCores = 1, recordLat = FALSE, blocksV = 0,
+  stopOrdering = FALSE, numOrdered = itNum/2, ...)
 }
 \arguments{
 \item{response}{Names of response variables}
@@ -42,6 +42,11 @@ part.}
 
 \item{priorVar}{Value that multiplies a identity matrix in the elicition
 process of the prior variance of the regression parameters.}
+
+\item{hyperSigma}{Vector of size containing the hyperparameters of the
+inverse gamma distribution for the sigma parameter of the asymmetric
+Laplace distribution. Default is c(0.1, 0.1), which gives a noninformative
+prior for sigma.}
 
 \item{refresh}{Interval between printing a message during the iteration
 process. Default is set to 100.}
