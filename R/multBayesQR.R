@@ -101,6 +101,10 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
 
     dataFile$y <- as.numeric(yResp)
     dataFile$directionX <- as.numeric(directionX)
+    dataFile$dir1 <- u[1]
+    dataFile$dir2 <- u[2]
+    dataFile$orthBasis1 <- x.qr[1,2]
+    dataFile$orthBasis2 <- x.qr[2,2]
 
     formulaUpdated <- stats::update(Formula::Formula(formulaPred),
                                     y ~ . + directionX)
