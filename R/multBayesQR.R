@@ -107,7 +107,6 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
 
     if(!bayesx){
       X <- stats::model.matrix(formulaUpdated, dataFile)
-      X <- cbind(X, directionX)
 
       if (is.null(betaValue))
         betaValue <- rep(0, dim(X)[2])
@@ -120,16 +119,17 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
 
     output$modelsTau <- lapply(tau, function(a) {
       if (bayesx){
-        check_NA_values <- TRUE
-        while (check_NA_values){
-          result <- R2BayesX::bayesx(formulaUpdated,
+        # check_NA_values <- TRUE
+        # while (check_NA_values){
+          result <- try(R2BayesX::bayesx(formulaUpdated,
                            data = dataFile,
                            iter = itNum, burnin = burnin, step = thin,
-                           method = "MCMC", family = "quantreg", quantile = a, ...)
+                           method = "MCMC", family = "quantreg", quantile = a, ...))
+          # check_NA_values <- FALSE
 
-          dimeff <- dim(result$fixed.effects)
-          if (!any(is.na(result$fixed.effects[1:dimeff[1], 1:dimeff[2]]))) check_NA_values <- FALSE
-        }
+          # dimeff <- dim(result$fixed.effects)
+          # if (!any(is.na(result$fixed.effects[1:dimeff[1], 1:dimeff[2]]))) check_NA_values <- FALSE
+        # }
       }
       else {
         result <- BayesQR(tau = a, y = yResp, X = X, itNum = itNum, thin = thin,
@@ -157,6 +157,7 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
   class(objects) <- "multBQR"
 
   objects$method <- ifelse(bayesx, 'bayesx', 'rcpp')
+  objects$response <- response
 
   return(objects)
 }
