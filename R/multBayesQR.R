@@ -74,7 +74,7 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
                         refresh = 100, bayesx = TRUE, sigmaSampling = TRUE,
                         quiet = T, tobit = FALSE, numCores = 1, recordLat = FALSE,
                         blocksV = 0, stopOrdering = FALSE, numOrdered = itNum/2,
-                        outfile = NULL, dir.rm = TRUE, ...){
+                        outfile = NULL, ...){
 
   if (length(directionPoint) > 1){
     vectorDir <- directionPoint
@@ -128,9 +128,8 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
                            iter = itNum, burnin = burnin, step = thin,
                            method = "MCMC", family = "quantreg", quantile = b,
                            control = R2BayesX::bayesx.control(...),
-                           model.name = paste0('bayesx.estim.dir_', a),
-                           outfile = outfile,
-                           dir.rm = dir.rm))
+                           outfile = paste0(outfile, 'dir_', a, '/'),
+                           dir.rm = FALSE))
       }
       else {
         result <- BayesQR(tau = b, y = yResp, X = X, itNum = itNum, thin = thin,
