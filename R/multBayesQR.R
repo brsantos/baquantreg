@@ -125,7 +125,7 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
                            iter = itNum, burnin = burnin, step = thin,
                            method = "MCMC", family = "quantreg", quantile = b,
                            control = R2BayesX::bayesx.control(...),
-                           outfile = paste0(outfile, 'dir_', a, '/'),
+                           outfile = paste0(outfile, 'dir_', a, '_tau_', b,  '/'),
                            dir.rm = FALSE))
       }
       else {
