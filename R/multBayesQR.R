@@ -11,7 +11,7 @@
 #'  number of directions equally spaced in the unit circle one should
 #'  estimate.
 #' @param dataFile A data.frame from which to find the variables defined in the
-#'  formula
+#'  formula.
 #' @param itNum Number of iterations.
 #' @param burnin Size of the initial to be discarded.
 #' @param thin Thinning parameter. Default value is 1.
@@ -55,19 +55,26 @@
 #'  the weighted residuals needed for the update of the posterior
 #'  distribution of the latent variables. Default is half the size of
 #'  the MCMC chain.
-#' @param ... Options to be passed to \code{bayesx} call.
+#' @param outfile argument to be passed to \code{bayesx.control}, in order
+#'  to define a directory where all output files should be saved. When
+#'  defining a different value than NULL, one should also set
+#'  \code{dir.rm = FALSE}.
+#' @param dir.rm argument to be passed to \code{bayesx.control}, in order
+#'  to define whether the directory with all estimation files should be
+#'  removed or not after finishing it.
+#' @param ... arguments passed to \code{bayesx.control}.
 #' @return A list with the chains of all parameters of interest.
 #' @useDynLib baquantreg
 #' @importFrom R2BayesX bayesx
 #' @importFrom Formula Formula
 
 multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFile, itNum = 2000,
-                        burnin, thin = 1,
-                        betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
+                        burnin, thin = 1, betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
                         priorVar = 100, hyperSigma = c(0.1, 0.1),
                         refresh = 100, bayesx = TRUE, sigmaSampling = TRUE,
                         quiet = T, tobit = FALSE, numCores = 1, recordLat = FALSE,
-                        blocksV = 0, stopOrdering = FALSE, numOrdered = itNum/2, ...){
+                        blocksV = 0, stopOrdering = FALSE, numOrdered = itNum/2,
+                        outfile = NULL, dir.rm = TRUE, ...){
 
   if (length(directionPoint) > 1){
     vectorDir <- directionPoint
@@ -89,9 +96,6 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
 
     A <- cbind(u, u_1)
     x.qr <- qr.Q(qr(A))
-
-    # Y <- stats::model.extract(stats::model.frame(formula, dataFile),
-    #                               "response")
 
     Y <- dataFile[, response]
 
@@ -117,22 +121,19 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
 
     output <- list()
 
-    output$modelsTau <- lapply(tau, function(a) {
+    output$modelsTau <- lapply(tau, function(b) {
       if (bayesx){
-        # check_NA_values <- TRUE
-        # while (check_NA_values){
           result <- try(R2BayesX::bayesx(formulaUpdated,
                            data = dataFile,
                            iter = itNum, burnin = burnin, step = thin,
-                           method = "MCMC", family = "quantreg", quantile = a, ...))
-          # check_NA_values <- FALSE
-
-          # dimeff <- dim(result$fixed.effects)
-          # if (!any(is.na(result$fixed.effects[1:dimeff[1], 1:dimeff[2]]))) check_NA_values <- FALSE
-        # }
+                           method = "MCMC", family = "quantreg", quantile = b,
+                           control = R2BayesX::bayesx.control(...),
+                           model.name = paste0('bayesx.estim.dir_', a),
+                           outfile = outfile,
+                           dir.rm = dir.rm))
       }
       else {
-        result <- BayesQR(tau = a, y = yResp, X = X, itNum = itNum, thin = thin,
+        result <- BayesQR(tau = b, y = yResp, X = X, itNum = itNum, thin = thin,
                 betaValue = betaValue, sigmaValue = sigmaValue, vSampleInit = vSampleInit,
                 priorVar = priorVar, hyperSigma = hyperSigma,
                 refresh = refresh, sigmaSampling = sigmaSampling,

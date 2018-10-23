@@ -9,7 +9,8 @@ multBayesQR(response, formulaPred, directionPoint, tau = 0.5, dataFile,
   vSampleInit = NULL, priorVar = 100, hyperSigma = c(0.1, 0.1),
   refresh = 100, bayesx = TRUE, sigmaSampling = TRUE, quiet = T,
   tobit = FALSE, numCores = 1, recordLat = FALSE, blocksV = 0,
-  stopOrdering = FALSE, numOrdered = itNum/2, ...)
+  stopOrdering = FALSE, numOrdered = itNum/2, outfile = NULL,
+  dir.rm = TRUE, ...)
 }
 \arguments{
 \item{response}{Names of response variables}
@@ -25,7 +26,7 @@ estimate.}
 \item{tau}{Quantiles of interest. Default is th median, \code{tau = 0.5}.}
 
 \item{dataFile}{A data.frame from which to find the variables defined in the
-formula}
+formula.}
 
 \item{itNum}{Number of iterations.}
 
@@ -88,7 +89,16 @@ the weighted residuals needed for the update of the posterior
 distribution of the latent variables. Default is half the size of
 the MCMC chain.}
 
-\item{...}{Options to be passed to \code{bayesx} call.}
+\item{outfile}{argument to be passed to \code{bayesx.control}, in order
+to define a directory where all output files should be saved. When
+defining a different value than NULL, one should also set
+\code{dir.rm = FALSE}.}
+
+\item{dir.rm}{argument to be passed to \code{bayesx.control}, in order
+to define whether the directory with all estimation files should be
+removed or not after finishing it.}
+
+\item{...}{arguments passed to \code{bayesx.control}.}
 }
 \value{
 A list with the chains of all parameters of interest.
