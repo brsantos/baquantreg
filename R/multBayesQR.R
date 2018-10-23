@@ -131,11 +131,10 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
       else {
         result <- BayesQR(tau = b, y = yResp, X = X, itNum = itNum, thin = thin,
                 betaValue = betaValue, sigmaValue = sigmaValue, vSampleInit = vSampleInit,
-                priorVar = priorVar, hyperSigma = hyperSigma,
-                refresh = refresh, sigmaSampling = sigmaSampling,
-                quiet = quiet,
-                tobit = tobit, recordLat = recordLat, blocksV = blocksV,
-                stopOrdering = stopOrdering, numOrdered = numOrdered)
+                priorVar = priorVar, hyperSigma = hyperSigma, refresh = refresh,
+                sigmaSampling = sigmaSampling, quiet = quiet, tobit = tobit,
+                recordLat = recordLat, blocksV = blocksV, stopOrdering = stopOrdering,
+                numOrdered = numOrdered)
       }
       result
     })
