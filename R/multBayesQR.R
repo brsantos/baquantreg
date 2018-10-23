@@ -59,9 +59,6 @@
 #'  to define a directory where all output files should be saved. When
 #'  defining a different value than NULL, one should also set
 #'  \code{dir.rm = FALSE}.
-#' @param dir.rm argument to be passed to \code{bayesx.control}, in order
-#'  to define whether the directory with all estimation files should be
-#'  removed or not after finishing it.
 #' @param ... arguments passed to \code{bayesx.control}.
 #' @return A list with the chains of all parameters of interest.
 #' @useDynLib baquantreg

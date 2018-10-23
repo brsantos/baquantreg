@@ -9,8 +9,7 @@ multBayesQR(response, formulaPred, directionPoint, tau = 0.5, dataFile,
   vSampleInit = NULL, priorVar = 100, hyperSigma = c(0.1, 0.1),
   refresh = 100, bayesx = TRUE, sigmaSampling = TRUE, quiet = T,
   tobit = FALSE, numCores = 1, recordLat = FALSE, blocksV = 0,
-  stopOrdering = FALSE, numOrdered = itNum/2, outfile = NULL,
-  dir.rm = TRUE, ...)
+  stopOrdering = FALSE, numOrdered = itNum/2, outfile = NULL, ...)
 }
 \arguments{
 \item{response}{Names of response variables}
@@ -93,10 +92,6 @@ the MCMC chain.}
 to define a directory where all output files should be saved. When
 defining a different value than NULL, one should also set
 \code{dir.rm = FALSE}.}
-
-\item{dir.rm}{argument to be passed to \code{bayesx.control}, in order
-to define whether the directory with all estimation files should be
-removed or not after finishing it.}
 
 \item{...}{arguments passed to \code{bayesx.control}.}
 }
