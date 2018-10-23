@@ -5,6 +5,10 @@ BayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, 
     .Call('_baquantreg_BayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, priorVar, hyperSigma, refresh, sigmaSampling, quiet, tobit, recordLat, blocksV, stopOrdering, numOrdered)
 }
 
+checkPoints <- function(gridy1, gridy2, directions, orthBasis, fullestimates, xvalue) {
+    .Call('_baquantreg_checkPoints', PACKAGE = 'baquantreg', gridy1, gridy2, directions, orthBasis, fullestimates, xvalue)
+}
+
 rgigRcpp <- function(chi, psi, lambda) {
     .Call('_baquantreg_rgigRcpp', PACKAGE = 'baquantreg', chi, psi, lambda)
 }

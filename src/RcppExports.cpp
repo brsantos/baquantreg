@@ -35,6 +35,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// checkPoints
+arma::mat checkPoints(arma::colvec gridy1, arma::colvec gridy2, arma::mat directions, arma::mat orthBasis, arma::mat fullestimates, arma::colvec xvalue);
+RcppExport SEXP _baquantreg_checkPoints(SEXP gridy1SEXP, SEXP gridy2SEXP, SEXP directionsSEXP, SEXP orthBasisSEXP, SEXP fullestimatesSEXP, SEXP xvalueSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::colvec >::type gridy1(gridy1SEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type gridy2(gridy2SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type directions(directionsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type orthBasis(orthBasisSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type fullestimates(fullestimatesSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type xvalue(xvalueSEXP);
+    rcpp_result_gen = Rcpp::wrap(checkPoints(gridy1, gridy2, directions, orthBasis, fullestimates, xvalue));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rgigRcpp
 double rgigRcpp(double chi, double psi, double lambda);
 RcppExport SEXP _baquantreg_rgigRcpp(SEXP chiSEXP, SEXP psiSEXP, SEXP lambdaSEXP) {
@@ -165,6 +181,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_baquantreg_BayesQR", (DL_FUNC) &_baquantreg_BayesQR, 18},
+    {"_baquantreg_checkPoints", (DL_FUNC) &_baquantreg_checkPoints, 6},
     {"_baquantreg_rgigRcpp", (DL_FUNC) &_baquantreg_rgigRcpp, 3},
     {"_baquantreg_spBayesQR", (DL_FUNC) &_baquantreg_spBayesQR, 21},
     {"_baquantreg_sppBayesQR", (DL_FUNC) &_baquantreg_sppBayesQR, 25},
