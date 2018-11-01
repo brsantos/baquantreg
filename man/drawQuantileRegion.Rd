@@ -5,7 +5,8 @@
 \title{Multiple-output Bayesian quantile regression model}
 \usage{
 drawQuantileRegion(model, ngridpoints = 100, xValue = 1,
-  paintedArea = TRUE, comparison = FALSE, ...)
+  paintedArea = TRUE, comparison = FALSE, result_folder = FALSE,
+  path_folder = NULL, ...)
 }
 \arguments{
 \item{model}{This is an object of the class \code{multBQR}, produced by a call to the
@@ -27,6 +28,12 @@ plot showing showing all quantile regions for the different quantiles.}
 
 \item{comparison}{Only considered when \code{paintedArea = FALSE}, if TRUE then
 it will plot comparisons of quantile regions for different values of \code{xvalue}.}
+
+\item{result_folder}{Logical value determining whether all estimates are stored in a
+folder produced by a BayesX call. Default is FALSE.}
+
+\item{path_folder}{If \code{result_folder = TRUE}, then one must inform the path
+where all results are stored.}
 
 \item{...}{Other parameters for \code{summary.multBQR}.}
 }

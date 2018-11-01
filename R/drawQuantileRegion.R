@@ -18,6 +18,10 @@
 #' plot showing showing all quantile regions for the different quantiles.
 #' @param comparison Only considered when \code{paintedArea = FALSE}, if TRUE then
 #'  it will plot comparisons of quantile regions for different values of \code{xvalue}.
+#' @param result_folder Logical value determining whether all estimates are stored in a
+#'  folder produced by a BayesX call. Default is FALSE.
+#' @param path_folder If \code{result_folder = TRUE}, then one must inform the path
+#'  where all results are stored.
 #' @param ... Other parameters for \code{summary.multBQR}.
 #' @return A ggplot with the quantile regions based on Bayesian quantile regression
 #' model estimates.
@@ -25,17 +29,53 @@
 
 
 drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1, paintedArea = TRUE,
-                               comparison = FALSE, ...){
+                               comparison = FALSE, result_folder = FALSE,
+                               path_folder = NULL, ...){
 
-  directions <- sapply(model$modelsDir, function(a) a$direction)
-  orthBases <- sapply(model$modelsDir, function(a) a$orthBasis)
+  if (!result_folder){
+    directions <- sapply(model$modelsDir, function(a) a$direction)
+    orthBases <- sapply(model$modelsDir, function(a) a$orthBasis)
 
-  p <- length(xValue)
+    taus <- model$modelsDir[[1]]$tau
+    ntaus <- length(taus)
 
-  taus <- model$modelsDir[[1]]$tau
-  ntaus <- length(taus)
+    Y <- model$modelsDir[[1]]$data[ , model$response]
 
-  Y <- model$modelsDir[[1]]$data[ , model$response]
+    estimates <- summary.multBQR(model, ...)
+
+    if (model$method != 'bayesx'){
+      betaEstimates <- lapply(estimates, function(a){
+        sapply(a$BetaPosterior, function(b) b[ , 2])
+      })
+
+      betaDifDirections <- lapply(1:ntaus, function(a){
+        sapply(betaEstimates, function(b) b[, a])
+      })
+    }
+    else{
+      betaEstimates <- lapply(estimates, function(a){
+        sapply(a, function(b) b$BetaPosterior[, 1])
+      })
+
+      betaDifDirections <- lapply(1:ntaus, function(a){
+        sapply(betaEstimates, function(b) b[, a])
+      })
+    }
+  }
+  else{
+    if (is.null(path_folder)) stop("You must define a path with all the results")
+    else{
+      results <- get_results(path_folder)
+
+      taus <- results$taus
+      ntaus <- length(taus)
+
+      Y <- t(results$Y)
+      betaDifDirections <- results$betaDifDirections
+      directions <- results$directions
+      orthBases <- results$orthBases
+    }
+  }
 
   y1range <- range(Y[,1])
   y2range <- range(Y[,2])
@@ -45,27 +85,6 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1, paintedArea
 
   Yseq <- cbind(rep(seqY1, times = ngridpoints),
                 rep(seqY2, each = ngridpoints))
-
-  estimates <- summary.multBQR(model, ...)
-
-  if (model$method != 'bayesx'){
-    betaEstimates <- lapply(estimates, function(a){
-      sapply(a$BetaPosterior, function(b) b[ , 2])
-    })
-
-    betaDifDirections <- lapply(1:ntaus, function(a){
-      sapply(betaEstimates, function(b) b[, a])
-    })
-  }
-  else{
-    betaEstimates <- lapply(estimates, function(a){
-      sapply(a, function(b) b$BetaPosterior[, 1])
-    })
-
-    betaDifDirections <- lapply(1:ntaus, function(a){
-      sapply(betaEstimates, function(b) b[, a])
-    })
-  }
 
   pointsPlot <-  lapply(1:ntaus, function(a){
     if (!comparison){
