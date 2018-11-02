@@ -17,9 +17,18 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
 
   ## Going through all folders and getting all estimates.
   results <- lapply(folders, function(a){
-    fixedEffects1 <- utils::read.table(paste0(path_folder, '/', a, '/', model_name, '_FixedEffects1.res'), head = TRUE)
-    fixedEffects2 <- utils::read.table(paste0(path_folder, '/', a, '/', model_name, '_FixedEffects2.res'), head = TRUE)
-    fixedEffects <- rbind(fixedEffects1, fixedEffects2)[, 3]
+    fixed_effects_files <- grepl("_FixedEffects[0-9]+.res", list.files(paste0(path_folder, '/', a, '/')))
+    files_results <- list.files(paste0(path_folder, '/', a, '/'))[fixed_effects_files]
+    if(sum(fixed_effects_files) > 1){
+      all_files <- lapply(files_results, function(aa){
+        utils::read.table(paste0(path_folder, '/', a, '/', aa), head = TRUE)
+      })
+      fixedEffects <- do.call(rbind, all_files)[, 3]
+    }
+    else{
+      fixedEffects <- utils::read.table(paste0(path_folder, '/', a, '/', files_results), head = TRUE)[, 3]
+    }
+
     variance <- utils::read.table(paste0(path_folder, '/', a, '/', model_name, '_scale.res'), head = TRUE)
     dataFile <- utils::read.table(paste0(path_folder, '/', a, '/', model_name, '.data.raw'), head = TRUE)
 
