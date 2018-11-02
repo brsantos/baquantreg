@@ -56,9 +56,7 @@
 #'  distribution of the latent variables. Default is half the size of
 #'  the MCMC chain.
 #' @param outfile argument to be passed to \code{bayesx.control}, in order
-#'  to define a directory where all output files should be saved. When
-#'  defining a different value than NULL, one should also set
-#'  \code{dir.rm = FALSE}.
+#'  to define a directory where all output files should be saved.
 #' @param ... arguments passed to \code{bayesx.control}.
 #' @return A list with the chains of all parameters of interest.
 #' @useDynLib baquantreg
@@ -120,13 +118,22 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
 
     output$modelsTau <- lapply(tau, function(b) {
       if (bayesx){
+        if (is.null(outfile)){
           result <- try(R2BayesX::bayesx(formulaUpdated,
-                           data = dataFile,
-                           iter = itNum, burnin = burnin, step = thin,
-                           method = "MCMC", family = "quantreg", quantile = b,
-                           control = R2BayesX::bayesx.control(...),
-                           outfile = paste0(outfile, 'dir_', a, '_tau_', b,  '/'),
-                           dir.rm = FALSE))
+                                         data = dataFile,
+                                         iter = itNum, burnin = burnin, step = thin,
+                                         method = "MCMC", family = "quantreg", quantile = b,
+                                         control = R2BayesX::bayesx.control(...)))
+        }
+        else{
+          result <- try(R2BayesX::bayesx(formulaUpdated,
+                                         data = dataFile,
+                                         iter = itNum, burnin = burnin, step = thin,
+                                         method = "MCMC", family = "quantreg", quantile = b,
+                                         control = R2BayesX::bayesx.control(...),
+                                         outfile = paste0(outfile, 'dir_', a, '_tau_', b,  '/'),
+                                         dir.rm = FALSE))
+        }
       }
       else {
         result <- BayesQR(tau = b, y = yResp, X = X, itNum = itNum, thin = thin,

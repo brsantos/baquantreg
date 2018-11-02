@@ -89,9 +89,7 @@ distribution of the latent variables. Default is half the size of
 the MCMC chain.}
 
 \item{outfile}{argument to be passed to \code{bayesx.control}, in order
-to define a directory where all output files should be saved. When
-defining a different value than NULL, one should also set
-\code{dir.rm = FALSE}.}
+to define a directory where all output files should be saved.}
 
 \item{...}{arguments passed to \code{bayesx.control}.}
 }
