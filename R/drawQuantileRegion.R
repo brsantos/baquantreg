@@ -83,9 +83,6 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1, paintedArea
   seqY1 <- seq(y1range[1], y1range[2], length.out = ngridpoints)
   seqY2 <- seq(y2range[1], y2range[2], length.out = ngridpoints)
 
-  Yseq <- cbind(rep(seqY1, times = ngridpoints),
-                rep(seqY2, each = ngridpoints))
-
   pointsPlot <-  lapply(1:ntaus, function(a){
     if (!comparison){
       checkPoints_values <- checkPoints(seqY1, seqY2,
@@ -106,11 +103,12 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1, paintedArea
                  max = y2_inside_max)
     }
     else{
-      lapply(xValue, function(b){
+      lapply(1:length(xValue), function(b){
+        temp_vector <- xValue[[b]]
         checkPoints_values <- checkPoints(seqY1, seqY2,
                                           t(directions), t(orthBases),
                                           betaDifDirections[[a]],
-                                          b)
+                                          temp_vector)
 
         y1_ind <- which(rowSums(checkPoints_values) > 0)
         y1_inside <- seqY1[y1_ind]
