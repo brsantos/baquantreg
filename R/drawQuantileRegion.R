@@ -93,15 +93,17 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1, paintedArea
                                         betaDifDirections[[a]],
                                         xValue)
 
-      y1_inside <- seqY1[apply(checkPoints_values, 1, sum) > 0]
-      valuesPlot <- apply(checkPoints_values[ , apply(checkPoints_values, 1, sum) > 0], 2, function(a){
-        values <- seqY2[which(a == 1)]
-        c(min(values), max(values))
-      })
+      y1_ind <- which(rowSums(checkPoints_values) > 0)
+      y1_inside <- seqY1[y1_ind]
+
+      sub_checkPoints <- checkPoints_values[y1_ind, ]
+
+      y2_inside_max <- apply(sub_checkPoints, 1, function(a) seqY2[max(which(a == 1))])
+      y2_inside_min <- apply(sub_checkPoints, 1, function(a) seqY2[min(which(a == 1))])
 
       data.frame(y1 = y1_inside,
-                 min = valuesPlot[1, ],
-                 max = valuesPlot[2, ])
+                 min = y2_inside_min,
+                 max = y2_inside_max)
     }
     else{
       lapply(xValue, function(b){
@@ -110,15 +112,17 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1, paintedArea
                                           betaDifDirections[[a]],
                                           b)
 
-        y1_inside <- seqY1[apply(checkPoints_values, 1, sum) > 0]
-        valuesPlot <- apply(checkPoints_values[ , apply(checkPoints_values, 1, sum) > 0], 2, function(a){
-          values <- seqY2[which(a == 1)]
-          c(min(values), max(values))
-        })
+        y1_ind <- which(rowSums(checkPoints_values) > 0)
+        y1_inside <- seqY1[y1_ind]
+
+        sub_checkPoints <- checkPoints_values[y1_ind, ]
+
+        y2_inside_max <- apply(sub_checkPoints, 1, function(a) seqY2[max(which(a == 1))])
+        y2_inside_min <- apply(sub_checkPoints, 1, function(a) seqY2[min(which(a == 1))])
 
         data.frame(y1 = y1_inside,
-                   min = valuesPlot[1, ],
-                   max = valuesPlot[2, ])
+                   min = y2_inside_min,
+                   max = y2_inside_max)
       })
     }
   })
