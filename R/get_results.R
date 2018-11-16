@@ -24,9 +24,11 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
         utils::read.table(paste0(path_folder, '/', a, '/', aa), head = TRUE)
       })
       fixedEffects <- do.call(rbind, all_files)[, 3]
+      fixedEffects_sd <- do.call(rbind, all_files)[, 4]
     }
     else{
       fixedEffects <- utils::read.table(paste0(path_folder, '/', a, '/', files_results), head = TRUE)[, 3]
+      fixedEffects_sd <- utils::read.table(paste0(path_folder, '/', a, '/', files_results), head = TRUE)[, 4]
     }
 
     variance <- utils::read.table(paste0(path_folder, '/', a, '/', model_name, '_scale.res'), head = TRUE)
@@ -36,7 +38,8 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
     directionX <- dataFile[, 'directionX']
 
     list(fixedEffects = fixedEffects, variance = variance,
-         y_response = y_response, directionX = directionX)
+         y_response = y_response, directionX = directionX,
+         fixedEffects_sd = fixedEffects_sd)
   })
 
   directionPoint <- max(directions_ind)
@@ -65,6 +68,10 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
     results[[a]]$fixedEffects
   })
 
+  sdDifDirections_matrix <- sapply(1:length(taus), function(a){
+    results[[a]]$fixedEffects_sd
+  })
+
   betaDifDirections <- lapply(unique_taus, function(a){
     positions_list <- which(taus == a)
     betaSubmatrix <- betaDifDirections_matrix[, positions_list]
@@ -74,6 +81,16 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
     })
   })
 
+  sdDifDirections <- lapply(unique_taus, function(a){
+    positions_list <- which(taus == a)
+    sdSubmatrix <- sdDifDirections_matrix[, positions_list]
+    directions_list <- directions_ind[positions_list]
+    sapply(1:numbDir, function(b){
+      sdSubmatrix[, which(directions_list == b)]
+    })
+  })
+
   list(Y = Y, taus = unique_taus, betaDifDirections = betaDifDirections,
-       directions = t(vectorDir), orthBases = t(orthBasis))
+       directions = t(vectorDir), orthBases = t(orthBasis),
+       sdDifDirections = sdDifDirections)
 }
