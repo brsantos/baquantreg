@@ -28,10 +28,12 @@ arma::mat checkPoints(arma::colvec gridy1, arma::colvec gridy2,
       int partcontour = 0;
       int count = 0;
       while (partcontour == 0 && count < ndirections){
-        double lefthand = directions(count, 0) * gridy1(k) + directions(count, 1) * gridy2(j);
+        double lefthand = directions(count, 0) * gridy1(k) +
+          directions(count, 1) * gridy2(j);
         double righthand = effDir(0, count) * (orthBasis(count, 0) * gridy1(k) +
                                   orthBasis(count, 1) * gridy2(j)) +
-                                  arma::as_scalar(xvalue.t() * estimates.col(count));
+                                  arma::as_scalar(xvalue.t() *
+                                  estimates.col(count));
         if (lefthand < righthand) partcontour = 1;
         else if (count == ndirections - 1){
           checking(k, j) = 1;

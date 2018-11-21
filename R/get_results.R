@@ -141,7 +141,6 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
   })
 
   list(Y = Y, taus = unique_taus, betaDifDirections = betaDifDirections,
-       directions = t(vectorDir), orthBases = t(orthBasis),
-       sdDifDirections = sdDifDirections,
-       draws_DifDirections = draws_DifDirections)
+       directions = t(vectorDir), orthBases = t(orthBasis), sdDifDirections =
+         sdDifDirections, draws_DifDirections = draws_DifDirections)
 }
