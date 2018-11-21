@@ -65,13 +65,19 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
                                          model_name, '.data.raw'),
                                   head = TRUE)
 
+    sigma_draws <- utils::read.table(paste0(path_folder, '/', a,
+                                            '/bayesx.estim_scale_sample.raw'),
+                                     head = TRUE)[,2]
+
+
+
     y_response <- dataFile[,'y']
     directionX <- dataFile[, 'directionX']
 
     list(fixedEffects = fixedEffects, variance = variance,
          y_response = y_response, directionX = directionX,
          fixedEffects_sd = fixedEffects_sd, beta_draws = beta_draws,
-         varnames = varnames)
+         varnames = varnames, sigma_draws = sigma_draws)
   })
 
   varnames <- results[[1]]$varnames
@@ -108,6 +114,8 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
 
   posterior_sigma <- sapply(results, function(a) as.numeric(a$variance))
 
+  sigma_draws_matrix <- sapply(results, function(a) a$sigma_draws)
+
   draws_matrix <- lapply(1:length(taus), function(a){
     useless_columns <- which(colnames(results[[a]]$beta_draws) == "intnr")
     final_draws <- results[[1]]$beta_draws[,-useless_columns]
@@ -142,7 +150,7 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
     })
   })
 
-  draws_DifDirections <- lapply(unique_taus, function(a){
+  beta_draws_DifDirections <- lapply(unique_taus, function(a){
     positions_list <- which(taus == a)
     draws_sublist <- draws_matrix[positions_list]
     directions_list <- directions_ind[positions_list]
@@ -151,8 +159,18 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
     })
   })
 
+  sigma_draws_DifDirections <- lapply(unique_taus, function(a){
+    positions_list <- which(taus == a)
+    draws_sublist <- sigma_draws_matrix[, positions_list]
+    directions_list <- directions_ind[positions_list]
+    lapply(1:numbDir, function(b){
+      draws_sublist[, which(directions_list == b)]
+    })
+  })
+
   list(Y = Y, taus = unique_taus, betaDifDirections = betaDifDirections,
        directions = t(vectorDir), orthBases = t(orthBasis), sdDifDirections =
-         sdDifDirections, draws_DifDirections = draws_DifDirections,
-       sigma_difDirections = sigma_difDirections)
+         sdDifDirections, beta_draws_DifDirections = beta_draws_DifDirections,
+       sigma_difDirections = sigma_difDirections,
+       sigma_draws_DifDirections = sigma_draws_DifDirections)
 }
