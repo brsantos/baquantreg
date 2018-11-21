@@ -103,12 +103,11 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1, paintedArea
                  max = y2_inside_max)
     }
     else{
-      lapply(1:length(xValue), function(b){
-        temp_vector <- xValue[[b]]
+      lapply(xValue, function(b){
         checkPoints_values <- checkPoints(seqY1, seqY2,
                                           t(directions), t(orthBases),
                                           betaDifDirections[[a]],
-                                          temp_vector)
+                                          b)
 
         y1_ind <- which(rowSums(checkPoints_values) > 0)
         y1_inside <- seqY1[y1_ind]
