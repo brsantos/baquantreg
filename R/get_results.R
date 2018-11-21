@@ -58,9 +58,9 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
                                                draws_results), head = TRUE)
     }
 
-    variance <- utils::read.table(paste0(path_folder, '/', a, '/',
+    sigma <- utils::read.table(paste0(path_folder, '/', a, '/',
                                          model_name, '_scale.res'),
-                                  head = TRUE)
+                                  head = TRUE)[1]
     dataFile <- utils::read.table(paste0(path_folder, '/', a, '/',
                                          model_name, '.data.raw'),
                                   head = TRUE)
@@ -68,7 +68,7 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
     y_response <- dataFile[,'y']
     directionX <- dataFile[, 'directionX']
 
-    list(fixedEffects = fixedEffects, variance = variance,
+    list(fixedEffects = fixedEffects, sigma = sigma,
          y_response = y_response, directionX = directionX,
          fixedEffects_sd = fixedEffects_sd, beta_draws = beta_draws,
          varnames = varnames)
