@@ -71,7 +71,7 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1,
     if (is.null(path_folder))
       stop("You must define a path with all the results")
     else{
-      results <- get_results(path_folder)
+      results <- get_results(path_folder, splines = splines_part)
 
       taus <- results$taus
       ntaus <- length(taus)
@@ -96,7 +96,7 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1,
   pointsPlot <-  lapply(1:ntaus, function(a){
     if (!comparison){
      spline_values <- sapply(1:number_directions, function(aa){
-       estimates_direction <- splines_estimates[[a]][[aa]]
+       estimates_direction <- splines_estimates[[a]][[aa]][[1]]
        distances <- abs(wValue - estimates_direction$W)
        estimates_direction$pmean[which(distances == min(distances))[1]]
      })
