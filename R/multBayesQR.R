@@ -63,12 +63,14 @@
 #' @importFrom R2BayesX bayesx
 #' @importFrom Formula Formula
 
-multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFile, itNum = 2000,
-                        burnin, thin = 1, betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
+multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
+                        dataFile, itNum = 2000, burnin, thin = 1,
+                        betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
                         priorVar = 100, hyperSigma = c(0.1, 0.1),
                         refresh = 100, bayesx = TRUE, sigmaSampling = TRUE,
-                        quiet = T, tobit = FALSE, numCores = 1, recordLat = FALSE,
-                        blocksV = 0, stopOrdering = FALSE, numOrdered = itNum/2,
+                        quiet = T, tobit = FALSE, numCores = 1,
+                        recordLat = FALSE, blocksV = 0,
+                        stopOrdering = FALSE, numOrdered = itNum/2,
                         outfile = NULL, ...){
 
   if (length(directionPoint) > 1){
@@ -119,29 +121,35 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5, dataFi
     output$modelsTau <- lapply(tau, function(b) {
       if (bayesx){
         if (is.null(outfile)){
-          result <- try(R2BayesX::bayesx(formulaUpdated,
-                                         data = dataFile,
-                                         iter = itNum, burnin = burnin, step = thin,
-                                         method = "MCMC", family = "quantreg", quantile = b,
-                                         control = R2BayesX::bayesx.control(...)))
+          result <- try(R2BayesX::bayesx(formulaUpdated, data = dataFile,
+                                         iter = itNum, burnin = burnin,
+                                         step = thin, method = "MCMC",
+                                         family = "quantreg", quantile = b,
+                                         control =
+                                           R2BayesX::bayesx.control(...)))
         }
         else{
           result <- try(R2BayesX::bayesx(formulaUpdated,
                                          data = dataFile,
-                                         iter = itNum, burnin = burnin, step = thin,
-                                         method = "MCMC", family = "quantreg", quantile = b,
-                                         control = R2BayesX::bayesx.control(...),
-                                         outfile = paste0(outfile, 'dir_', a, '_tau_', b,  '/'),
+                                         iter = itNum, burnin = burnin,
+                                         step = thin, method = "MCMC",
+                                         family = "quantreg", quantile = b,
+                                         control =
+                                           R2BayesX::bayesx.control(...),
+                                         outfile =
+                                           paste0(outfile, 'dir_',
+                                                  a, '_tau_', b,  '/'),
                                          dir.rm = FALSE))
         }
       }
       else {
         result <- BayesQR(tau = b, y = yResp, X = X, itNum = itNum, thin = thin,
-                betaValue = betaValue, sigmaValue = sigmaValue, vSampleInit = vSampleInit,
-                priorVar = priorVar, hyperSigma = hyperSigma, refresh = refresh,
+                betaValue = betaValue, sigmaValue = sigmaValue,
+                vSampleInit = vSampleInit, priorVar = priorVar,
+                hyperSigma = hyperSigma, refresh = refresh,
                 sigmaSampling = sigmaSampling, quiet = quiet, tobit = tobit,
-                recordLat = recordLat, blocksV = blocksV, stopOrdering = stopOrdering,
-                numOrdered = numOrdered)
+                recordLat = recordLat, blocksV = blocksV,
+                stopOrdering = stopOrdering, numOrdered = numOrdered)
       }
       result
     })
