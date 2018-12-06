@@ -18,7 +18,7 @@ arma::mat checkPoints(arma::colvec gridy1, arma::colvec gridy2,
 
   arma::mat effDir = fullestimates.row(p - 1);
   arma::mat estimates;
-  if(p == 2) estimates  = fullestimates.row(0);
+  if(p == 2) estimates = fullestimates.row(0);
   else estimates = fullestimates.rows(0, p - 2);
 
   arma::mat checking = arma::zeros(n1, n2);
