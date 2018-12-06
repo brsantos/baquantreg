@@ -1,6 +1,7 @@
 ## Organizing the results in a folder
 
-get_results <- function(path_folder, model_name = "bayesx.estim"){
+get_results <- function(path_folder, model_name = "bayesx.estim",
+                        splines = FALSE){
   folders <- list.files(path_folder)
 
   ## Considering at most 999 directions
@@ -68,6 +69,12 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
     sigma_draws <- utils::read.table(paste0(path_folder, '/', a,
                                             '/bayesx.estim_scale_sample.raw'),
                                      head = TRUE)[,2]
+    spline_estimates <- NULL
+    if (splines){
+      spline_estimates <- utils::read.table(paste0(path_folder, '/', a,
+                                                   '/bayesx.estim_f_W_pspline.res'),
+                                            head = TRUE)[, 2:3]
+    }
 
 
 
@@ -77,7 +84,8 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
     list(fixedEffects = fixedEffects, variance = variance,
          y_response = y_response, directionX = directionX,
          fixedEffects_sd = fixedEffects_sd, beta_draws = beta_draws,
-         varnames = varnames, sigma_draws = sigma_draws)
+         varnames = varnames, sigma_draws = sigma_draws,
+         spline_estimates = spline_estimates)
   })
 
   varnames <- results[[1]]$varnames
@@ -104,24 +112,22 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
 
   Y <- solve(rbind(u, uu)) %*% rbind(y_resp, xDirec)
 
-  betaDifDirections_matrix <- sapply(1:length(taus), function(a){
-    results[[a]]$fixedEffects
-  })
+  betaDifDirections_matrix <- sapply(results, function(a) a$fixedEffects)
 
-  sdDifDirections_matrix <- sapply(1:length(taus), function(a){
-    results[[a]]$fixedEffects_sd
-  })
+  sdDifDirections_matrix <- sapply(results, function(a) a$fixedEffects_sd)
 
   posterior_sigma <- sapply(results, function(a) as.numeric(a$variance))
 
   sigma_draws_matrix <- sapply(results, function(a) a$sigma_draws)
 
-  draws_matrix <- lapply(1:length(taus), function(a){
-    useless_columns <- which(colnames(results[[a]]$beta_draws) == "intnr")
-    final_draws <- results[[1]]$beta_draws[,-useless_columns]
+  draws_matrix <- lapply(results, function(a){
+    useless_columns <- which(colnames(a$beta_draws) == "intnr")
+    final_draws <- a$beta_draws[, -useless_columns]
     colnames(final_draws) <- varnames
     final_draws
   })
+
+  splines_matrix <- lapply(results, function(a) a$spline_estimates)
 
   betaDifDirections <- lapply(unique_taus, function(a){
     positions_list <- which(taus == a)
@@ -168,9 +174,22 @@ get_results <- function(path_folder, model_name = "bayesx.estim"){
     })
   })
 
+  spline_estimates_DifDirections <- NULL
+  if (splines){
+    spline_estimates_DifDirections <- lapply(unique_taus, function(a){
+      positions_list <- which(taus == a)
+      splines_sublist <- splines_matrix[positions_list]
+      directions_list <- directions_ind[positions_list]
+      lapply(1:numbDir, function(b){
+        splines_sublist[which(directions_list == b)]
+      })
+    })
+  }
+
   list(Y = Y, taus = unique_taus, betaDifDirections = betaDifDirections,
        directions = t(vectorDir), orthBases = t(orthBasis), sdDifDirections =
          sdDifDirections, beta_draws_DifDirections = beta_draws_DifDirections,
        sigma_difDirections = sigma_difDirections,
-       sigma_draws_DifDirections = sigma_draws_DifDirections)
+       sigma_draws_DifDirections = sigma_draws_DifDirections,
+       spline_estimates_DifDirections = spline_estimates_DifDirections)
 }

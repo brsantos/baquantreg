@@ -6,42 +6,49 @@
 \usage{
 drawQuantileRegion(model, ngridpoints = 100, xValue = 1,
   paintedArea = TRUE, comparison = FALSE, result_folder = FALSE,
-  path_folder = NULL, ...)
+  path_folder = NULL, splines_part = FALSE, wValue = NULL, ...)
 }
 \arguments{
-\item{model}{This is an object of the class \code{multBQR}, produced by a call to the
-\code{multBayesQR} function.}
+\item{model}{This is an object of the class \code{multBQR}, produced by a
+call to the \code{multBayesQR} function.}
 
-\item{ngridpoints}{Number of grid points considered to build this quantile region,
-where a thorough search will look for the specified region, given the estimates
-for several directions. Default is 100, that will produce a grid with 10.000 points
-in the observed range of the data.}
+\item{ngridpoints}{Number of grid points considered to build this quantile
+region, where a thorough search will look for the specified region, given
+the estimates for several directions. Default is 100, that will produce a
+grid with 10.000 points in the observed range of the data.}
 
-\item{xValue}{Fixed value of the predictor variables. Default value is 1 when there is
-only the intercept. If there is the interest in comparing the quantile regions
-for different values of predictors, it must used with a list of values for the
-predictors.}
+\item{xValue}{Fixed value of the predictor variables. Default value is 1
+when there is only the intercept. If there is the interest in comparing the
+quantile regions for different values of predictors, it must used with a
+list of values for the predictors.}
 
-\item{paintedArea}{If TRUE, it will plot the data points and the quantile region layer
-over the points, for each tau, in different plots. If FALSE, it will produce one
-plot showing showing all quantile regions for the different quantiles.}
+\item{paintedArea}{If TRUE, it will plot the data points and the quantile
+region layer over the points, for each tau, in different plots. If FALSE,
+it will produce one plot showing showing all quantile regions for the
+different quantiles.}
 
-\item{comparison}{Only considered when \code{paintedArea = FALSE}, if TRUE then
-it will plot comparisons of quantile regions for different values of \code{xvalue}.}
+\item{comparison}{Only considered when \code{paintedArea = FALSE}, if TRUE
+then it will plot comparisons of quantile regions for different values of
+\code{xvalue}.}
 
-\item{result_folder}{Logical value determining whether all estimates are stored in a
-folder produced by a BayesX call. Default is FALSE.}
+\item{result_folder}{Logical value determining whether all estimates are
+stored in a folder produced by a BayesX call. Default is FALSE.}
 
-\item{path_folder}{If \code{result_folder = TRUE}, then one must inform the path
-where all results are stored.}
+\item{path_folder}{If \code{result_folder = TRUE}, then one must inform the
+path where all results are stored.}
+
+\item{splines_part}{Logical value to indicate whether there are splines
+terms in the equation to draw the quantile contours.}
+
+\item{wValue}{Fixed value to be plugged in the spline part of the equation.}
 
 \item{...}{Other parameters for \code{summary.multBQR}.}
 }
 \value{
-A ggplot with the quantile regions based on Bayesian quantile regression
-model estimates.
+A ggplot with the quantile regions based on Bayesian quantile
+ regression model estimates.
 }
 \description{
-This function draws plots of the quantile region based on multiple-output quantile
-regression models.
+This function draws plots of the quantile region based on multiple-output
+ quantile regression models.
 }

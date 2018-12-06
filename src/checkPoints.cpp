@@ -7,7 +7,8 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 arma::mat checkPoints(arma::colvec gridy1, arma::colvec gridy2,
                       arma::mat directions, arma::mat orthBasis,
-                      arma::mat fullestimates, arma::colvec xvalue){
+                      arma::mat fullestimates, arma::colvec xvalue,
+                      bool splines, arma::colvec addterm){
 
   int n1 = gridy1.size();
   int n2 = gridy2.size();
@@ -34,6 +35,7 @@ arma::mat checkPoints(arma::colvec gridy1, arma::colvec gridy2,
                                   orthBasis(count, 1) * gridy2(j)) +
                                   arma::as_scalar(xvalue.t() *
                                   estimates.col(count));
+        if (splines) righthand = righthand + addterm(count);
         if (lefthand < righthand) partcontour = 1;
         else if (count == ndirections - 1){
           checking(k, j) = 1;
