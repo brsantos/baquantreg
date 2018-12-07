@@ -179,8 +179,8 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1,
           rep(taus[a],  2*dim(pointsPlot[[a]])[1] + 1)
         }))))
 
-      g <- ggplot(dataPlot) + theme_bw()
-      g + geom_path(aes(x, y, linetype = factor(taus))) +
+      g <- ggplot() + theme_bw()
+      g + geom_path(data = dataPlot, aes(x, y, linetype = factor(taus))) +
         scale_linetype_discrete(name = expression(tau)) +
         xlab(colnames(Y)[1]) +
         ylab(colnames(Y)[2]) +
@@ -209,8 +209,8 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1,
                              taus = tausPoints,
                              predictors = predictorsType)
 
-      g <- ggplot(dataPlot) + theme_bw()
-      g + geom_path(aes(x, y, linetype = factor(taus), color =
+      g <- ggplot() + theme_bw()
+      g + geom_path(data = dataPlot, aes(x, y, linetype = factor(taus), color =
                           factor(predictors))) +
         scale_linetype_discrete(name = expression(tau)) + xlab(colnames(Y)[1]) +
         ylab(colnames(Y)[2]) + theme(legend.position = 'none')
