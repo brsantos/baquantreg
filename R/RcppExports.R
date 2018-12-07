@@ -5,8 +5,16 @@ BayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, 
     .Call('_baquantreg_BayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, priorVar, hyperSigma, refresh, sigmaSampling, quiet, tobit, recordLat, blocksV, stopOrdering, numOrdered)
 }
 
-checkPoints <- function(gridy1, gridy2, directions, orthBasis, fullestimates, xvalue) {
-    .Call('_baquantreg_checkPoints', PACKAGE = 'baquantreg', gridy1, gridy2, directions, orthBasis, fullestimates, xvalue)
+tpBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, gammaValue, sigmaGamma, link, priorVar, refresh, quiet) {
+    .Call('_baquantreg_tpBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, gammaValue, sigmaGamma, link, priorVar, refresh, quiet)
+}
+
+ziTobitBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, gammaValue, sigmaGamma, link, priorVar, refresh, quiet, burnin) {
+    .Call('_baquantreg_ziTobitBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, gammaValue, sigmaGamma, link, priorVar, refresh, quiet, burnin)
+}
+
+checkPoints <- function(gridy1, gridy2, directions, orthBasis, fullestimates, xvalue, splines, addterm) {
+    .Call('_baquantreg_checkPoints', PACKAGE = 'baquantreg', gridy1, gridy2, directions, orthBasis, fullestimates, xvalue, splines, addterm)
 }
 
 rgigRcpp <- function(chi, psi, lambda) {
@@ -19,13 +27,5 @@ spBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, matDist, la
 
 sppBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, matDist, lambdaVec, lambda, shapeL, rateL, tuneP, indices, m, alphaValue, tuneA, priorVar, quiet, refresh, jitter, includeAlpha, tuneV, kMT, discLambda) {
     .Call('_baquantreg_sppBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, matDist, lambdaVec, lambda, shapeL, rateL, tuneP, indices, m, alphaValue, tuneA, priorVar, quiet, refresh, jitter, includeAlpha, tuneV, kMT, discLambda)
-}
-
-tpBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, gammaValue, sigmaGamma, link, priorVar, refresh, quiet) {
-    .Call('_baquantreg_tpBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, gammaValue, sigmaGamma, link, priorVar, refresh, quiet)
-}
-
-ziTobitBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, gammaValue, sigmaGamma, link, priorVar, refresh, quiet, burnin) {
-    .Call('_baquantreg_ziTobitBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, gammaValue, sigmaGamma, link, priorVar, refresh, quiet, burnin)
 }
 

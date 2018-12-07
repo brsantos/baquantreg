@@ -35,9 +35,57 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// tpBayesQR
+List tpBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::vec betaValue, double sigmaValue, arma::vec vSampleInit, arma::vec gammaValue, double sigmaGamma, int link, double priorVar, int refresh, bool quiet);
+RcppExport SEXP _baquantreg_tpBayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP vSampleInitSEXP, SEXP gammaValueSEXP, SEXP sigmaGammaSEXP, SEXP linkSEXP, SEXP priorVarSEXP, SEXP refreshSEXP, SEXP quietSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type itNum(itNumSEXP);
+    Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type betaValue(betaValueSEXP);
+    Rcpp::traits::input_parameter< double >::type sigmaValue(sigmaValueSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type vSampleInit(vSampleInitSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type gammaValue(gammaValueSEXP);
+    Rcpp::traits::input_parameter< double >::type sigmaGamma(sigmaGammaSEXP);
+    Rcpp::traits::input_parameter< int >::type link(linkSEXP);
+    Rcpp::traits::input_parameter< double >::type priorVar(priorVarSEXP);
+    Rcpp::traits::input_parameter< int >::type refresh(refreshSEXP);
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(tpBayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, gammaValue, sigmaGamma, link, priorVar, refresh, quiet));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ziTobitBayesQR
+List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::colvec gammaValue, double sigmaGamma, int link, double priorVar, int refresh, bool quiet, int burnin);
+RcppExport SEXP _baquantreg_ziTobitBayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP gammaValueSEXP, SEXP sigmaGammaSEXP, SEXP linkSEXP, SEXP priorVarSEXP, SEXP refreshSEXP, SEXP quietSEXP, SEXP burninSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type itNum(itNumSEXP);
+    Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type betaValue(betaValueSEXP);
+    Rcpp::traits::input_parameter< double >::type sigmaValue(sigmaValueSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type gammaValue(gammaValueSEXP);
+    Rcpp::traits::input_parameter< double >::type sigmaGamma(sigmaGammaSEXP);
+    Rcpp::traits::input_parameter< int >::type link(linkSEXP);
+    Rcpp::traits::input_parameter< double >::type priorVar(priorVarSEXP);
+    Rcpp::traits::input_parameter< int >::type refresh(refreshSEXP);
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    Rcpp::traits::input_parameter< int >::type burnin(burninSEXP);
+    rcpp_result_gen = Rcpp::wrap(ziTobitBayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, gammaValue, sigmaGamma, link, priorVar, refresh, quiet, burnin));
+    return rcpp_result_gen;
+END_RCPP
+}
 // checkPoints
-arma::mat checkPoints(arma::colvec gridy1, arma::colvec gridy2, arma::mat directions, arma::mat orthBasis, arma::mat fullestimates, arma::colvec xvalue);
-RcppExport SEXP _baquantreg_checkPoints(SEXP gridy1SEXP, SEXP gridy2SEXP, SEXP directionsSEXP, SEXP orthBasisSEXP, SEXP fullestimatesSEXP, SEXP xvalueSEXP) {
+arma::mat checkPoints(arma::colvec gridy1, arma::colvec gridy2, arma::mat directions, arma::mat orthBasis, arma::mat fullestimates, arma::colvec xvalue, bool splines, arma::colvec addterm);
+RcppExport SEXP _baquantreg_checkPoints(SEXP gridy1SEXP, SEXP gridy2SEXP, SEXP directionsSEXP, SEXP orthBasisSEXP, SEXP fullestimatesSEXP, SEXP xvalueSEXP, SEXP splinesSEXP, SEXP addtermSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -47,7 +95,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type orthBasis(orthBasisSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type fullestimates(fullestimatesSEXP);
     Rcpp::traits::input_parameter< arma::colvec >::type xvalue(xvalueSEXP);
-    rcpp_result_gen = Rcpp::wrap(checkPoints(gridy1, gridy2, directions, orthBasis, fullestimates, xvalue));
+    Rcpp::traits::input_parameter< bool >::type splines(splinesSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type addterm(addtermSEXP);
+    rcpp_result_gen = Rcpp::wrap(checkPoints(gridy1, gridy2, directions, orthBasis, fullestimates, xvalue, splines, addterm));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -130,63 +180,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// tpBayesQR
-List tpBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::vec betaValue, double sigmaValue, arma::vec vSampleInit, arma::vec gammaValue, double sigmaGamma, int link, double priorVar, int refresh, bool quiet);
-RcppExport SEXP _baquantreg_tpBayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP vSampleInitSEXP, SEXP gammaValueSEXP, SEXP sigmaGammaSEXP, SEXP linkSEXP, SEXP priorVarSEXP, SEXP refreshSEXP, SEXP quietSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type y(ySEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< int >::type itNum(itNumSEXP);
-    Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type betaValue(betaValueSEXP);
-    Rcpp::traits::input_parameter< double >::type sigmaValue(sigmaValueSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type vSampleInit(vSampleInitSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type gammaValue(gammaValueSEXP);
-    Rcpp::traits::input_parameter< double >::type sigmaGamma(sigmaGammaSEXP);
-    Rcpp::traits::input_parameter< int >::type link(linkSEXP);
-    Rcpp::traits::input_parameter< double >::type priorVar(priorVarSEXP);
-    Rcpp::traits::input_parameter< int >::type refresh(refreshSEXP);
-    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(tpBayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, gammaValue, sigmaGamma, link, priorVar, refresh, quiet));
-    return rcpp_result_gen;
-END_RCPP
-}
-// ziTobitBayesQR
-List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::colvec gammaValue, double sigmaGamma, int link, double priorVar, int refresh, bool quiet, int burnin);
-RcppExport SEXP _baquantreg_ziTobitBayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP gammaValueSEXP, SEXP sigmaGammaSEXP, SEXP linkSEXP, SEXP priorVarSEXP, SEXP refreshSEXP, SEXP quietSEXP, SEXP burninSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type y(ySEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< int >::type itNum(itNumSEXP);
-    Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type betaValue(betaValueSEXP);
-    Rcpp::traits::input_parameter< double >::type sigmaValue(sigmaValueSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type gammaValue(gammaValueSEXP);
-    Rcpp::traits::input_parameter< double >::type sigmaGamma(sigmaGammaSEXP);
-    Rcpp::traits::input_parameter< int >::type link(linkSEXP);
-    Rcpp::traits::input_parameter< double >::type priorVar(priorVarSEXP);
-    Rcpp::traits::input_parameter< int >::type refresh(refreshSEXP);
-    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    Rcpp::traits::input_parameter< int >::type burnin(burninSEXP);
-    rcpp_result_gen = Rcpp::wrap(ziTobitBayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, gammaValue, sigmaGamma, link, priorVar, refresh, quiet, burnin));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_baquantreg_BayesQR", (DL_FUNC) &_baquantreg_BayesQR, 18},
-    {"_baquantreg_checkPoints", (DL_FUNC) &_baquantreg_checkPoints, 6},
+    {"_baquantreg_tpBayesQR", (DL_FUNC) &_baquantreg_tpBayesQR, 14},
+    {"_baquantreg_ziTobitBayesQR", (DL_FUNC) &_baquantreg_ziTobitBayesQR, 14},
+    {"_baquantreg_checkPoints", (DL_FUNC) &_baquantreg_checkPoints, 8},
     {"_baquantreg_rgigRcpp", (DL_FUNC) &_baquantreg_rgigRcpp, 3},
     {"_baquantreg_spBayesQR", (DL_FUNC) &_baquantreg_spBayesQR, 21},
     {"_baquantreg_sppBayesQR", (DL_FUNC) &_baquantreg_sppBayesQR, 25},
-    {"_baquantreg_tpBayesQR", (DL_FUNC) &_baquantreg_tpBayesQR, 14},
-    {"_baquantreg_ziTobitBayesQR", (DL_FUNC) &_baquantreg_ziTobitBayesQR, 14},
     {NULL, NULL, 0}
 };
 
