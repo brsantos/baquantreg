@@ -15,7 +15,7 @@ get_results <- function(path_folder, model_name = "bayesx.estim",
   # Considering taus with at most two decimal places
   start_positions <- regexpr("tau_0.[0-9]+", folders)
   length_tau <- attr(regexpr("tau_0.[0-9]+", folders), 'match.length')
-  taus <- as.numeric(ifelse(length_tau == 7, substr(folders, start_positions +4,
+  taus <- as.numeric(ifelse(length_tau == 7, substr(folders, start_positions+4,
                                                     start_positions + 6),
                             substr(folders, start_positions + 4,
                                    start_positions + 7)))

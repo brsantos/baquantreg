@@ -106,14 +106,21 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1,
                                         xValue, splines_part, spline_values)
 
       y1_ind <- which(rowSums(checkPoints_values) > 0)
-      y1_inside <- seqY1[y1_ind]
+      if(length(y1_ind) > 0){
+        y1_inside <- seqY1[y1_ind]
 
-      sub_checkPoints <- checkPoints_values[y1_ind, ]
+        sub_checkPoints <- checkPoints_values[y1_ind, ]
 
-      y2_inside_max <- apply(sub_checkPoints, 1, function(a)
-        seqY2[max(which(a == 1))])
-      y2_inside_min <- apply(sub_checkPoints, 1, function(a)
-        seqY2[min(which(a == 1))])
+        y2_inside_max <- apply(sub_checkPoints, 1, function(a)
+          seqY2[max(which(a == 1))])
+        y2_inside_min <- apply(sub_checkPoints, 1, function(a)
+          seqY2[min(which(a == 1))])
+      }
+      else{
+        y1_inside <- NA
+        y2_inside_min <- NA
+        y2_inside_max <- NA
+      }
 
       data.frame(y1 = y1_inside,
                  min = y2_inside_min,
@@ -127,14 +134,22 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1,
                                           b)
 
         y1_ind <- which(rowSums(checkPoints_values) > 0)
-        y1_inside <- seqY1[y1_ind]
 
-        sub_checkPoints <- checkPoints_values[y1_ind, ]
+        if(length(y1_ind) > 0){
+          y1_inside <- seqY1[y1_ind]
 
-        y2_inside_max <- apply(sub_checkPoints, 1, function(a)
-          seqY2[max(which(a == 1))])
-        y2_inside_min <- apply(sub_checkPoints, 1, function(a)
-          seqY2[min(which(a == 1))])
+          sub_checkPoints <- checkPoints_values[y1_ind, ]
+
+          y2_inside_max <- apply(sub_checkPoints, 1, function(a)
+            seqY2[max(which(a == 1))])
+          y2_inside_min <- apply(sub_checkPoints, 1, function(a)
+            seqY2[min(which(a == 1))])
+        }
+        else{
+          y1_inside <- NA
+          y2_inside_min <- NA
+          y2_inside_max <- NA
+        }
 
         data.frame(y1 = y1_inside,
                    min = y2_inside_min,
