@@ -95,13 +95,15 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1,
 
   pointsPlot <-  lapply(1:ntaus, function(a){
     if (!comparison){
-     spline_values <- sapply(1:number_directions, function(aa){
-       estimates_direction <- splines_estimates[[a]][[aa]][[1]]
-       distances <- abs(wValue - estimates_direction$W)
-       estimates_direction$pmean[which(distances == min(distances))[1]]
-     })
+      if (splines_part) spline_values <- sapply(1:number_directions,
+                                                function(aa){
+            estimates_direction <- splines_estimates[[a]][[aa]][[1]]
+            distances <- abs(wValue - estimates_direction$W)
+            estimates_direction$pmean[which(distances == min(distances))[1]]
+      })
+      else spline_values <- rep(0, number_directions)
 
-     checkPoints_values <- checkPoints(seqY1, seqY2, t(directions),
+      checkPoints_values <- checkPoints(seqY1, seqY2, t(directions),
                                         t(orthBases), betaDifDirections[[a]],
                                         xValue, splines_part, spline_values)
 
