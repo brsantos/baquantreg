@@ -72,7 +72,7 @@ get_results <- function(path_folder, model_name = "bayesx.estim",
     spline_estimates <- NULL
     if (splines){
       spline_estimates <- utils::read.table(paste0(path_folder, '/', a,
-                                                   '/bayesx.estim_f_W_pspline.res'),
+                                              '/bayesx.estim_f_W_pspline.res'),
                                             head = TRUE)[, 2:3]
     }
 

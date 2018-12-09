@@ -27,15 +27,19 @@
 #' @param splines_part  Logical value to indicate whether there are splines
 #'  terms in the equation to draw the quantile contours.
 #' @param wValue Fixed value to be plugged in the spline part of the equation.
+#' @param print_plot Logical determining whether plot should be printed or
+#'  data with coordinantes should be returned. Only checked when paintedArea is
+#'  FALSE. Default is TRUE.
 #' @param ... Other parameters for \code{summary.multBQR}.
 #' @return A ggplot with the quantile regions based on Bayesian quantile
 #'  regression model estimates.
 #' @useDynLib baquantreg
 
 drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1,
-                               paintedArea = TRUE, comparison = FALSE,
+                               paintedArea = FALSE, comparison = FALSE,
                                result_folder = FALSE, path_folder = NULL,
-                               splines_part = FALSE, wValue = NULL, ...){
+                               splines_part = FALSE, wValue = NULL,
+                               print_plot = TRUE, ...){
 
   if (!result_folder){
     directions <- sapply(model$modelsDir, function(a) a$direction)
@@ -181,12 +185,15 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1,
           rep(taus[a],  2*dim(pointsPlot[[a]])[1] + 1)
         }))))
 
-      g <- ggplot() + theme_bw()
-      g + geom_path(data = dataPlot, aes(x, y, linetype = factor(taus))) +
-        scale_linetype_discrete(name = expression(tau)) +
-        xlab(colnames(Y)[1]) +
-        ylab(colnames(Y)[2]) +
-        theme(legend.position = 'none')
+      if(print_plot){
+        g <- ggplot() + theme_bw()
+        g + geom_path(data = dataPlot, aes(x, y, linetype = factor(taus))) +
+          scale_linetype_discrete(name = expression(tau)) +
+          xlab(colnames(Y)[1]) +
+          ylab(colnames(Y)[2]) +
+          theme(legend.position = 'none')
+      }
+      else dataPlot
     }
     else{
       xPoints <- as.numeric(unlist(sapply(pointsPlot, sapply, function(a){
@@ -211,11 +218,14 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1,
                              taus = tausPoints,
                              predictors = predictorsType)
 
-      g <- ggplot() + theme_bw()
-      g + geom_path(data = dataPlot, aes(x, y, linetype = factor(taus), color =
-                          factor(predictors))) +
-        scale_linetype_discrete(name = expression(tau)) + xlab(colnames(Y)[1]) +
-        ylab(colnames(Y)[2]) + theme(legend.position = 'none')
+      if(print_plot){
+        g <- ggplot() + theme_bw()
+        g + geom_path(data = dataPlot, aes(x, y, linetype = factor(taus), color =
+                                             factor(predictors))) +
+          scale_linetype_discrete(name = expression(tau)) + xlab(colnames(Y)[1]) +
+          ylab(colnames(Y)[2]) + theme(legend.position = 'none')
+      }
+      else dataPlot
     }
   }
 }

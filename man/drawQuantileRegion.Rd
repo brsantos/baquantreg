@@ -5,8 +5,9 @@
 \title{Multiple-output Bayesian quantile regression model}
 \usage{
 drawQuantileRegion(model, ngridpoints = 100, xValue = 1,
-  paintedArea = TRUE, comparison = FALSE, result_folder = FALSE,
-  path_folder = NULL, splines_part = FALSE, wValue = NULL, ...)
+  paintedArea = FALSE, comparison = FALSE, result_folder = FALSE,
+  path_folder = NULL, splines_part = FALSE, wValue = NULL,
+  print_plot = TRUE, ...)
 }
 \arguments{
 \item{model}{This is an object of the class \code{multBQR}, produced by a
@@ -41,6 +42,10 @@ path where all results are stored.}
 terms in the equation to draw the quantile contours.}
 
 \item{wValue}{Fixed value to be plugged in the spline part of the equation.}
+
+\item{print_plot}{Logical determining whether plot should be printed or
+data with coordinantes should be returned. Only checked when paintedArea is
+FALSE. Default is TRUE.}
 
 \item{...}{Other parameters for \code{summary.multBQR}.}
 }
