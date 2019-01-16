@@ -17,14 +17,16 @@ double funG(double y, void *params){
   double lambda = (p->lambda);
   double m = (p->m);
 
-  return 0.5 * beta * pow(y,3) - pow(y,2) * (0.5 * beta * m + lambda + 1) + y * ((lambda - 1) * m - 0.5 * beta) + 0.5 * beta * m;
+  return 0.5 * beta * pow(y,3) - pow(y,2) * (0.5 * beta * m + lambda + 1) +
+    y * ((lambda - 1) * m - 0.5 * beta) + 0.5 * beta * m;
 }
 
 // [[Rcpp::export]]
 double rgigRcpp(double chi, double psi, double lambda){
   double alpha = sqrt(psi/chi);
   double beta = sqrt(psi * chi);
-  double m = std::max((lambda - 1 + sqrt(pow(lambda - 1,2) + pow(beta,2)))/beta, 1e-8);
+  double m = std::max((lambda - 1 + sqrt(pow(lambda - 1,2) + pow(beta,2)))/beta,
+                      1e-8);
 
   const gsl_root_fsolver_type *T1;
   const gsl_root_fsolver_type *T2;
@@ -80,8 +82,10 @@ double rgigRcpp(double chi, double psi, double lambda){
   while (status2 == GSL_CONTINUE);
   gsl_root_fsolver_free (s2);
 
-  double a = (yP - m) * pow(yP/m,0.5 * (lambda - 1)) * exp(-0.25 * beta * (yP + 1/yP - m - 1/m));
-  double b = (yM - m) * pow(yM/m,0.5 * (lambda - 1)) * exp(-0.25 * beta * (yM + 1/yM - m - 1/m));
+  double a = (yP - m) * pow(yP/m,0.5 * (lambda - 1)) * exp(-0.25 * beta *
+              (yP + 1/yP - m - 1/m));
+  double b = (yM - m) * pow(yM/m,0.5 * (lambda - 1)) * exp(-0.25 * beta *
+              (yM + 1/yM - m - 1/m));
   double c = -0.25 * beta * (m + 1/m) + 0.5 * (lambda - 1) * log(m);
 
   double output;
@@ -93,7 +97,7 @@ double rgigRcpp(double chi, double psi, double lambda){
     double R2 = runif(1)[0];
     Y = m + a * R2/R1 + b * (1 - R2)/R1;
     if (Y > 0) {
-      if (-log(R1) >= -0.5 * (lambda - 1) * log(Y) + 0.25 * beta * (Y + 1/Y) + c){
+      if (-log(R1) >= -0.5 * (lambda - 1) * log(Y) + 0.25 *beta* (Y + 1/Y) + c){
         needValue = 0;
       }
     }
