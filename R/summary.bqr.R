@@ -23,12 +23,12 @@ summary.bqr <- function (object, burnin = 1000, ci = 0.95, mult = FALSE, ...)
   if (class(object) != "bqr")
     stop("Use the correct summary method for your model")
 
-  numIt <- dim(object$modelsTau[[1]]$BetaSample)[1]
+  numIt <- dim(object$tau[[1]]$BetaSample)[1]
 
   X <- stats::model.matrix(object$formula, object$data)
 
   output <- list()
-  output$BetaPosterior <- lapply(object$modelsTau, function(a){
+  output$BetaPosterior <- lapply(object$tau, function(a){
 
     if (!mult) vnames <- colnames(X)
     else vnames <- c(colnames(X), 'directionX')
