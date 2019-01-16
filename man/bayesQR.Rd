@@ -7,8 +7,7 @@
 bayesQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
   sigmaValue = 1, vSampleInit = NULL, priorVar = 100,
   hyperSigma = c(0.1, 0.1), refresh = 100, sigmaSampling = TRUE,
-  quiet = T, tobit = FALSE, recordLat = FALSE, blocksV = 0,
-  stopOrdering = FALSE, numOrdered = itNum/2)
+  quiet = T, tobit = FALSE, recordLat = FALSE, choice_lat = TRUE)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~
@@ -56,20 +55,7 @@ the parameter without this inputation process.}
 \item{recordLat}{If TRUE, it will keep the Markov chain samples for the
 latent variable. Default is FALSE.}
 
-\item{blocksV}{Number of blocks used to sample in the posterior distribution
-of the latent variable. If 0, then blocking is not used and all latent
-observations are sampled from. Default value is 0.}
-
-\item{stopOrdering}{If TRUE, it will stop ordering the weighted residuals
-in order to update the states of the latent variables, and will consider
-the ordering of some particular state of the chain; if FALSE, for every
-iteration of the MCMC procedure, it will keep reordering these residual
-terms. Default is FALSE.}
-
-\item{numOrdered}{The number of iterations that will be used to order
-the weighted residuals needed for the update of the posterior
-distribution of the latent variables. Default is half the size of
-the MCMC chain.}
+\item{choice_lat}{choice for posterior draws for latent variable.}
 }
 \value{
 A list with the chains of all parameters of interest.

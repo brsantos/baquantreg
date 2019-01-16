@@ -43,20 +43,9 @@
 #'  parallel models when more than one direction is considered.
 #' @param recordLat If TRUE, it will keep the Markov chain samples for the
 #'  latent variable. Default is FALSE.
-#' @param blocksV Number of blocks used to sample in the posterior distribution
-#'  of the latent variable. If 0, then blocking is not used and all latent
-#'  observations are sampled from. Default value is 0.
-#' @param stopOrdering If TRUE, it will stop ordering the weighted residuals
-#'  in order to update the states of the latent variables, and will consider
-#'  the ordering of some particular state of the chain; if FALSE, for every
-#'  iteration of the MCMC procedure, it will keep reordering these residual
-#'  terms. Default is FALSE.
-#' @param numOrdered The number of iterations that will be used to order
-#'  the weighted residuals needed for the update of the posterior
-#'  distribution of the latent variables. Default is half the size of
-#'  the MCMC chain.
 #' @param outfile argument to be passed to \code{bayesx.control}, in order
 #'  to define a directory where all output files should be saved.
+#' @param choice_lat choice for posterior draws for latent variable.
 #' @param ... arguments passed to \code{bayesx.control}.
 #' @return A list with the chains of all parameters of interest.
 #' @useDynLib baquantreg
@@ -69,9 +58,8 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
                         priorVar = 100, hyperSigma = c(0.1, 0.1),
                         refresh = 100, bayesx = TRUE, sigmaSampling = TRUE,
                         quiet = T, tobit = FALSE, numCores = 1,
-                        recordLat = FALSE, blocksV = 0,
-                        stopOrdering = FALSE, numOrdered = itNum/2,
-                        outfile = NULL, ...){
+                        recordLat = FALSE, outfile = NULL, choice_lat = TRUE,
+                        ...){
 
   if (length(directionPoint) > 1){
     vectorDir <- directionPoint
@@ -148,8 +136,7 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
                 vSampleInit = vSampleInit, priorVar = priorVar,
                 hyperSigma = hyperSigma, refresh = refresh,
                 sigmaSampling = sigmaSampling, quiet = quiet, tobit = tobit,
-                recordLat = recordLat, blocksV = blocksV,
-                stopOrdering = stopOrdering, numOrdered = numOrdered)
+                recordLat = recordLat, choice_lat = choice_lat)
       }
       result
     })
