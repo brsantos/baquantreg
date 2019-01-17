@@ -1,19 +1,12 @@
 #include <RcppArmadillo.h>
-#include <RcppGSL.h>
-
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_roots.h>
 
 #include "helperTN.h"
 #include "helper1.h"
-#include "helperGIG.h"
 #include "helperRD.h"
 
 using namespace Rcpp;   // inline does that for us already
 
 // [[Rcpp::depends(RcppArmadillo)]]
-// [[Rcpp::depends(RcppGSL)]]
 
 // [[Rcpp::export]]
 List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
@@ -171,7 +164,7 @@ List ziTobitBayesQR(double tau, arma::colvec y, arma::mat X, int itNum,
         for(int o = 0; o < n; o++){
           if (varInd(o)==censInd(o)){
             delta2[o] = std::max(delta2[o], 1e-10);
-            zSample[o] = rgigRcpp(delta2[o], gama2, lambda);
+            zSample[o] = rinvgauss_rcpp(pow(gama2/delta2[o], 0.5), gama2);
           }
         }
 

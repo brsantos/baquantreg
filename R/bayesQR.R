@@ -34,7 +34,6 @@
 #'  the parameter without this inputation process.
 #' @param recordLat If TRUE, it will keep the Markov chain samples for the
 #'  latent variable. Default is FALSE.
-#' @param choice_lat choice for posterior draws for latent variable.
 #' @return A list with the chains of all parameters of interest.
 #' @references Kozumi and Kobayashi (2011) - Gibbs sampling methods for
 #'  Bayesian quantile regression. Journal of Statistical Computation and
@@ -49,8 +48,7 @@ bayesQR <- function(formula, tau = 0.5, data, itNum, thin=1,
                     priorVar = 100, hyperSigma = c(0.1, 0.1),
                     refresh = 100, sigmaSampling = TRUE,
                     quiet = T,
-                    tobit = FALSE, recordLat = FALSE,
-                    choice_lat = TRUE){
+                    tobit = FALSE, recordLat = FALSE){
 
   y <- as.numeric(stats::model.extract(stats::model.frame(formula, data), 'response'))
   X <- stats::model.matrix(formula, data)
@@ -66,7 +64,7 @@ bayesQR <- function(formula, tau = 0.5, data, itNum, thin=1,
             hyperSigma = hyperSigma,
             refresh = refresh, sigmaSampling = sigmaSampling,
             quiet = quiet, tobit = tobit,
-            recordLat = recordLat, choice_lat = choice_lat)
+            recordLat = recordLat)
   })
 
   output$tau <- tau

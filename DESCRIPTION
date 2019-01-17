@@ -14,13 +14,11 @@ Depends:
 LazyData: TRUE
 Imports:
     Rcpp (>= 0.12.2),
-    RcppGSL,
     RcppArmadillo (>= 0.4.100.2.1),
     ggplot2, 
     dplyr, 
     R2BayesX,
     Formula
 LinkingTo: Rcpp,
-    RcppArmadillo,
-    RcppGSL
+    RcppArmadillo
 RoxygenNote: 6.0.1

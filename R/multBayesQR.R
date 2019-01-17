@@ -45,7 +45,6 @@
 #'  latent variable. Default is FALSE.
 #' @param outfile argument to be passed to \code{bayesx.control}, in order
 #'  to define a directory where all output files should be saved.
-#' @param choice_lat choice for posterior draws for latent variable.
 #' @param ... arguments passed to \code{bayesx.control}.
 #' @return A list with the chains of all parameters of interest.
 #' @useDynLib baquantreg
@@ -58,8 +57,7 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
                         priorVar = 100, hyperSigma = c(0.1, 0.1),
                         refresh = 100, bayesx = TRUE, sigmaSampling = TRUE,
                         quiet = T, tobit = FALSE, numCores = 1,
-                        recordLat = FALSE, outfile = NULL, choice_lat = TRUE,
-                        ...){
+                        recordLat = FALSE, outfile = NULL, ...){
 
   if (length(directionPoint) > 1){
     vectorDir <- directionPoint
@@ -136,7 +134,7 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
                 vSampleInit = vSampleInit, priorVar = priorVar,
                 hyperSigma = hyperSigma, refresh = refresh,
                 sigmaSampling = sigmaSampling, quiet = quiet, tobit = tobit,
-                recordLat = recordLat, choice_lat = choice_lat)
+                recordLat = recordLat)
       }
       result
     })

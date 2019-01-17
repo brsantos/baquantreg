@@ -2,14 +2,13 @@
 // Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #include <RcppArmadillo.h>
-#include <RcppGSL.h>
 #include <Rcpp.h>
 
 using namespace Rcpp;
 
 // BayesQR
-List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::vec vSampleInit, double priorVar, NumericVector hyperSigma, int refresh, bool sigmaSampling, bool quiet, bool tobit, bool recordLat, int blocksV, bool stopOrdering, int numOrdered);
-RcppExport SEXP _baquantreg_BayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP vSampleInitSEXP, SEXP priorVarSEXP, SEXP hyperSigmaSEXP, SEXP refreshSEXP, SEXP sigmaSamplingSEXP, SEXP quietSEXP, SEXP tobitSEXP, SEXP recordLatSEXP, SEXP blocksVSEXP, SEXP stopOrderingSEXP, SEXP numOrderedSEXP) {
+List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::vec vSampleInit, double priorVar, NumericVector hyperSigma, int refresh, bool sigmaSampling, bool quiet, bool tobit, bool recordLat);
+RcppExport SEXP _baquantreg_BayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP vSampleInitSEXP, SEXP priorVarSEXP, SEXP hyperSigmaSEXP, SEXP refreshSEXP, SEXP sigmaSamplingSEXP, SEXP quietSEXP, SEXP tobitSEXP, SEXP recordLatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -28,10 +27,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     Rcpp::traits::input_parameter< bool >::type tobit(tobitSEXP);
     Rcpp::traits::input_parameter< bool >::type recordLat(recordLatSEXP);
-    Rcpp::traits::input_parameter< int >::type blocksV(blocksVSEXP);
-    Rcpp::traits::input_parameter< bool >::type stopOrdering(stopOrderingSEXP);
-    Rcpp::traits::input_parameter< int >::type numOrdered(numOrderedSEXP);
-    rcpp_result_gen = Rcpp::wrap(BayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, priorVar, hyperSigma, refresh, sigmaSampling, quiet, tobit, recordLat, blocksV, stopOrdering, numOrdered));
+    rcpp_result_gen = Rcpp::wrap(BayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, vSampleInit, priorVar, hyperSigma, refresh, sigmaSampling, quiet, tobit, recordLat));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -98,19 +94,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type splines(splinesSEXP);
     Rcpp::traits::input_parameter< arma::colvec >::type addterm(addtermSEXP);
     rcpp_result_gen = Rcpp::wrap(checkPoints(gridy1, gridy2, directions, orthBasis, fullestimates, xvalue, splines, addterm));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rgigRcpp
-double rgigRcpp(double chi, double psi, double lambda);
-RcppExport SEXP _baquantreg_rgigRcpp(SEXP chiSEXP, SEXP psiSEXP, SEXP lambdaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type chi(chiSEXP);
-    Rcpp::traits::input_parameter< double >::type psi(psiSEXP);
-    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(rgigRcpp(chi, psi, lambda));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -182,11 +165,10 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_baquantreg_BayesQR", (DL_FUNC) &_baquantreg_BayesQR, 18},
+    {"_baquantreg_BayesQR", (DL_FUNC) &_baquantreg_BayesQR, 15},
     {"_baquantreg_tpBayesQR", (DL_FUNC) &_baquantreg_tpBayesQR, 14},
     {"_baquantreg_ziTobitBayesQR", (DL_FUNC) &_baquantreg_ziTobitBayesQR, 14},
     {"_baquantreg_checkPoints", (DL_FUNC) &_baquantreg_checkPoints, 8},
-    {"_baquantreg_rgigRcpp", (DL_FUNC) &_baquantreg_rgigRcpp, 3},
     {"_baquantreg_spBayesQR", (DL_FUNC) &_baquantreg_spBayesQR, 21},
     {"_baquantreg_sppBayesQR", (DL_FUNC) &_baquantreg_sppBayesQR, 25},
     {NULL, NULL, 0}

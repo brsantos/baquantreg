@@ -1,19 +1,12 @@
 #include <RcppArmadillo.h>
-#include <RcppGSL.h>
-
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_roots.h>
 
 #include "helper1.h"
-#include "helperGIG.h"
 #include "helperRD.h"
 #include "helperTN.h"
 
 using namespace Rcpp;
 
 // [[Rcpp::depends(RcppArmadillo)]]
-// [[Rcpp::depends(RcppGSL)]]
 
 // [[Rcpp::export]]
 List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
@@ -21,8 +14,7 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
                  arma::vec vSampleInit, double priorVar,
                  NumericVector hyperSigma, int refresh,
                  bool sigmaSampling,
-                 bool quiet, bool tobit, bool recordLat,
-                 int blocksV, bool stopOrdering, int numOrdered){
+                 bool quiet, bool tobit, bool recordLat){
 
   RNGScope scope;
 
@@ -103,48 +95,9 @@ List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin,
       delta2 = diagvec((1/(psi2*sigmaValue)) * diagmat(yS - aux) *
         diagmat(yS - aux));
 
-      if(blocksV == 0){
-        for(int o = 0; o < n; o++){
-          delta2[o] = std::max(delta2[o], 1e-8);
-          zSample[o] = rgigRcpp(delta2[o], gama2, lambda);
-        }
-      }
-      else{
-        NumericVector tempVec2 = floor(seq_len(blocksV) * n/blocksV);
-        IntegerVector tempVec = as<IntegerVector>(tempVec2);
-
-        // Reordering terms.
-        if (!stopOrdering) sortRes = arma::sort_index(delta2);
-        else if (stopOrdering && k < numOrdered) sortRes = arma::sort_index(delta2);
-        // X = X.rows(sortRes);
-        // yS = yS(sortRes);
-        // delta2 = delta2(sortRes);
-        // aux = aux(sortRes);
-
-        for(int kk = 0; kk < blocksV; kk++){
-          double zSampleAux;
-          double delta_aux = 0.0;
-          int oo, beg_span;
-          if (kk == 0){
-            oo = 0;
-            beg_span = 0;
-          }
-          else{
-            oo = tempVec[kk - 1];
-            beg_span = tempVec[kk - 1];
-          }
-
-          int range = tempVec[kk] - beg_span;
-
-          while (oo < tempVec[kk]){
-            delta_aux = delta_aux + std::max(delta2(sortRes(oo)), 1e-8);
-            oo++;
-          }
-
-          zSampleAux = rgigRcpp(delta_aux/range, gama2, lambda);
-          zSample.elem(sortRes(arma::span(beg_span, tempVec[kk]-1))).fill(zSampleAux);
-          // zSample(sortRes(arma::span(beg_span, tempVec2[kk] - 1))) = arma::ones<arma::vec>(range) * zSampleAux;
-        }
+      for(int o = 0; o < n; o++){
+        delta2[o] = std::max(delta2[o], 1e-8);
+        zSample[o] = rinvgauss_rcpp(pow(gama2/delta2[o], 0.5), gama2);
       }
 
       if (sigmaSampling){

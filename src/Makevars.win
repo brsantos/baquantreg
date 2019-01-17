@@ -1,14 +1,1 @@
-
-# Use gsl headers and libraries in LOCAL_SOFT or from downloaded gsl
-BAQUANTREG_LOCAL_SOFT=$(shell "${R_HOME}/bin/R" CMD config LOCAL_SOFT)
-ifeq ($(wildcard "${BAQUANTREG_LOCAL_SOFT}/include/gsl/gsl_errno.h"),)
-ifneq ($(wildcard gsl/include/gsl/gsl_errno.h),)
-BAQUANTREG_GSL_LIB = -L"gsl/lib$(R_ARCH)"
-BAQUANTREG_GSL_INCLUDE = -Igsl/include
-endif
-endif
-
-PKG_CFLAGS = -I. -Imisc -Imodels $(SIMINF_GSL_INCLUDE) 
-
-PKG_LIBS = $(BAQUANTREG_GSL_LIB) -lm -lgsl -lgslcblas
-
+#

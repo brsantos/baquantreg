@@ -1,5 +1,4 @@
 #include <RcppArmadillo.h>
-#include <RcppGSL.h>
 
 #include "helperLV.h"
 #include "helperRD.h"

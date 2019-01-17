@@ -8,8 +8,7 @@ multBayesQR(response, formulaPred, directionPoint, tau = 0.5, dataFile,
   itNum = 2000, burnin, thin = 1, betaValue = NULL, sigmaValue = 1,
   vSampleInit = NULL, priorVar = 100, hyperSigma = c(0.1, 0.1),
   refresh = 100, bayesx = TRUE, sigmaSampling = TRUE, quiet = T,
-  tobit = FALSE, numCores = 1, recordLat = FALSE, outfile = NULL,
-  choice_lat = TRUE, ...)
+  tobit = FALSE, numCores = 1, recordLat = FALSE, outfile = NULL, ...)
 }
 \arguments{
 \item{response}{Names of response variables}
@@ -75,8 +74,6 @@ latent variable. Default is FALSE.}
 
 \item{outfile}{argument to be passed to \code{bayesx.control}, in order
 to define a directory where all output files should be saved.}
-
-\item{choice_lat}{choice for posterior draws for latent variable.}
 
 \item{...}{arguments passed to \code{bayesx.control}.}
 }

@@ -32,3 +32,16 @@ double Flaplace (double predictor, double tau, double sigma){
   else output = 1 - (1-tau)*exp((tau/sigma)*predictor);
   return output;
 }
+
+double rinvgauss_rcpp(double mu, double lambda){
+  double Y = pow(rnorm(1, 0.0, 1.0)[0], 2.0);
+  double dispersion = 1/lambda;
+  double Yphi = Y * dispersion * mu;
+  double X1, out, firstroot = runif(1)[0];
+  if (Yphi > 5e+5) X1 = 1/Yphi;
+  else X1 = 1 + Yphi/2 * (1 - pow(1 + 4/Yphi, 0.5));
+  if (firstroot < 1/(1 + X1))  out = mu * X1;
+  else out = mu * (1 / X1);
+  return 1/out;
+}
+
