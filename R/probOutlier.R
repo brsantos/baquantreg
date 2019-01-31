@@ -32,30 +32,25 @@ probOutlier <- function(object, burnin = 50, plotProb = TRUE,
   if (all.obs) seqObs <- 1:nobs
   else seqObs <- obs
 
-  print("I'm using this function")
-
-  # prob <- sapply(object$chains, function(a){
-  #   sapply(seqObs, function(b){
-  #     maxValues <- apply(a$vSample[-c(1:burnin),-b], 2, max)
-  #     vSample <- a$vSample[-c(1:burnin), b]
-  #     mean(sapply(maxValues, function(c){
-  #       sum(vSample > c)/length(vSample)
-  #     }))
-  #   })
-  # })
-
-  ## Changing way of calculating probability
   prob <- sapply(object$chains, function(a){
     sapply(seqObs, function(b){
-      chainOthers <- a$vSample[-c(1:burnin),-b]
+      maxValues <- apply(a$vSample[-c(1:burnin),-b], 2, max)
       vSample <- a$vSample[-c(1:burnin), b]
-      sizeChain <- length(vSample)
-      mean(sapply(1:dim(chainOthers)[2], function(aaa) sum(vSample > chainOthers[,aaa])/sizeChain))
+      mean(sapply(maxValues, function(c){
+        sum(vSample > c)/length(vSample)
+      }))
     })
   })
 
-  print(prob[1])
-
+  ## Changing way of calculating probability
+  # prob <- sapply(object$chains, function(a){
+  #   sapply(seqObs, function(b){
+  #     chainOthers <- a$vSample[-c(1:burnin),-b]
+  #     vSample <- a$vSample[-c(1:burnin), b]
+  #     sizeChain <- length(vSample)
+  #     mean(sapply(1:dim(chainOthers)[2], function(aaa) sum(vSample > chainOthers[,aaa])/sizeChain))
+  #   })
+  # })
 
   plotData <- data.frame(nobs = rep(seqObs, times=length(taus)),
                            values = as.numeric(prob),

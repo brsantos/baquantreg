@@ -16,7 +16,7 @@
 #' @param sigmaValue Initial value for the scale parameter.
 #' @param vSampleInit Initial value for the latent variables.
 #' @param priorVar Value that multiplies a identity matrix in the elicitation
-#' process of the prior variance of the regression parameters.
+#'  process of the prior variance of the regression parameters.
 #' @param hyperSigma Vector of size containing the hyperparameters of the
 #'  inverse gamma distribution for the sigma parameter of the asymmetric
 #'  Laplace distribution. Default is c(0.1, 0.1), which gives a noninformative
