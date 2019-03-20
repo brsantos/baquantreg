@@ -220,10 +220,12 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1,
 
       if(print_plot){
         g <- ggplot() + theme_bw()
-        g + geom_path(data = dataPlot, aes(x, y, linetype = factor(taus), color =
-                                             factor(predictors))) +
-          scale_linetype_discrete(name = expression(tau)) + xlab(colnames(Y)[1]) +
-          ylab(colnames(Y)[2]) + theme(legend.position = 'none')
+        g + geom_path(data = dataPlot, aes(x, y, linetype = factor(taus),
+                                           color = factor(predictors))) +
+          scale_linetype_discrete(name = expression(tau)) +
+          xlab(colnames(Y)[1]) +
+          ylab(colnames(Y)[2]) +
+          theme(legend.position = 'none')
       }
       else dataPlot
     }

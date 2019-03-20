@@ -1,7 +1,7 @@
 ## Organizing the results in a folder
 
 get_results <- function(path_folder, model_name = "bayesx.estim",
-                        splines = FALSE){
+                        splines = FALSE, name_var){
   folders <- list.files(path_folder)
 
   ## Considering at most 999 directions
@@ -72,7 +72,8 @@ get_results <- function(path_folder, model_name = "bayesx.estim",
     spline_estimates <- NULL
     if (splines){
       spline_estimates <- utils::read.table(paste0(path_folder, '/', a,
-                                              '/bayesx.estim_f_W_pspline.res'),
+                                              '/bayesx.estim_f_',
+                                              name_var , '_pspline.res'),
                                             head = TRUE)[, 2:3]
     }
 
