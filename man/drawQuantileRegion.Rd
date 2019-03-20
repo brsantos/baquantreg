@@ -7,7 +7,7 @@
 drawQuantileRegion(model, ngridpoints = 100, xValue = 1,
   paintedArea = FALSE, comparison = FALSE, result_folder = FALSE,
   path_folder = NULL, splines_part = FALSE, wValue = NULL,
-  print_plot = TRUE, ...)
+  print_plot = TRUE, model_name = "bayesx.estim", name_var, ...)
 }
 \arguments{
 \item{model}{This is an object of the class \code{multBQR}, produced by a
@@ -46,6 +46,14 @@ terms in the equation to draw the quantile contours.}
 \item{print_plot}{Logical determining whether plot should be printed or
 data with coordinantes should be returned. Only checked when paintedArea is
 FALSE. Default is TRUE.}
+
+\item{model_name}{When results will be collected in a folder, this should be
+the name of the name considered by BayesX to save all tables. Default is
+'bayesx.estim'.}
+
+\item{name_var}{When there is a nonlinear variable from which one wants to
+consider different values for plotting, this should have the name of the
+variable.}
 
 \item{...}{Other parameters for \code{summary.multBQR}.}
 }

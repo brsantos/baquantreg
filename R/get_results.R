@@ -1,7 +1,6 @@
 ## Organizing the results in a folder
 
-get_results <- function(path_folder, model_name = "bayesx.estim",
-                        splines = FALSE, name_var){
+get_results <- function(path_folder, model_name, splines = FALSE, name_var){
   folders <- list.files(path_folder)
 
   ## Considering at most 999 directions

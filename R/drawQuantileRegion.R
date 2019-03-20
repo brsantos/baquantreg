@@ -30,6 +30,12 @@
 #' @param print_plot Logical determining whether plot should be printed or
 #'  data with coordinantes should be returned. Only checked when paintedArea is
 #'  FALSE. Default is TRUE.
+#' @param model_name When results will be collected in a folder, this should be
+#'  the name of the name considered by BayesX to save all tables. Default is
+#'  'bayesx.estim'.
+#' @param name_var When there is a nonlinear variable from which one wants to
+#'  consider different values for plotting, this should have the name of the
+#'  variable.
 #' @param ... Other parameters for \code{summary.multBQR}.
 #' @return A ggplot with the quantile regions based on Bayesian quantile
 #'  regression model estimates.
@@ -39,7 +45,9 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1,
                                paintedArea = FALSE, comparison = FALSE,
                                result_folder = FALSE, path_folder = NULL,
                                splines_part = FALSE, wValue = NULL,
-                               print_plot = TRUE, ...){
+                               print_plot = TRUE,
+                               model_name = 'bayesx.estim',
+                               name_var, ...){
 
   if (!result_folder){
     directions <- sapply(model$modelsDir, function(a) a$direction)
@@ -75,7 +83,10 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1,
     if (is.null(path_folder))
       stop("You must define a path with all the results")
     else{
-      results <- get_results(path_folder, splines = splines_part)
+      results <- get_results(path_folder,
+                             model_name = model_name,
+                             splines = splines_part,
+                             name_var = name_var)
 
       taus <- results$taus
       ntaus <- length(taus)
