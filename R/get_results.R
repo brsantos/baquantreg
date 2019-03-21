@@ -59,7 +59,7 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var){
     }
 
     variance <- utils::read.table(paste0(path_folder, '/', a, '/',
-                                         model_name, '_scale.res'),
+                                           model_name, '_scale.res'),
                                   head = TRUE)[1]
     dataFile <- utils::read.table(paste0(path_folder, '/', a, '/',
                                          model_name, '.data.raw'),
@@ -75,8 +75,6 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var){
                                               name_var , '_pspline.res'),
                                             head = TRUE)[, 2:3]
     }
-
-
 
     y_response <- dataFile[,'y']
     directionX <- dataFile[, 'directionX']
