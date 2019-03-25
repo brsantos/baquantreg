@@ -4,7 +4,7 @@
 \alias{plot.summary.bqr}
 \title{Plot methods for summary of Bayesian quantile regression models.}
 \usage{
-\method{plot}{summary.bqr}(x, separate = F, sigma = F)
+\method{plot}{summary.bqr}(x, separate = F, sigma = F, ...)
 }
 \arguments{
 \item{x}{This is an object of the class \code{summary.bqr},
@@ -17,6 +17,8 @@ is FALSE.}
 \item{sigma}{if FALSE, it does the plot the posterior estimates for quantile
 regression parameters, and if TRUE, it plots the posterior estimates only
 for sigma. Default is set to FALSE.}
+
+\item{...}{Other \code{plot} arguments.}
 }
 \value{
 A ggplot of the posterior estimates with their credible intervals.

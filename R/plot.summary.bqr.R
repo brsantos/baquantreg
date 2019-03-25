@@ -11,12 +11,13 @@
 #' @param sigma if FALSE, it does the plot the posterior estimates for quantile
 #'  regression parameters, and if TRUE, it plots the posterior estimates only
 #'  for sigma. Default is set to FALSE.
+#' @param ... Other \code{plot} arguments.
 #' @return A ggplot of the posterior estimates with their credible intervals.
 #' @export
 #' @useDynLib baquantreg
 #' @import ggplot2
 
-plot.summary.bqr <- function(x, separate = F, sigma = F){
+plot.summary.bqr <- function(x, separate = F, sigma = F, ...){
   if (class(x) != "summary.bqr")
     stop("Look for the correct method for your model.")
 
