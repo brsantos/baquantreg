@@ -10,7 +10,6 @@
 #' @param ci Credible interval coefficient. Default value is 0.95.
 #' @param mult Defining whether this function will be used for multiple-output
 #'  Bayesian quantile regression or not. Default is FALSE.
-#' @param ... other plot params.
 #' @return A data frame with summary information about the quantile regression
 #'  parameters.
 #' @export
@@ -18,7 +17,7 @@
 #' @examples
 #' set.seed(1)
 
-summary.bqr <- function (object, burnin = 1000, ci = 0.95, mult = FALSE, ...)
+summary.bqr <- function (object, burnin = 1000, ci = 0.95, mult = FALSE)
 {
   if (class(object) != "bqr")
     stop("Use the correct summary method for your model")
