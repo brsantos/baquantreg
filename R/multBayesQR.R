@@ -198,12 +198,12 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
         all_files <- lapply(files_results, function(aa){
           utils::read.table(aa, head = TRUE)
         })
-        fixedEffects <- do.call(rbind, all_files)[, 3]
+        fixedEffects <- do.call(rbind, all_files)
       } else {
-        fixedEffects <- utils::read.table(files_results, head = TRUE)[, 3]
+        fixedEffects <- utils::read.table(files_results, head = TRUE)
       }
 
-      if(any(is.na(fixedEffect)) | any(is.na(info_splines$pmean))){
+      if(any(is.na(fixedEffects$pmean)) | any(is.na(info_splines$pmean))){
         try(system(paste(path_bayesx, 'bayesx.estim.input.prg')))
       }
     }, mc.cores = numCores)
