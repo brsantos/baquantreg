@@ -70,16 +70,16 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
 
   n_dim <- length(response)
 
-  if (n_dim > 3){
-    numbDir <- length(directionPoint)
-  } else if (length(directionPoint) > 1 & length(directionPoint) != n_dim){
+  if (n_dim >= 3){
+    numbDir <- nrow(directionPoint)
+  } else if (length(directionPoint) > 1 & ncol(directionPoint) != n_dim){
     stop("Dimension of directions is different than dimension of response")
   }
 
-  if (length(directionPoint) > 1){
+  if (length(directionPoint) > 1 & n_dim == 2){
     vectorDir <- directionPoint
     numbDir <- 1
-  } else {
+  } else if (n_dim == 2) {
     angles <- (0:(directionPoint-1))*2*pi/directionPoint
     vectorDir <- cbind(cos(angles), sin(angles))
     numbDir <- directionPoint
@@ -118,12 +118,22 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
     directionX <- matrix(t(x.qr[, 2:n_dim]) %*% t(Y), ncol = n_dim - 1)
 
     dataFile$y <- as.numeric(yResp)
-    if (n_dim == 2) dataFile$directionX <- as.numeric(directionX)
-    else dataFile$directionX <- directionX
-
-    formulaUpdated <- stats::update(Formula::Formula(formulaPred),
-                                    y ~ . + directionX)
-
+    if (n_dim == 2){
+      dataFile$directionX <- as.numeric(directionX)
+      formulaUpdated <- stats::update(Formula::Formula(formulaPred),
+                                      y ~ . + directionX)
+    }
+    else{
+      dataFile <- cbind(dataFile, directionX)
+      dim_X <- ncol(dataFile)
+      dir_variables <- paste0("directionX_", 1:(n_dim - 1))
+      colnames(dataFile)[(dim_X - n_dim + 2):dim_X] <- dir_variables
+      formulaUpdated <- stats::update(Formula::Formula(formulaPred),
+                                      stats::as.formula(paste0("y ~ . + ",
+                                                        paste(dir_variables,
+                                                              collapse = " + ")
+                                      )))
+    }
     if(!bayesx){
       X <- stats::model.matrix(formulaUpdated, dataFile)
 
@@ -208,7 +218,6 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
       }
     }, mc.cores = numCores)
   }
-
 
   class(objects) <- "multBQR"
 
