@@ -9,7 +9,9 @@
 #' @param directionPoint Either a vector with the same number of dimensions of
 #'  response variable, indicating a direction, or a integer indicating the
 #'  number of directions equally spaced in the unit circle one should
-#'  estimate.
+#'  estimate. If the number of dimensions of the response variable is larger
+#'  or equal to 3 then this must a matrix with all directions considered, where
+#'  the rows represent each direction.
 #' @param dataFile A data.frame from which to find the variables defined in the
 #'  formula.
 #' @param itNum Number of iterations.
@@ -45,6 +47,12 @@
 #'  latent variable. Default is FALSE.
 #' @param outfile argument to be passed to \code{bayesx.control}, in order
 #'  to define a directory where all output files should be saved.
+#' @param check_bayesx To check whether all calls to BayesX generated valid
+#'  chain values for all models. In case there are NA values, it calls BayesX
+#'  just for those models with problems. This is only considered when
+#'  \code{outfile} is different than \code{NULL}.
+#' @param path_bayesx When \code{check_bayes} is \code{TRUE}, the user must
+#'  inform the path of BayesX in order for these new calls of the program.
 #' @param ... arguments passed to \code{bayesx.control}.
 #' @return A list with the chains of all parameters of interest.
 #' @useDynLib baquantreg
@@ -57,13 +65,21 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
                         priorVar = 100, hyperSigma = c(0.1, 0.1),
                         refresh = 100, bayesx = TRUE, sigmaSampling = TRUE,
                         quiet = T, tobit = FALSE, numCores = 1,
-                        recordLat = FALSE, outfile = NULL, ...){
+                        recordLat = FALSE, outfile = NULL,
+                        check_bayesx = FALSE, path_bayesx = NULL, ...){
+
+  n_dim <- length(response)
+
+  if (n_dim > 3){
+    numbDir <- length(directionPoint)
+  } else if (length(directionPoint) > 1 & length(directionPoint) != n_dim){
+    stop("Dimension of directions is different than dimension of response")
+  }
 
   if (length(directionPoint) > 1){
     vectorDir <- directionPoint
     numbDir <- 1
-  }
-  else{
+  } else {
     angles <- (0:(directionPoint-1))*2*pi/directionPoint
     vectorDir <- cbind(cos(angles), sin(angles))
     numbDir <- directionPoint
@@ -72,22 +88,38 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
   objects <- list()
 
   objects$modelsDir <- parallel::mclapply(1:numbDir, function(a){
-    if (length(directionPoint) > 1) u <- directionPoint
-    else u <- vectorDir[a,]
+    if (n_dim == 2){
+      if (length(directionPoint) > 1)
+        u <- directionPoint
+      else
+        u <- vectorDir[a, ]
+    } else {
+      u <- directionPoint[a, ]
+    }
 
-    u_1 <- c(1,0)
+    if (n_dim == 2){
+      u_1 <- c(1, 0)
 
-    A <- cbind(u, u_1)
-    x.qr <- qr.Q(qr(A))
+      A <- cbind(u, u_1)
+      x.qr <- qr.Q(qr(A))
+    }
+    else {
+      u_1 <- c(1, 0, 0)
+      u_2 <- c(0, 1, 0)
+
+      A <- cbind(u, u_1, u_2)
+      x.qr <- qr.Q(qr(A))
+    }
 
     Y <- dataFile[, response]
 
     yResp <- t(u) %*% t(Y)
 
-    directionX <- matrix(t(x.qr[,2]) %*% t(Y), ncol = 1)
+    directionX <- matrix(t(x.qr[, 2:n_dim]) %*% t(Y), ncol = n_dim - 1)
 
     dataFile$y <- as.numeric(yResp)
-    dataFile$directionX <- as.numeric(directionX)
+    if (n_dim == 2) dataFile$directionX <- as.numeric(directionX)
+    else dataFile$directionX <- directionX
 
     formulaUpdated <- stats::update(Formula::Formula(formulaPred),
                                     y ~ . + directionX)
@@ -100,7 +132,6 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
       if (is.null(vSampleInit))
         vSampleInit <- rep(1, length(yResp))
     }
-
 
     output <- list()
 
@@ -150,10 +181,40 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
     return(output)
   }, mc.cores = numCores)
 
+  if (check_bayesx){
+    listFolders <- list.files(outfile)
+
+    parallel::mclapply(listFolders, function(a){
+      setwd(paste0(outfile, a))
+
+      fixed_effects_files <- grepl("_FixedEffects[0-9]+.res", list.files())
+      files_results <- list.files()[fixed_effects_files]
+
+      spline_files <- grepl("spline.res", list.files())
+      splines_results <- list.files()[spline_files]
+      info_splines <- utils::read.table(splines_results, head = TRUE)
+
+      if(sum(fixed_effects_files) > 1){
+        all_files <- lapply(files_results, function(aa){
+          utils::read.table(aa, head = TRUE)
+        })
+        fixedEffects <- do.call(rbind, all_files)[, 3]
+      } else {
+        fixedEffects <- utils::read.table(files_results, head = TRUE)[, 3]
+      }
+
+      if(any(is.na(fixedEffect)) | any(is.na(info_splines$pmean))){
+        try(system(paste(path_bayesx, 'bayesx.estim.input.prg')))
+      }
+    }, mc.cores = numCores)
+  }
+
+
   class(objects) <- "multBQR"
 
   objects$method <- ifelse(bayesx, 'bayesx', 'rcpp')
   objects$response <- response
+  objects$n_dim <- n_dim
 
   return(objects)
 }

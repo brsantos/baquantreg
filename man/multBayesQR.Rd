@@ -8,7 +8,8 @@ multBayesQR(response, formulaPred, directionPoint, tau = 0.5, dataFile,
   itNum = 2000, burnin, thin = 1, betaValue = NULL, sigmaValue = 1,
   vSampleInit = NULL, priorVar = 100, hyperSigma = c(0.1, 0.1),
   refresh = 100, bayesx = TRUE, sigmaSampling = TRUE, quiet = T,
-  tobit = FALSE, numCores = 1, recordLat = FALSE, outfile = NULL, ...)
+  tobit = FALSE, numCores = 1, recordLat = FALSE, outfile = NULL,
+  check_bayesx = FALSE, path_bayesx = NULL, ...)
 }
 \arguments{
 \item{response}{Names of response variables}
@@ -19,7 +20,9 @@ and the predictor terms, separated by + operators, on the right side.}
 \item{directionPoint}{Either a vector with the same number of dimensions of
 response variable, indicating a direction, or a integer indicating the
 number of directions equally spaced in the unit circle one should
-estimate.}
+estimate. If the number of dimensions of the response variable is larger
+or equal to 3 then this must a matrix with all directions considered, where
+the rows represent each direction.}
 
 \item{tau}{Quantiles of interest. Default is th median, \code{tau = 0.5}.}
 
@@ -74,6 +77,14 @@ latent variable. Default is FALSE.}
 
 \item{outfile}{argument to be passed to \code{bayesx.control}, in order
 to define a directory where all output files should be saved.}
+
+\item{check_bayesx}{To check whether all calls to BayesX generated valid
+chain values for all models. In case there are NA values, it calls BayesX
+just for those models with problems. This is only considered when
+\code{outfile} is different than \code{NULL}.}
+
+\item{path_bayesx}{When \code{check_bayes} is \code{TRUE}, the user must
+inform the path of BayesX in order for these new calls of the program.}
 
 \item{...}{arguments passed to \code{bayesx.control}.}
 }
