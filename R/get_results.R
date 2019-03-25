@@ -65,13 +65,13 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var){
                                          model_name, '.data.raw'),
                                   head = TRUE)
 
-    sigma_draws <- utils::read.table(paste0(path_folder, '/', a,
-                                            '/bayesx.estim_scale_sample.raw'),
+    sigma_draws <- utils::read.table(paste0(path_folder, '/', a, '/',
+                                            model_name, '_scale_sample.raw'),
                                      head = TRUE)[,2]
     spline_estimates <- NULL
     if (splines){
-      spline_estimates <- utils::read.table(paste0(path_folder, '/', a,
-                                              '/bayesx.estim_f_',
+      spline_estimates <- utils::read.table(paste0(path_folder, '/', a, '/',
+                                              model_name, '_f_',
                                               name_var , '_pspline.res'),
                                             head = TRUE)[, 2:3]
     }
