@@ -193,30 +193,36 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
 
   if (check_bayesx){
     listFolders <- list.files(outfile)
+    check_folders <- rep(TRUE, length(listFolders))
 
-    parallel::mclapply(listFolders, function(a){
-      setwd(paste0(outfile, a))
+    while (any(check_folders)){
 
-      fixed_effects_files <- grepl("_FixedEffects[0-9]+.res", list.files())
-      files_results <- list.files()[fixed_effects_files]
+      parallel::mclapply(listFolders, function(a){
+        setwd(paste0(outfile, a))
 
-      spline_files <- grepl("spline.res", list.files())
-      splines_results <- list.files()[spline_files]
-      info_splines <- utils::read.table(splines_results, head = TRUE)
+        fixed_effects_files <- grepl("_FixedEffects[0-9]+.res", list.files())
+        files_results <- list.files()[fixed_effects_files]
 
-      if(sum(fixed_effects_files) > 1){
-        all_files <- lapply(files_results, function(aa){
-          utils::read.table(aa, head = TRUE)
-        })
-        fixedEffects <- do.call(rbind, all_files)
-      } else {
-        fixedEffects <- utils::read.table(files_results, head = TRUE)
-      }
+        spline_files <- grepl("spline.res", list.files())
+        splines_results <- list.files()[spline_files]
+        info_splines <- utils::read.table(splines_results, head = TRUE)
 
-      if(any(is.na(fixedEffects$pmean)) | any(is.na(info_splines$pmean))){
-        try(system(paste(path_bayesx, 'bayesx.estim.input.prg')))
-      }
-    }, mc.cores = numCores)
+        if(sum(fixed_effects_files) > 1){
+          all_files <- lapply(files_results, function(aa){
+            utils::read.table(aa, head = TRUE)
+          })
+          fixedEffects <- do.call(rbind, all_files)
+        } else {
+          fixedEffects <- utils::read.table(files_results, head = TRUE)
+        }
+
+        if(any(is.na(fixedEffects$pmean)) | any(is.na(info_splines$pmean))){
+          try(system(paste(path_bayesx, 'bayesx.estim.input.prg')))
+        } else {
+          check_folders[which(listFolders == a)] <- FALSE
+        }
+      }, mc.cores = numCores)
+    }
   }
 
   class(objects) <- "multBQR"
