@@ -9,13 +9,11 @@
 #' @param directionPoint Either a vector with the same number of dimensions of
 #'  response variable, indicating a direction, or a integer indicating the
 #'  number of directions equally spaced in the unit circle one should
-#'  estimate.
-#' @param length_1d When the response has more than 2 dimensions, this should
+#'  estimate. When the response has more than 2 dimensions, this should
 #'  determine the number of points considered in each dimension, in order to
 #'  define the number of directions taken into account in estimation. The
-#'  number of directions is equal to \code{length_1d}^d, where d is the
-#'  dimension of the response variable. Still only considering 3 dimension case.
-#'  Default value is 8.
+#'  number of directions is then equal to \code{length_1d}^d, where d is the
+#'  dimension of the response variable.
 #' @param dataFile A data.frame from which to find the variables defined in the
 #'  formula.
 #' @param itNum Number of iterations.
@@ -64,8 +62,7 @@
 #' @importFrom Formula Formula
 
 multBayesQR <- function(response, formulaPred, directionPoint,
-                        length_1d = 8, tau = 0.5,
-                        dataFile, itNum = 2000, burnin, thin = 1,
+                        tau = 0.5, dataFile, itNum = 2000, burnin, thin = 1,
                         betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
                         priorVar = 100, hyperSigma = c(0.1, 0.1),
                         refresh = 100, bayesx = TRUE, sigmaSampling = TRUE,
@@ -75,9 +72,7 @@ multBayesQR <- function(response, formulaPred, directionPoint,
 
   n_dim <- length(response)
 
-  if (n_dim >= 3){
-    numbDir <- nrow(directionPoint)
-  } else if (length(directionPoint) > 1 & length(directionPoint) != n_dim){
+  if (length(directionPoint) > 1 & length(directionPoint) != n_dim){
     stop("Dimension of directions is different than dimension of response")
   }
 
@@ -89,17 +84,19 @@ multBayesQR <- function(response, formulaPred, directionPoint,
     vectorDir <- cbind(cos(angles), sin(angles))
     numbDir <- directionPoint
   } else if (n_dim == 3){
-    x_dir <- seq(-1, 1, length = length_1d)
-    y_dir <- seq(-1, 1, length = length_1d)
-    z_dir <- seq(-1, 1, length = length_1d)
+    x_dir <- seq(-1, 1, length = directionPoint)
+    y_dir <- seq(-1, 1, length = directionPoint)
+    z_dir <- seq(-1, 1, length = directionPoint)
 
     x_y_z_grid <- expand.grid(x_dir, y_dir, z_dir)
+    check_zeros <- !apply(x_y_z_grid, 1, function(a) all(a == 0))
+    x_y_z_grid <- x_y_z_grid[check_zeros, ]
 
     vectorDir <- t(apply(x_y_z_grid, 1, function(a){
       a / sqrt(sum(a^2))
     }))
+    numbDir <- nrow(vectorDir)
   }
-
 
   objects <- list()
 
