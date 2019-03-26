@@ -4,12 +4,13 @@
 \alias{multBayesQR}
 \title{Multiple-output Bayesian quantile regression model}
 \usage{
-multBayesQR(response, formulaPred, directionPoint, tau = 0.5, dataFile,
-  itNum = 2000, burnin, thin = 1, betaValue = NULL, sigmaValue = 1,
-  vSampleInit = NULL, priorVar = 100, hyperSigma = c(0.1, 0.1),
-  refresh = 100, bayesx = TRUE, sigmaSampling = TRUE, quiet = T,
-  tobit = FALSE, numCores = 1, recordLat = FALSE, outfile = NULL,
-  check_bayesx = FALSE, path_bayesx = NULL, ...)
+multBayesQR(response, formulaPred, directionPoint, length_1d = 8, tau = 0.5,
+  dataFile, itNum = 2000, burnin, thin = 1, betaValue = NULL,
+  sigmaValue = 1, vSampleInit = NULL, priorVar = 100,
+  hyperSigma = c(0.1, 0.1), refresh = 100, bayesx = TRUE,
+  sigmaSampling = TRUE, quiet = T, tobit = FALSE, numCores = 1,
+  recordLat = FALSE, outfile = NULL, check_bayesx = FALSE,
+  path_bayesx = NULL, ...)
 }
 \arguments{
 \item{response}{Names of response variables}
@@ -20,9 +21,14 @@ and the predictor terms, separated by + operators, on the right side.}
 \item{directionPoint}{Either a vector with the same number of dimensions of
 response variable, indicating a direction, or a integer indicating the
 number of directions equally spaced in the unit circle one should
-estimate. If the number of dimensions of the response variable is larger
-or equal to 3 then this must a matrix with all directions considered, where
-the rows represent each direction.}
+estimate.}
+
+\item{length_1d}{When the response has more than 2 dimensions, this should
+determine the number of points considered in each dimension, in order to
+define the number of directions taken into account in estimation. The
+number of directions is equal to \code{length_1d}^d, where d is the
+dimension of the response variable. Still only considering 3 dimension case.
+Default value is 8.}
 
 \item{tau}{Quantiles of interest. Default is th median, \code{tau = 0.5}.}
 

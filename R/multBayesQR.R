@@ -9,9 +9,13 @@
 #' @param directionPoint Either a vector with the same number of dimensions of
 #'  response variable, indicating a direction, or a integer indicating the
 #'  number of directions equally spaced in the unit circle one should
-#'  estimate. If the number of dimensions of the response variable is larger
-#'  or equal to 3 then this must a matrix with all directions considered, where
-#'  the rows represent each direction.
+#'  estimate.
+#' @param length_1d When the response has more than 2 dimensions, this should
+#'  determine the number of points considered in each dimension, in order to
+#'  define the number of directions taken into account in estimation. The
+#'  number of directions is equal to \code{length_1d}^d, where d is the
+#'  dimension of the response variable. Still only considering 3 dimension case.
+#'  Default value is 8.
 #' @param dataFile A data.frame from which to find the variables defined in the
 #'  formula.
 #' @param itNum Number of iterations.
@@ -59,7 +63,8 @@
 #' @importFrom R2BayesX bayesx
 #' @importFrom Formula Formula
 
-multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
+multBayesQR <- function(response, formulaPred, directionPoint,
+                        length_1d = 8, tau = 0.5,
                         dataFile, itNum = 2000, burnin, thin = 1,
                         betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
                         priorVar = 100, hyperSigma = c(0.1, 0.1),
@@ -83,19 +88,24 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
     angles <- (0:(directionPoint-1))*2*pi/directionPoint
     vectorDir <- cbind(cos(angles), sin(angles))
     numbDir <- directionPoint
+  } else if (n_dim == 3){
+    x_dir <- seq(-1, 1, length = length_1d)
+    y_dir <- seq(-1, 1, length = length_1d)
+    z_dir <- seq(-1, 1, length = length_1d)
+
+    x_y_z_grid <- expand.grid(x_dir, y_dir, z_dir)
+
+    vectorDir <- t(apply(x_y_z_grid, 1, function(a){
+      a / sqrt(sum(a^2))
+    }))
   }
+
 
   objects <- list()
 
   objects$modelsDir <- parallel::mclapply(1:numbDir, function(a){
-    if (n_dim == 2){
-      if (length(directionPoint) > 1)
-        u <- directionPoint
-      else
-        u <- vectorDir[a, ]
-    } else {
-      u <- directionPoint[a, ]
-    }
+    if (n_dim == 2 & length(directionPoint) > 1) u <- directionPoint
+    else u <- vectorDir[a, ]
 
     if (n_dim == 2){
       u_1 <- c(1, 0)
@@ -123,7 +133,7 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
       formulaUpdated <- stats::update(Formula::Formula(formulaPred),
                                       y ~ . + directionX)
     }
-    else{
+    else {
       dataFile <- cbind(dataFile, directionX)
       dim_X <- ncol(dataFile)
       dir_variables <- paste0("directionX_", 1:(n_dim - 1))
