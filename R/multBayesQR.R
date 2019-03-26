@@ -72,7 +72,7 @@ multBayesQR <- function(response, formulaPred, directionPoint, tau = 0.5,
 
   if (n_dim >= 3){
     numbDir <- nrow(directionPoint)
-  } else if (length(directionPoint) > 1 & ncol(directionPoint) != n_dim){
+  } else if (length(directionPoint) > 1 & length(directionPoint) != n_dim){
     stop("Dimension of directions is different than dimension of response")
   }
 
