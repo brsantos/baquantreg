@@ -200,40 +200,19 @@ multBayesQR <- function(response, formulaPred, directionPoint,
 
   if (check_bayesx){
     listFolders <- list.files(outfile)
-    check_folders <- rep(TRUE, length(listFolders))
 
-    while (any(check_folders)){
+    run_bayesx <- function(dir){
+      text <- readLines(paste0(dir, '/bayesx.estim.input.prg'))
+      newSeed <- ceiling(stats::runif(1)*10000)
+      text <- gsub("setseed=[0-9]+", paste0("setseed=", newSeed), text)
+      writeLines(text, 'bayesx.estim.input.prg')
+      system(paste(path_bayesx, 'bayesx.estim.input.prg'))
+    }
 
-      parallel::mclapply(listFolders, function(a){
-        setwd(paste0(outfile, a))
-
-        fixed_effects_files <- grepl("_FixedEffects[0-9]+.res", list.files())
-        files_results <- list.files()[fixed_effects_files]
-
-        spline_files <- grepl("spline.res", list.files())
-        splines_results <- list.files()[spline_files]
-        info_splines <- utils::read.table(splines_results, head = TRUE)
-
-        if(sum(fixed_effects_files) > 1){
-          all_files <- lapply(files_results, function(aa){
-            utils::read.table(aa, head = TRUE)
-          })
-          fixedEffects <- do.call(rbind, all_files)
-        } else {
-          fixedEffects <- utils::read.table(files_results, head = TRUE)
-        }
-
-        if(any(is.na(fixedEffects$pmean)) | any(is.na(info_splines$pmean))){
-          ## Changing seed in case of issues with BayesX
-          text <- readLines('bayesx.estim.input.prg')
-          newSeed <- ceiling(runif(1)*10000)
-          text <- gsub("setseed=[0-9]+", paste0("setseed=", newSeed), text)
-          writeLines(text, 'bayesx.estim.input.prg')
-          try(system(paste(path_bayesx, 'bayesx.estim.input.prg')))
-        } else {
-          check_folders[which(listFolders == a)] <- FALSE
-        }
-      }, mc.cores = numCores)
+    while (any(check_NA(paste0(outfile, '/', listFolders)))){
+      folders_error <- listFolders[check_NA(paste0(outfile, '/', listFolders))]
+      complete_folders <- paste0(outfile, '/', folders_error)
+      parallel::mclapply(complete_folders, run_bayesx, mc.cores = numCores)
     }
   }
 
