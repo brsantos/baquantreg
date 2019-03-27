@@ -224,6 +224,11 @@ multBayesQR <- function(response, formulaPred, directionPoint,
         }
 
         if(any(is.na(fixedEffects$pmean)) | any(is.na(info_splines$pmean))){
+          ## Changing seed in case of issues with BayesX
+          text <- readLines('bayesx.estim.input.prg')
+          newSeed <- ceiling(runif(1)*10000)
+          text <- gsub("setseed=[0-9]+", paste0("setseed=", newSeed), text)
+          writeLines(text, 'bayesx.estim.input.prg')
           try(system(paste(path_bayesx, 'bayesx.estim.input.prg')))
         } else {
           check_folders[which(listFolders == a)] <- FALSE
