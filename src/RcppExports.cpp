@@ -97,6 +97,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// checkPoints_cube
+arma::cube checkPoints_cube(arma::colvec gridy1, arma::colvec gridy2, arma::colvec gridy3, arma::mat directions, arma::mat orthBasis1, arma::mat orthBasis2, arma::mat fullestimates, arma::colvec xvalue, bool splines, arma::colvec addterm);
+RcppExport SEXP _baquantreg_checkPoints_cube(SEXP gridy1SEXP, SEXP gridy2SEXP, SEXP gridy3SEXP, SEXP directionsSEXP, SEXP orthBasis1SEXP, SEXP orthBasis2SEXP, SEXP fullestimatesSEXP, SEXP xvalueSEXP, SEXP splinesSEXP, SEXP addtermSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::colvec >::type gridy1(gridy1SEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type gridy2(gridy2SEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type gridy3(gridy3SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type directions(directionsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type orthBasis1(orthBasis1SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type orthBasis2(orthBasis2SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type fullestimates(fullestimatesSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type xvalue(xvalueSEXP);
+    Rcpp::traits::input_parameter< bool >::type splines(splinesSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type addterm(addtermSEXP);
+    rcpp_result_gen = Rcpp::wrap(checkPoints_cube(gridy1, gridy2, gridy3, directions, orthBasis1, orthBasis2, fullestimates, xvalue, splines, addterm));
+    return rcpp_result_gen;
+END_RCPP
+}
 // spBayesQR
 List spBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::mat matDist, double lambda, double tuneP, double alphaValue, double tuneA, double priorVar, int refresh, bool quiet, double jitter, bool includeAlpha, double tuneV, int kMT, double shapeL, double rateL);
 RcppExport SEXP _baquantreg_spBayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP matDistSEXP, SEXP lambdaSEXP, SEXP tunePSEXP, SEXP alphaValueSEXP, SEXP tuneASEXP, SEXP priorVarSEXP, SEXP refreshSEXP, SEXP quietSEXP, SEXP jitterSEXP, SEXP includeAlphaSEXP, SEXP tuneVSEXP, SEXP kMTSEXP, SEXP shapeLSEXP, SEXP rateLSEXP) {
@@ -169,6 +189,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_baquantreg_tpBayesQR", (DL_FUNC) &_baquantreg_tpBayesQR, 14},
     {"_baquantreg_ziTobitBayesQR", (DL_FUNC) &_baquantreg_ziTobitBayesQR, 14},
     {"_baquantreg_checkPoints", (DL_FUNC) &_baquantreg_checkPoints, 8},
+    {"_baquantreg_checkPoints_cube", (DL_FUNC) &_baquantreg_checkPoints_cube, 10},
     {"_baquantreg_spBayesQR", (DL_FUNC) &_baquantreg_spBayesQR, 21},
     {"_baquantreg_sppBayesQR", (DL_FUNC) &_baquantreg_sppBayesQR, 25},
     {NULL, NULL, 0}

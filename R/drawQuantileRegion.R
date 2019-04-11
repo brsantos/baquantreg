@@ -5,6 +5,9 @@
 #'
 #' @param model This is an object of the class \code{multBQR}, produced by a
 #'  call to the \code{multBayesQR} function.
+#' @param datafile A data.frame from which to find the variables defined in the
+#'  formula.
+#' @param response Names of response variables
 #' @param ngridpoints Number of grid points considered to build this quantile
 #'  region, where a thorough search will look for the specified region, given
 #'  the estimates for several directions. Default is 100, that will produce a
@@ -41,7 +44,8 @@
 #'  regression model estimates.
 #' @useDynLib baquantreg
 
-drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1,
+drawQuantileRegion <- function(model, datafile, response,
+                               ngridpoints = 100, xValue = 1,
                                paintedArea = FALSE, comparison = FALSE,
                                result_folder = FALSE, path_folder = NULL,
                                splines_part = FALSE, wValue = NULL,
@@ -91,7 +95,7 @@ drawQuantileRegion <- function(model, ngridpoints = 100, xValue = 1,
       taus <- results$taus
       ntaus <- length(taus)
 
-      Y <- t(results$Y)
+      Y <- datafile[, response]
       betaDifDirections <- results$betaDifDirections
       directions <- results$directions
       orthBases <- results$orthBases

@@ -17,6 +17,10 @@ checkPoints <- function(gridy1, gridy2, directions, orthBasis, fullestimates, xv
     .Call('_baquantreg_checkPoints', PACKAGE = 'baquantreg', gridy1, gridy2, directions, orthBasis, fullestimates, xvalue, splines, addterm)
 }
 
+checkPoints_cube <- function(gridy1, gridy2, gridy3, directions, orthBasis1, orthBasis2, fullestimates, xvalue, splines, addterm) {
+    .Call('_baquantreg_checkPoints_cube', PACKAGE = 'baquantreg', gridy1, gridy2, gridy3, directions, orthBasis1, orthBasis2, fullestimates, xvalue, splines, addterm)
+}
+
 spBayesQR <- function(tau, y, X, itNum, thin, betaValue, sigmaValue, matDist, lambda, tuneP, alphaValue, tuneA, priorVar, refresh, quiet, jitter, includeAlpha, tuneV, kMT, shapeL, rateL) {
     .Call('_baquantreg_spBayesQR', PACKAGE = 'baquantreg', tau, y, X, itNum, thin, betaValue, sigmaValue, matDist, lambda, tuneP, alphaValue, tuneA, priorVar, refresh, quiet, jitter, includeAlpha, tuneV, kMT, shapeL, rateL)
 }

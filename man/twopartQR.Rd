@@ -4,10 +4,10 @@
 \alias{twopartQR}
 \title{Two part model using Bayesian quantile regression model}
 \usage{
-twopartQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
-  sigmaValue = 1, vSampleInit = NULL, gammaValue = NULL,
-  sigmaGamma = 0.5, link = 1, priorVar = 100, refresh = 100,
-  quiet = FALSE)
+twopartQR(formula, tau = 0.5, data, itNum, thin = 1,
+  betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
+  gammaValue = NULL, sigmaGamma = 0.5, link = 1, priorVar = 100,
+  refresh = 100, quiet = FALSE)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~

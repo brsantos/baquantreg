@@ -1,6 +1,7 @@
 ## Organizing the results in a folder
 
-get_results <- function(path_folder, model_name, splines = FALSE, name_var){
+get_results <- function(path_folder, model_name, splines = FALSE, name_var,
+                        n_dim = 2){
   folders <- list.files(path_folder)
 
   ## Considering at most 999 directions
@@ -77,7 +78,12 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var){
     }
 
     y_response <- dataFile[,'y']
-    directionX <- dataFile[, 'directionX']
+    if (n_dim == 2) {
+      directionX <- dataFile[, 'directionX']
+    } else {
+      directionX <- dataFile[, c('directionXIi11iI1', 'directionXIi11iI2')]
+    }
+
 
     list(fixedEffects = fixedEffects, variance = variance,
          y_response = y_response, directionX = directionX,
@@ -90,25 +96,47 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var){
 
   directionPoint <- max(directions_ind)
 
-  angles <- (0:(directionPoint-1))*2*pi/directionPoint
-  vectorDir <- cbind(cos(angles), sin(angles))
-  numbDir <- directionPoint
+  if (n_dim == 2){
+    angles <- (0:(directionPoint-1))*2*pi/directionPoint
+    vectorDir <- cbind(cos(angles), sin(angles))
+    numbDir <- directionPoint
 
-  orthBasis <- t(apply(vectorDir, 1, function(a){
-    u_1 <- c(1,0)
+    orthBasis <- t(apply(vectorDir, 1, function(a){
+      u_1 <- c(1,0)
 
-    A <- cbind(a, u_1)
-    qr.Q(qr(A))[, 2]
-  }))
+      A <- cbind(a, u_1)
+      qr.Q(qr(A))[, 2]
+    }))
+  } else {
+    x_dir <- seq(-1, 1, length = directionPoint^(1/3))
+    y_dir <- seq(-1, 1, length = directionPoint^(1/3))
+    z_dir <- seq(-1, 1, length = directionPoint^(1/3))
 
-  index <- sample(1:numbDir, 1)
-  u <- vectorDir[index, ]
-  uu <- orthBasis[index, ]
+    x_y_z_grid <- expand.grid(x_dir, y_dir, z_dir)
+    check_zeros <- !apply(x_y_z_grid, 1, function(a) all(a == 0))
+    x_y_z_grid <- x_y_z_grid[check_zeros, ]
 
-  y_resp <- results[[which(directions_ind == index)[1]]]$y_response
-  xDirec <- results[[which(directions_ind == index)[1]]]$directionX
+    vectorDir <- t(apply(x_y_z_grid, 1, function(a){
+      a / sqrt(sum(a^2))
+    }))
+    numbDir <- nrow(vectorDir)
 
-  Y <- solve(rbind(u, uu)) %*% rbind(y_resp, xDirec)
+    orthBasis1 <- t(apply(vectorDir, 1, function(a){
+      u_1 <- c(1, 0, 0)
+      u_2 <- c(0, 1, 0)
+
+      A <- cbind(a, u_1, u_2)
+      qr.Q(qr(A))[, 2]
+    }))
+
+    orthBasis2 <- t(apply(vectorDir, 1, function(a){
+      u_1 <- c(1, 0, 0)
+      u_2 <- c(0, 1, 0)
+
+      A <- cbind(a, u_1, u_2)
+      qr.Q(qr(A))[, 3]
+    }))
+  }
 
   betaDifDirections_matrix <- sapply(results, function(a) a$fixedEffects)
 
@@ -127,67 +155,58 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var){
 
   splines_matrix <- lapply(results, function(a) a$spline_estimates)
 
-  betaDifDirections <- lapply(unique_taus, function(a){
-    positions_list <- which(taus == a)
-    betaSubmatrix <- betaDifDirections_matrix[, positions_list]
-    directions_list <- directions_ind[positions_list]
-    sapply(1:numbDir, function(b){
-      betaSubmatrix[, which(directions_list == b)]
-    })
-  })
-
-  sdDifDirections <- lapply(unique_taus, function(a){
-    positions_list <- which(taus == a)
-    sdSubmatrix <- sdDifDirections_matrix[, positions_list]
-    directions_list <- directions_ind[positions_list]
-    sapply(1:numbDir, function(b){
-      sdSubmatrix[, which(directions_list == b)]
-    })
-  })
-
-  sigma_difDirections <- sapply(unique_taus, function(a){
-    positions_list <- which(taus == a)
-    sigma_subvector <- posterior_sigma[positions_list]
-    directions_list <- directions_ind[positions_list]
-    sapply(1:numbDir, function(b){
-      sigma_subvector[which(directions_list == b)]
-    })
-  })
-
-  beta_draws_DifDirections <- lapply(unique_taus, function(a){
-    positions_list <- which(taus == a)
-    draws_sublist <- draws_matrix[positions_list]
-    directions_list <- directions_ind[positions_list]
-    lapply(1:numbDir, function(b){
-      draws_sublist[which(directions_list == b)]
-    })
-  })
-
-  sigma_draws_DifDirections <- lapply(unique_taus, function(a){
-    positions_list <- which(taus == a)
-    draws_sublist <- sigma_draws_matrix[, positions_list]
-    directions_list <- directions_ind[positions_list]
-    lapply(1:numbDir, function(b){
-      draws_sublist[, which(directions_list == b)]
-    })
-  })
-
-  spline_estimates_DifDirections <- NULL
-  if (splines){
-    spline_estimates_DifDirections <- lapply(unique_taus, function(a){
+  organize_info <- function(object, matrix_info = TRUE){
+    lapply(unique_taus, function(a){
       positions_list <- which(taus == a)
-      splines_sublist <- splines_matrix[positions_list]
       directions_list <- directions_ind[positions_list]
-      lapply(1:numbDir, function(b){
-        splines_sublist[which(directions_list == b)]
-      })
+
+      if (matrix_info){
+        aux_object <- object[, positions_list]
+        sapply(1:numbDir, function(b){
+          aux_object[, which(directions_list == b)]
+        })
+      }
+      else{
+        aux_object <- object[positions_list]
+        sapply(1:numbDir, function(b){
+          aux_object[which(directions_list == b)]
+        })
+      }
     })
   }
 
-  list(Y = Y, taus = unique_taus, betaDifDirections = betaDifDirections,
-       directions = t(vectorDir), orthBases = t(orthBasis), sdDifDirections =
-         sdDifDirections, beta_draws_DifDirections = beta_draws_DifDirections,
-       sigma_difDirections = sigma_difDirections,
-       sigma_draws_DifDirections = sigma_draws_DifDirections,
-       spline_estimates_DifDirections = spline_estimates_DifDirections)
+  betaDifDirections <- organize_info(betaDifDirections_matrix)
+
+  sdDifDirections <- organize_info(sdDifDirections_matrix)
+
+  sigma_difDirections <- organize_info(posterior_sigma, matrix_info = FALSE)
+
+  beta_draws_DifDirections <- organize_info(draws_matrix,
+                                            matrix_info = FALSE)
+
+  sigma_draws_DifDirections <- organize_info(sigma_draws_matrix)
+
+  spline_estimates_DifDirections <- NULL
+  if (splines){
+    spline_estimates_DifDirections <- organize_info(splines_matrix)
+  }
+
+  if(n_dim == 2){
+    list(taus = unique_taus, betaDifDirections = betaDifDirections,
+         directions = t(vectorDir), orthBases = t(orthBasis),
+         sdDifDirections = sdDifDirections,
+         beta_draws_DifDirections = beta_draws_DifDirections,
+         sigma_difDirections = sigma_difDirections,
+         sigma_draws_DifDirections = sigma_draws_DifDirections,
+         spline_estimates_DifDirections = spline_estimates_DifDirections)
+  } else {
+    list(taus = unique_taus, betaDifDirections = betaDifDirections,
+         directions = t(vectorDir), orthBases1 = t(orthBasis1),
+         orthBases2 = t(orthBasis2),
+         sdDifDirections = sdDifDirections,
+         beta_draws_DifDirections = beta_draws_DifDirections,
+         sigma_difDirections = sigma_difDirections,
+         sigma_draws_DifDirections = sigma_draws_DifDirections,
+         spline_estimates_DifDirections = spline_estimates_DifDirections)
+  }
 }
