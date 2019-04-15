@@ -117,7 +117,7 @@ drawQuantileRegion_3D <- function(model, datafile, response,
       data.frame(y1 = rep(y1_inside, times = 2),
                  y2 = c(y2_inside_min, y2_inside_max),
                  y3 = rep(seqY3[aaa], length(y1_inside) * 2),
-                 type = c('min', 'max'))
+                 type = rep(c('min', 'max'), each = length(y1_inside)))
       })
 
     points_inside_all <- do.call(rbind.data.frame, points_inside)
