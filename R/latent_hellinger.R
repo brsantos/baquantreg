@@ -1,7 +1,7 @@
 
 #' Hellinger distance for the latent variables of the estimation process.
 #'
-#' Returns the Hellinger distance for the latent variables, which are
+#' Returns the Hellinger divergence for the latent variables, which are
 #'  used in estimation process, and it could indicate possible outlying
 #'  observations.
 #'
@@ -40,15 +40,20 @@ latent_hellinger <- function(object, burnin = 50, plot_div = TRUE,
     sapply(seqObs, function(b){
       otherV <- a$vSample[-c(1:burnin),-b]
       vSample <- a$vSample[-c(1:burnin), b]
-      mean(sapply(1:(nobs-1), function(c){
-        minV <- min(vSample, otherV[,c])
-        maxV <- max(vSample, otherV[,c])
-        g1 <- stats::density(otherV[,c], from = minV, to = maxV)$y
-        g2 <- stats::density(vSample, from = minV, to = maxV)$y
-        g1[g1 == 0] <- .Machine$double.eps
-        g2[g2 == 0] <- .Machine$double.eps
-        valF <- sqrt(g2 * g1)
-        1 - utils::tail(cumsum(.5 * (valF[-1] + valF[-length(valF)])), 1)
+      mean(sapply(1:(nobs-1), function(ccc){
+        minV <- min(vSample, otherV[,ccc])
+        maxV <- max(vSample, otherV[,ccc])
+        g1 <- stats::density(otherV[,ccc], from = minV, to = maxV)
+        g2 <- stats::density(vSample, from = minV, to = maxV)
+
+        if (!all.equal(g1$x, g2$x))
+          warning("Values considered for interpolation are not the same.")
+
+        f_y <- sqrt(g1$y * g2$y)
+
+        f <- stats::approxfun(x = g1$x, y = f_y)
+
+        1 - stats::integrate(f, lower = minV, upper = maxV)$value
       }))
     })
   })

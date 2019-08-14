@@ -41,15 +41,21 @@ latentKL <- function(object, burnin = 50, plotKL = TRUE,
     sapply(seqObs, function(b){
       otherV <- a$vSample[-c(1:burnin),-b]
       vSample <- a$vSample[-c(1:burnin), b]
-      mean(sapply(1:(nobs-1), function(c){
-        minV <- min(vSample, otherV[,c])
-        maxV <- max(vSample, otherV[,c])
-        g1 <- stats::density(otherV[,c], from = minV, to = maxV)$y
-        g2 <- stats::density(vSample, from = minV, to = maxV)$y
-        g1[g1 == 0] <- .Machine$double.eps
-        g2[g2 == 0] <- .Machine$double.eps
-        valF <- g2 * (log(g2) - log(g1))
-        utils::tail(cumsum(.5 * (valF[-1] + valF[-length(valF)])), 1)
+      mean(sapply(1:(nobs-1), function(ccc){
+        minV <- min(vSample, otherV[,ccc])
+        maxV <- max(vSample, otherV[,ccc])
+
+        g1 <- stats::density(otherV[,ccc], from = minV, to = maxV)
+        g2 <- stats::density(vSample, from = minV, to = maxV)
+
+        if (!all.equal(g1$x, g2$x))
+          warning("Values considered for interpolation are not the same.")
+
+        f_y <- g2$y * (log(g2$y) - log(g1$y))
+
+        f <- stats::approxfun(x = g1$x, y = f_y)
+
+        stats::integrate(f, lower = minV, upper = maxV)$value
       }))
     })
   })
