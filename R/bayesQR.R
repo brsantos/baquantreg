@@ -50,7 +50,9 @@ bayesQR <- function(formula, tau = 0.5, data, itNum, thin=1,
                     quiet = T,
                     tobit = FALSE, recordLat = FALSE){
 
-  y <- as.numeric(stats::model.extract(stats::model.frame(formula, data), 'response'))
+  y <- as.numeric(
+    stats::model.extract(stats::model.frame(formula, data), 'response')
+    )
   X <- stats::model.matrix(formula, data)
 
   if (is.null(betaValue)) betaValue <- rep(0, dim(X)[2])

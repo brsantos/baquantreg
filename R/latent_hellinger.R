@@ -1,8 +1,7 @@
 
-#' Kullback-Leibler divergence for the latent variables of the estimation
-#'  process.
+#' Hellinger distance for the latent variables of the estimation process.
 #'
-#' Returns the Kullback-Leibler divergence for the latent variables, which are
+#' Returns the Hellinger distance for the latent variables, which are
 #'  used in estimation process, and it could indicate possible outlying
 #'  observations.
 #'
@@ -10,7 +9,7 @@
 #'  to the bayesQR function.
 #' @param burnin Initial part of the chain, which is to be discarded. Default
 #'  value is 50.
-#' @param plotKL If TRUE, the function prints the plot with all probabilities.
+#' @param plot_div If TRUE, the function prints the plot with all probabilities.
 #'  Default is set to TRUE.
 #' @param scales.free If FALSE, the default, then all plots will use the same
 #'  y scale. If TRUE, for each tau the plot will use the best possible scale
@@ -25,7 +24,7 @@
 #' @useDynLib baquantreg
 #' @import ggplot2
 
-latentKL <- function(object, burnin = 50, plotKL = TRUE,
+latent_hellinger <- function(object, burnin = 50, plot_div = TRUE,
                      scales.free = FALSE, all.obs = TRUE, obs = 1) {
 
   if (class(object) != "bqr")
@@ -48,8 +47,8 @@ latentKL <- function(object, burnin = 50, plotKL = TRUE,
         g2 <- stats::density(vSample, from = minV, to = maxV)$y
         g1[g1 == 0] <- .Machine$double.eps
         g2[g2 == 0] <- .Machine$double.eps
-        valF <- g2 * (log(g2) - log(g1))
-        utils::tail(cumsum(.5 * (valF[-1] + valF[-length(valF)])), 1)
+        valF <- sqrt(g2 * g1)
+        1 - utils::tail(cumsum(.5 * (valF[-1] + valF[-length(valF)])), 1)
       }))
     })
   })
@@ -61,7 +60,7 @@ latentKL <- function(object, burnin = 50, plotKL = TRUE,
   if (all.obs){
     maxKL <- which.max(stats::aggregate(values ~ nobs, data=plotData, mean)$values)
 
-    print(paste("The observation with greatest Kullback-Leibler divergence from the others is:",
+    print(paste("The observation with greatest Hellinger distance from the others is:",
                 maxKL))
 
     g <- ggplot(subset(plotData), aes(y=values, x=nobs)) + theme_bw()
@@ -71,10 +70,10 @@ latentKL <- function(object, burnin = 50, plotKL = TRUE,
     }
 
     g <- g + geom_point() +
-      ylab("Mean Kullback-Leibler divergence for each point") +
+      ylab("Mean Hellinger distance for each point") +
       xlab("# Observation")
 
-    if (plotKL) print(g)
+    if (plot_div) print(g)
   }
 
   return(invisible(plotData))

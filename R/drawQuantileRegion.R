@@ -116,7 +116,7 @@ drawQuantileRegion <- function(model, datafile, response,
     if (!comparison){
       if (splines_part) spline_values <- sapply(1:number_directions,
                                                 function(aa){
-            estimates_direction <- splines_estimates[[a]][[aa]][[1]]
+            estimates_direction <- splines_estimates[[a]][[aa]]
             distances <- abs(wValue - estimates_direction[, name_var])
             estimates_direction$pmean[which(distances == min(distances))[1]]
       })
