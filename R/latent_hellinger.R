@@ -1,7 +1,7 @@
 
 #' Hellinger distance for the latent variables of the estimation process.
 #'
-#' Returns the Hellinger divergence for the latent variables, which are
+#' Returns the Hellinger distance for the latent variables, which are
 #'  used in estimation process, and it could indicate possible outlying
 #'  observations.
 #'
@@ -49,11 +49,15 @@ latent_hellinger <- function(object, burnin = 50, plot_div = TRUE,
         if (!all.equal(g1$x, g2$x))
           warning("Values considered for interpolation are not the same.")
 
+        g1$y[g1$y == 0] <- .Machine$double.eps
+        g2$y[g2$y == 0] <- .Machine$double.eps
+
         f_y <- sqrt(g1$y * g2$y)
 
         f <- stats::approxfun(x = g1$x, y = f_y)
 
-        1 - stats::integrate(f, lower = minV, upper = maxV)$value
+        1 - stats::integrate(f, lower = minV, upper = maxV,
+                             rel.tol = .Machine$double.eps^0.1)$value
       }))
     })
   })

@@ -188,7 +188,8 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
 
   spline_estimates_DifDirections <- NULL
   if (splines){
-    spline_estimates_DifDirections <- organize_info(splines_matrix)
+    spline_estimates_DifDirections <- organize_info(splines_matrix,
+                                                    matrix_info = FALSE)
   }
 
   if(n_dim == 2){

@@ -51,11 +51,15 @@ latentKL <- function(object, burnin = 50, plotKL = TRUE,
         if (!all.equal(g1$x, g2$x))
           warning("Values considered for interpolation are not the same.")
 
+        g1$y[g1$y == 0] <- .Machine$double.eps
+        g2$y[g2$y == 0] <- .Machine$double.eps
+
         f_y <- g2$y * (log(g2$y) - log(g1$y))
 
         f <- stats::approxfun(x = g1$x, y = f_y)
 
-        stats::integrate(f, lower = minV, upper = maxV)$value
+        stats::integrate(f, lower = minV, upper = maxV,
+                         rel.tol = .Machine$double.eps^0.1)$value
       }))
     })
   })

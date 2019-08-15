@@ -36,11 +36,11 @@
 
 drawQuantileRegion_3D <- function(model, datafile, response,
                                   ngridpoints = 100, xValue = 1,
-                               path_folder = NULL,
-                               splines_part = FALSE, wValue = NULL,
-                               print_plot = TRUE,
-                               model_name = 'bayesx.estim',
-                               name_var, ...){
+                                  path_folder = NULL,
+                                  splines_part = FALSE, wValue = NULL,
+                                  print_plot = TRUE,
+                                  model_name = 'bayesx.estim',
+                                  name_var, ...){
 
   if (is.null(path_folder))
     stop("You must define a path with all the results")
