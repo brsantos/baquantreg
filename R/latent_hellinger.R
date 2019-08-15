@@ -57,7 +57,8 @@ latent_hellinger <- function(object, burnin = 50, plot_div = TRUE,
         f <- stats::approxfun(x = g1$x, y = f_y)
 
         1 - stats::integrate(f, lower = minV, upper = maxV,
-                             rel.tol = .Machine$double.eps^0.1)$value
+                             rel.tol = .Machine$double.eps^0.1,
+                             subdivisions = 80)$value
       }))
     })
   })
