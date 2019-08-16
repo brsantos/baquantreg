@@ -54,11 +54,13 @@ latent_hellinger <- function(object, burnin = 50, plot_div = TRUE,
 
         f_y <- sqrt(g1$y * g2$y)
 
-        f <- stats::approxfun(x = g1$x, y = f_y)
+        1 - sum((f_y[-1] + f_y[-length(f_y)]) * diff(g1$x) * 0.5)
 
-        1 - stats::integrate(f, lower = minV, upper = maxV,
-                             rel.tol = .Machine$double.eps^0.1,
-                             subdivisions = 80)$value
+        # f <- stats::approxfun(x = g1$x, y = f_y)
+        #
+        # 1 - stats::integrate(f, lower = 0, upper = Inf,
+        #                      rel.tol = .Machine$double.eps^0.1,
+        #                      subdivisions = 50)$value
       }))
     })
   })

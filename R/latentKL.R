@@ -56,10 +56,13 @@ latentKL <- function(object, burnin = 50, plotKL = TRUE,
 
         f_y <- g2$y * (log(g2$y) - log(g1$y))
 
-        f <- stats::approxfun(x = g1$x, y = f_y)
+        sum((f_y[-1] + f_y[-length(f_y)]) * diff(g1$x) * 0.5)
 
-        stats::integrate(f, lower = minV, upper = maxV,
-                         rel.tol = .Machine$double.eps^0.1)$value
+        # f <- stats::approxfun(x = g1$x, y = f_y)
+        #
+        # stats::integrate(f, lower = minV, upper = Inf,
+        #                  rel.tol = .Machine$double.eps^0.1,
+        #                  subdivisions = 50)$value
       }))
     })
   })
