@@ -5,11 +5,12 @@
 \title{Multiple-output Bayesian quantile regression model}
 \usage{
 multBayesQR(response, formulaPred, directionPoint, tau = 0.5, dataFile,
-  itNum = 2000, burnin, thin = 1, betaValue = NULL, sigmaValue = 1,
-  vSampleInit = NULL, priorVar = 100, hyperSigma = c(0.1, 0.1),
-  refresh = 100, bayesx = TRUE, sigmaSampling = TRUE, quiet = T,
-  tobit = FALSE, numCores = 1, recordLat = FALSE, outfile = NULL,
-  check_bayesx = FALSE, path_bayesx = NULL, ...)
+  itNum = 2000, burnin, thin = 1, chains = NULL, betaValue = NULL,
+  sigmaValue = 1, vSampleInit = NULL, priorVar = 100,
+  hyperSigma = c(0.1, 0.1), refresh = 100, bayesx = TRUE,
+  sigmaSampling = TRUE, quiet = T, tobit = FALSE, numCores = 1,
+  recordLat = FALSE, outfile = NULL, check_bayesx = FALSE,
+  path_bayesx = NULL, ...)
 }
 \arguments{
 \item{response}{Names of response variables}
@@ -36,6 +37,10 @@ formula.}
 \item{burnin}{Size of the initial to be discarded.}
 
 \item{thin}{Thinning parameter. Default value is 1.}
+
+\item{chains}{The number of chains to be run for each parameter. Only
+available when using \code{bayes = TRUE} and its default is one, when this
+is equal to NULL.}
 
 \item{betaValue}{Initial values for the parameter beta for the continuous
 part.}

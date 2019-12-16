@@ -19,6 +19,9 @@
 #' @param itNum Number of iterations.
 #' @param burnin Size of the initial to be discarded.
 #' @param thin Thinning parameter. Default value is 1.
+#' @param chains The number of chains to be run for each parameter. Only
+#'  available when using \code{bayes = TRUE} and its default is one, when this
+#'  is equal to NULL.
 #' @param betaValue Initial values for the parameter beta for the continuous
 #'  part.
 #' @param sigmaValue Initial value for the scale parameter.
@@ -63,6 +66,7 @@
 
 multBayesQR <- function(response, formulaPred, directionPoint,
                         tau = 0.5, dataFile, itNum = 2000, burnin, thin = 1,
+                        chains = NULL,
                         betaValue = NULL, sigmaValue = 1, vSampleInit = NULL,
                         priorVar = 100, hyperSigma = c(0.1, 0.1),
                         refresh = 100, bayesx = TRUE, sigmaSampling = TRUE,
@@ -159,6 +163,7 @@ multBayesQR <- function(response, formulaPred, directionPoint,
                                          iter = itNum, burnin = burnin,
                                          step = thin, method = "MCMC",
                                          family = "quantreg", quantile = b,
+                                         chains = chains,
                                          control =
                                            R2BayesX::bayesx.control(...)))
         }
@@ -168,6 +173,7 @@ multBayesQR <- function(response, formulaPred, directionPoint,
                                          iter = itNum, burnin = burnin,
                                          step = thin, method = "MCMC",
                                          family = "quantreg", quantile = b,
+                                         chains = chains,
                                          control =
                                            R2BayesX::bayesx.control(...),
                                          outfile =
