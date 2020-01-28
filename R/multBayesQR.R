@@ -123,7 +123,12 @@ multBayesQR <- function(response, formulaPred, directionPoint,
       range_xyzw <- max_xyzw - min_xyzw
 
       x_y_z_w_1step <- sweep(x_y_z_w, 2, min_xyzw)
-      x_y_z_w_grid <- (sweep(x_y_z_w_1step, 2, range_xyzw, "/") * 2) - 1
+      x_y_z_w_points <- (sweep(x_y_z_w_1step, 2, range_xyzw, "/") * 2) - 1
+
+      x_y_z_w_grid <- expand.grid(x_y_z_w_points[, 1],
+                                  x_y_z_w_points[, 2],
+                                  x_y_z_w_points[, 3],
+                                  x_y_z_w_points[, 4])
     }
     else {
       x_dir <- seq(-1, 1, length = directionPoint)
