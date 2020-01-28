@@ -10,7 +10,7 @@ multBayesQR(response, formulaPred, directionPoint, tau = 0.5, dataFile,
   hyperSigma = c(0.1, 0.1), refresh = 100, bayesx = TRUE,
   sigmaSampling = TRUE, quiet = T, tobit = FALSE, numCores = 1,
   recordLat = FALSE, outfile = NULL, check_bayesx = FALSE,
-  path_bayesx = NULL, ...)
+  path_bayesx = NULL, adaptive_dir = FALSE, ...)
 }
 \arguments{
 \item{response}{Names of response variables}
@@ -92,6 +92,14 @@ just for those models with problems. This is only considered when
 
 \item{path_bayesx}{When \code{check_bayes} is \code{TRUE}, the user must
 inform the path of BayesX in order for these new calls of the program.}
+
+\item{adaptive_dir}{If  \code{TRUE}, then directions will take into account the
+marginal quantiles of each dimension of the response variable. Otherwise,
+the direction vector are created creating all possible combinations of
+points inside the interval [-1, 1] given the number of points
+\code{directionPoint}. The default is \code{FALSE}.
+ The default
+is FALSE.}
 
 \item{...}{arguments passed to \code{bayesx.control}.}
 }

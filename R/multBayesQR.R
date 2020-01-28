@@ -58,6 +58,13 @@
 #'  \code{outfile} is different than \code{NULL}.
 #' @param path_bayesx When \code{check_bayes} is \code{TRUE}, the user must
 #'  inform the path of BayesX in order for these new calls of the program.
+#' @param adaptive_dir If  \code{TRUE}, then directions will take into account the
+#'  marginal quantiles of each dimension of the response variable. Otherwise,
+#'  the direction vector are created creating all possible combinations of
+#'  points inside the interval [-1, 1] given the number of points
+#'  \code{directionPoint}. The default is \code{FALSE}.
+#'   The default
+#'  is FALSE.
 #' @param ... arguments passed to \code{bayesx.control}.
 #' @return A list with the chains of all parameters of interest.
 #' @useDynLib baquantreg
@@ -72,7 +79,8 @@ multBayesQR <- function(response, formulaPred, directionPoint,
                         refresh = 100, bayesx = TRUE, sigmaSampling = TRUE,
                         quiet = T, tobit = FALSE, numCores = 1,
                         recordLat = FALSE, outfile = NULL,
-                        check_bayesx = FALSE, path_bayesx = NULL, ...){
+                        check_bayesx = FALSE, path_bayesx = NULL,
+                        adaptive_dir = FALSE, ...){
 
   n_dim <- length(response)
 
@@ -100,6 +108,41 @@ multBayesQR <- function(response, formulaPred, directionPoint,
       a / sqrt(sum(a^2))
     }))
     numbDir <- nrow(vectorDir)
+  } else if (n_dim == 4){
+    if (adaptive_dir){
+      Y <- dataFile[, response]
+
+      x_y_z_w <- apply(Y,
+                       2,
+                       stats::quantile,
+                       0:(directionPoint - 1)/(directionPoint - 1))
+
+      min_xyzw <- apply(Y, 2, range)[1, ]
+      max_xyzw <- apply(Y, 2, range)[2, ]
+
+      range_xyzw <- max_xyzw - min_xyzw
+
+      x_y_z_w_1step <- sweep(x_y_z_w, 2, min_xyzw)
+      x_y_z_w_grid <- (sweep(x_y_z_w_1step, 2, range_xyzw, "/") * 2) - 1
+    }
+    else {
+      x_dir <- seq(-1, 1, length = directionPoint)
+      y_dir <- seq(-1, 1, length = directionPoint)
+      z_dir <- seq(-1, 1, length = directionPoint)
+      w_dir <- seq(-1, 1, length = directionPoint)
+
+      x_y_z_w_grid <- expand.grid(x_dir, y_dir, z_dir, w_dir)
+    }
+
+    check_zeros <- !apply(x_y_z_w_grid, 1, function(a) all(a == 0))
+    x_y_z_w_grid <- x_y_z_w_grid[check_zeros, ]
+
+    vectorDir <- t(apply(x_y_z_w_grid, 1, function(a){
+      a / sqrt(sum(a^2))
+    }))
+    numbDir <- nrow(vectorDir)
+  } else {
+    stop("Number of dimensions for response variable is greater than 4")
   }
 
   objects <- list()
@@ -113,12 +156,18 @@ multBayesQR <- function(response, formulaPred, directionPoint,
 
       A <- cbind(u, u_1)
       x.qr <- qr.Q(qr(A))
-    }
-    else {
+    } else if (n_dim == 3) {
       u_1 <- c(1, 0, 0)
       u_2 <- c(0, 1, 0)
 
       A <- cbind(u, u_1, u_2)
+      x.qr <- qr.Q(qr(A))
+    } else {
+      u_1 <- c(1, 0, 0, 0)
+      u_2 <- c(0, 1, 0, 0)
+      u_3 <- c(0, 0, 1, 0)
+
+      A <- cbind(u, u_1, u_2, u_3)
       x.qr <- qr.Q(qr(A))
     }
 
@@ -137,7 +186,7 @@ multBayesQR <- function(response, formulaPred, directionPoint,
     else {
       dataFile <- cbind(dataFile, directionX)
       dim_X <- ncol(dataFile)
-      dir_variables <- paste0("directionX_", 1:(n_dim - 1))
+      dir_variables <- paste0("directionx", 1:(n_dim - 1))
       colnames(dataFile)[(dim_X - n_dim + 2):dim_X] <- dir_variables
       formulaUpdated <- stats::update(Formula::Formula(formulaPred),
                                       stats::as.formula(paste0("y ~ . + ",
@@ -145,7 +194,8 @@ multBayesQR <- function(response, formulaPred, directionPoint,
                                                               collapse = " + ")
                                       )))
     }
-    if(!bayesx){
+
+    if (!bayesx){
       X <- stats::model.matrix(formulaUpdated, dataFile)
 
       if (is.null(betaValue))
@@ -209,7 +259,7 @@ multBayesQR <- function(response, formulaPred, directionPoint,
 
     run_bayesx <- function(dir){
       text <- readLines(paste0(dir, '/bayesx.estim.input.prg'))
-      newSeed <- ceiling(stats::runif(1)*10000)
+      newSeed <- ceiling(stats::runif(1) * 10000)
       text <- gsub("setseed=[0-9]+", paste0("setseed=", newSeed), text)
       writeLines(text, 'bayesx.estim.input.prg')
       system(paste(path_bayesx, 'bayesx.estim.input.prg'))

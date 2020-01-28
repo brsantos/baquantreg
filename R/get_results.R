@@ -81,7 +81,7 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
     if (n_dim == 2) {
       directionX <- dataFile[, 'directionX']
     } else {
-      directionX <- dataFile[, c('directionXIi11iI1', 'directionXIi11iI2')]
+      directionX <- dataFile[, c('directionx1', 'directionx2')]
     }
 
 
