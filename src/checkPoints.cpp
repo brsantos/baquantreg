@@ -39,6 +39,7 @@ arma::mat checkPoints(arma::colvec gridy1, arma::colvec gridy2,
         if (splines) righthand = righthand + addterm(count);
         if (lefthand < righthand) partcontour = 1;
         else if (count == ndirections - 1){
+          Rcout << "count = " << count << std::endl;
           arma::rowvec coordinates = {gridy1(k), gridy2(j)};
           checking.insert_rows(count, coordinates);
           // checking(k, j) = 1;
