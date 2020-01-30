@@ -23,12 +23,14 @@ arma::mat checkPoints(arma::colvec gridy1, arma::colvec gridy2,
 
   // arma::mat checking = arma::zeros(n1, n2);
   arma::mat checking;
+  int number_points = 0;
 
   for(int k = 0; k < n1; k++){
     for(int j = 0; j < n2; j++){
 
       int partcontour = 0;
       int count = 0;
+
       while (partcontour == 0 && count < ndirections){
         double lefthand = directions(count, 0) * gridy1(k) +
           directions(count, 1) * gridy2(j);
@@ -39,9 +41,9 @@ arma::mat checkPoints(arma::colvec gridy1, arma::colvec gridy2,
         if (splines) righthand = righthand + addterm(count);
         if (lefthand < righthand) partcontour = 1;
         else if (count == ndirections - 1){
-          Rcout << "count = " << count << std::endl;
           arma::rowvec coordinates = {gridy1(k), gridy2(j)};
-          checking.insert_rows(count, coordinates);
+          checking.insert_rows(number_points, coordinates);
+          number_points++;
           // checking(k, j) = 1;
         }
         count++;
