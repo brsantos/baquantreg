@@ -126,16 +126,29 @@ drawQuantileRegion <- function(model, datafile, response,
                                         t(orthBases), betaDifDirections[[a]],
                                         xValue, splines_part, spline_values)
 
-      y1_ind <- which(rowSums(checkPoints_values) > 0)
-      if(length(y1_ind) > 0){
-        y1_inside <- seqY1[y1_ind]
+      # y1_ind <- which(rowSums(checkPoints_values) > 0)
 
-        sub_checkPoints <- checkPoints_values[y1_ind, ]
+      # if(length(y1_ind) > 0){
+      if(length(checkPoints_values) > 0){
+        y1_inside <- unique(sort(checkPoints_values[, 1]))
+        # y1_inside <- seqY1[y1_ind]
 
-        y2_inside_max <- apply(sub_checkPoints, 1, function(a)
-          seqY2[max(which(a == 1))])
-        y2_inside_min <- apply(sub_checkPoints, 1, function(a)
-          seqY2[min(which(a == 1))])
+        # sub_checkPoints <- checkPoints_values[y1_ind, ]
+
+        # y2_inside_max <- apply(sub_checkPoints, 1, function(a)
+        #   seqY2[max(which(a == 1))])
+
+        y2_inside_max <- sapply(y1_inside, function(a){
+          values_to_filter <- checkPoints_values[ , 1] == a
+          max(checkPoints_values[ values_to_filter, 2])
+        })
+
+        # y2_inside_min <- apply(sub_checkPoints, 1, function(a)
+        #   seqY2[min(which(a == 1))])
+        y2_inside_min <- sapply(y1_inside, function(a){
+          values_to_filter <- checkPoints_values[ , 1] == a
+          min(checkPoints_values[values_to_filter, 2])
+        })
       }
       else{
         y1_inside <- NA
@@ -154,19 +167,31 @@ drawQuantileRegion <- function(model, datafile, response,
                                           betaDifDirections[[a]],
                                           b)
 
-        y1_ind <- which(rowSums(checkPoints_values) > 0)
+        # y1_ind <- which(rowSums(checkPoints_values) > 0)
 
-        if(length(y1_ind) > 0){
-          y1_inside <- seqY1[y1_ind]
+        # if(length(y1_ind) > 0){
+        if(length(checkPoints_values) > 0){
+          y1_inside <- unique(sort(checkPoints_values[, 1]))
+          # y1_inside <- seqY1[y1_ind]
 
-          sub_checkPoints <- checkPoints_values[y1_ind, ]
+          # sub_checkPoints <- checkPoints_values[y1_ind, ]
 
-          y2_inside_max <- apply(sub_checkPoints, 1, function(a)
-            seqY2[max(which(a == 1))])
-          y2_inside_min <- apply(sub_checkPoints, 1, function(a)
-            seqY2[min(which(a == 1))])
+          # y2_inside_max <- apply(sub_checkPoints, 1, function(a)
+          #   seqY2[max(which(a == 1))])
+
+          y2_inside_max <- sapply(y1_inside, function(a){
+            values_to_filter <- checkPoints_values[ , 1] == a
+            max(checkPoints_values[ values_to_filter, 2])
+          })
+
+          # y2_inside_min <- apply(sub_checkPoints, 1, function(a)
+          #   seqY2[min(which(a == 1))])
+          y2_inside_min <- sapply(y1_inside, function(a){
+            values_to_filter <- checkPoints_values[ , 1] == a
+            min(checkPoints_values[values_to_filter, 2])
+          })
         }
-        else{
+        else {
           y1_inside <- NA
           y2_inside_min <- NA
           y2_inside_max <- NA
