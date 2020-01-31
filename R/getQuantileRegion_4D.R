@@ -1,7 +1,7 @@
 #' Multiple-output Bayesian quantile regression model
 #'
 #' This function draws plots of the quantile region based on multiple-output
-#'  quantile regression models, when the response variable has 3 dimensions.
+#'  quantile regression models, when the response variable has 4 dimensions.
 #'
 #' @param model This is an object of the class \code{multBQR}, produced by a
 #'  call to the \code{multBayesQR} function.
@@ -29,18 +29,23 @@
 #' @param name_var When there is a nonlinear variable from which one wants to
 #'  consider different values for plotting, this should have the name of the
 #'  variable.
+#' @param adaptive_dir If  \code{TRUE}, then directions will take into account the
+#'  marginal quantiles of each dimension of the response variable. Otherwise,
+#'  the direction vector are created creating all possible combinations of
+#'  points inside the interval [-1, 1] given the number of points
+#'  \code{directionPoint}. The default is \code{FALSE}.
 #' @param ... Other parameters for \code{summary.multBQR}.
 #' @return A ggplot with the quantile regions based on Bayesian quantile
 #'  regression model estimates.
 #' @useDynLib baquantreg
 
-drawQuantileRegion_3D <- function(model, datafile, response,
+getQuantileRegion_4D <- function(model, datafile, response,
                                   ngridpoints = 100, xValue = 1,
                                   path_folder = NULL,
                                   splines_part = FALSE, wValue = NULL,
                                   print_plot = TRUE,
                                   model_name = 'bayesx.estim',
-                                  name_var, ...){
+                                  name_var, adaptive_dir, ...){
 
   if (is.null(path_folder))
     stop("You must define a path with all the results")
@@ -49,7 +54,7 @@ drawQuantileRegion_3D <- function(model, datafile, response,
                            model_name = model_name,
                            splines = splines_part,
                            name_var = name_var,
-                           n_dim = 3, datafile, response)
+                           n_dim = 4, datafile, response, adaptive_dir)
 
     taus <- results$taus
     ntaus <- length(taus)
@@ -59,6 +64,7 @@ drawQuantileRegion_3D <- function(model, datafile, response,
     directions <- results$directions
     orthBases1 <- results$orthBases1
     orthBases2 <- results$orthBases2
+    orthBases3 <- results$orthBases3
 
     number_directions <- dim(directions)[2]
 
@@ -68,10 +74,12 @@ drawQuantileRegion_3D <- function(model, datafile, response,
   y1range <- range(Y[, 1])
   y2range <- range(Y[, 2])
   y3range <- range(Y[, 3])
+  y4range <- range(Y[, 4])
 
   seqY1 <- seq(y1range[1], y1range[2], length.out = ngridpoints)
   seqY2 <- seq(y2range[1], y2range[2], length.out = ngridpoints)
   seqY3 <- seq(y3range[1], y3range[2], length.out = ngridpoints)
+  seqY4 <- seq(y4range[1], y4range[2], length.out = ngridpoints)
 
   pointsPlot <-  lapply(1:ntaus, function(a){
     if (splines_part){
@@ -83,46 +91,54 @@ drawQuantileRegion_3D <- function(model, datafile, response,
         })
     } else spline_values <- rep(0, number_directions)
 
-    checkPoints_values <- checkPoints_cube(seqY1, seqY2, seqY3,
-                                      t(directions),
-                                      t(orthBases1), t(orthBases2),
-                                      betaDifDirections[[a]],
-                                      xValue, splines_part, spline_values)
+    checkPoints_val <- checkPoints_4d(seqY1, seqY2, seqY3, seqY4,
+                                         t(directions),
+                                         t(orthBases1), t(orthBases2),
+                                         t(orthBases3),
+                                         betaDifDirections[[a]],
+                                         xValue, splines_part, spline_values)
 
-    y3_inside <- unique(checkPoints_values[, 3])
+    all_points <- lapply(unique(sort(checkPoints_val[, 4])), function(dddd){
+      checkPoints_values <- checkPoints_val[checkPoints_val[,4] == dddd, ]
 
-    points_inside <- lapply(y3_inside, function(aaa){
-      checkPoints_values_aux_ind <- checkPoints_values[,3] == aaa
-      checkPoints_values_aux <-
-        checkPoints_values[checkPoints_values_aux_ind, 1:2]
+      y3_inside <- unique(checkPoints_values[, 3])
 
-      if(length(checkPoints_values_aux) > 0){
-        y1_inside <- unique(sort(checkPoints_values[, 1]))
+      points_inside <- lapply(y3_inside, function(aaa){
+        checkPoints_values_aux_ind <- checkPoints_values[,3] == aaa
+        checkPoints_values_aux <-
+          checkPoints_values[checkPoints_values_aux_ind, 1:2]
 
-        y2_inside_max <- sapply(y1_inside, function(a){
-          values_to_filter <- checkPoints_values_aux[ , 1] == a
-          max(checkPoints_values_aux[ values_to_filter, 2])
-        })
+        if(length(checkPoints_values_aux) > 0){
+          y1_inside <- unique(sort(checkPoints_values[, 1]))
 
-        y2_inside_min <- sapply(y1_inside, function(a){
-          values_to_filter <- checkPoints_values_aux[ , 1] == a
-          min(checkPoints_values_aux[values_to_filter, 2])
-        })
+          y2_inside_max <- sapply(y1_inside, function(a){
+            values_to_filter <- checkPoints_values_aux[ , 1] == a
+            max(checkPoints_values_aux[ values_to_filter, 2])
+          })
 
-      }
-      else {
-        y1_inside <- NA
-        y2_inside_min <- NA
-        y2_inside_max <- NA
-      }
+          y2_inside_min <- sapply(y1_inside, function(a){
+            values_to_filter <- checkPoints_values_aux[ , 1] == a
+            min(checkPoints_values_aux[values_to_filter, 2])
+          })
 
-      data.frame(y1 = rep(y1_inside, times = 2),
-                 y2 = c(y2_inside_min, y2_inside_max),
-                 y3 = rep(aaa, length(y1_inside) * 2),
-                 type = rep(c('min', 'max'), each = length(y1_inside)))
+        }
+        else {
+          y1_inside <- NA
+          y2_inside_min <- NA
+          y2_inside_max <- NA
+        }
+
+        data.frame(y1 = rep(y1_inside, times = 2),
+                   y2 = c(y2_inside_min, y2_inside_max),
+                   y3 = rep(aaa, length(y1_inside) * 2),
+                   type = rep(c('min', 'max'), each = length(y1_inside)))
       })
 
-    points_inside_all <- do.call(rbind.data.frame, points_inside)
-    points_inside_all[stats::complete.cases(points_inside_all), ]
+      points_inside_all <- do.call(rbind.data.frame, points_inside)
+      points_inside_all[stats::complete.cases(points_inside_all), ]
+      points_inside_all$y4 <- rep(dddd, dim(points_inside_all)[1])
+    })
+    all_points_all <- do.call(rbind.data.frame, all_points)
+    all_points_all[stats::complete.cases(all_points_all), ]
   })
 }

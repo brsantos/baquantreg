@@ -1,7 +1,7 @@
 ## Organizing the results in a folder
 
 get_results <- function(path_folder, model_name, splines = FALSE, name_var,
-                        n_dim = 2){
+                        n_dim = 2, datafile_original, response, adaptive_dir){
   folders <- list.files(path_folder)
 
   ## Considering at most 999 directions
@@ -80,10 +80,11 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
     y_response <- dataFile[,'y']
     if (n_dim == 2) {
       directionX <- dataFile[, 'directionX']
-    } else {
+    } else if (n_dim == 3){
       directionX <- dataFile[, c('directionx1', 'directionx2')]
+    } else {
+      directionX <- dataFile[, c('directionx1', 'directionx2', 'directionx3')]
     }
-
 
     list(fixedEffects = fixedEffects, variance = variance,
          y_response = y_response, directionX = directionX,
@@ -107,7 +108,7 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
       A <- cbind(a, u_1)
       qr.Q(qr(A))[, 2]
     }))
-  } else {
+  } else if (n_dim == 3){
     x_dir <- seq(-1, 1, length = directionPoint^(1/3))
     y_dir <- seq(-1, 1, length = directionPoint^(1/3))
     z_dir <- seq(-1, 1, length = directionPoint^(1/3))
@@ -135,6 +136,71 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
 
       A <- cbind(a, u_1, u_2)
       qr.Q(qr(A))[, 3]
+    }))
+  } else {
+    if (adaptive_dir){
+      Y <- datafile_original[, response]
+
+      x_y_z_w <- apply(Y,
+                       2,
+                       stats::quantile,
+                       0:(directionPoint - 1)/(directionPoint - 1))
+
+      min_xyzw <- apply(Y, 2, range)[1, ]
+      max_xyzw <- apply(Y, 2, range)[2, ]
+
+      range_xyzw <- max_xyzw - min_xyzw
+
+      x_y_z_w_1step <- sweep(x_y_z_w, 2, min_xyzw)
+      x_y_z_w_points <- (sweep(x_y_z_w_1step, 2, range_xyzw, "/") * 2) - 1
+
+      x_y_z_w_grid <- expand.grid(x_y_z_w_points[, 1],
+                                  x_y_z_w_points[, 2],
+                                  x_y_z_w_points[, 3],
+                                  x_y_z_w_points[, 4])
+
+    } else {
+      x_dir <- seq(-1, 1, length = directionPoint)
+      y_dir <- seq(-1, 1, length = directionPoint)
+      z_dir <- seq(-1, 1, length = directionPoint)
+      w_dir <- seq(-1, 1, length = directionPoint)
+
+      x_y_z_w_grid <- expand.grid(x_dir, y_dir, z_dir, w_dir)
+    }
+
+    check_zeros <- !apply(x_y_z_w_grid, 1, function(a) all(a == 0))
+    x_y_z_w_grid <- x_y_z_w_grid[check_zeros, ]
+
+    vectorDir <- t(apply(x_y_z_w_grid, 1, function(a){
+      a / sqrt(sum(a^2))
+    }))
+    numbDir <- nrow(vectorDir)
+
+    orthBasis1 <- t(apply(vectorDir, 1, function(a){
+      u_1 <- c(1, 0, 0, 0)
+      u_2 <- c(0, 1, 0, 0)
+      u_3 <- c(0, 0, 1, 0)
+
+      A <- cbind(a, u_1, u_2, u_3)
+      qr.Q(qr(A))[, 2]
+    }))
+
+    orthBasis2 <- t(apply(vectorDir, 1, function(a){
+      u_1 <- c(1, 0, 0, 0)
+      u_2 <- c(0, 1, 0, 0)
+      u_3 <- c(0, 0, 1, 0)
+
+      A <- cbind(a, u_1, u_2, u_3)
+      qr.Q(qr(A))[, 3]
+    }))
+
+    orthBasis3 <- t(apply(vectorDir, 1, function(a){
+      u_1 <- c(1, 0, 0, 0)
+      u_2 <- c(0, 1, 0, 0)
+      u_3 <- c(0, 0, 1, 0)
+
+      A <- cbind(a, u_1, u_2, u_3)
+      qr.Q(qr(A))[, 4]
     }))
   }
 
@@ -192,9 +258,18 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
                                                     matrix_info = FALSE)
   }
 
-  if(n_dim == 2){
+  if (n_dim == 2){
     list(taus = unique_taus, betaDifDirections = betaDifDirections,
          directions = t(vectorDir), orthBases = t(orthBasis),
+         sdDifDirections = sdDifDirections,
+         beta_draws_DifDirections = beta_draws_DifDirections,
+         sigma_difDirections = sigma_difDirections,
+         sigma_draws_DifDirections = sigma_draws_DifDirections,
+         spline_estimates_DifDirections = spline_estimates_DifDirections)
+  } else if (n_dim == 2) {
+    list(taus = unique_taus, betaDifDirections = betaDifDirections,
+         directions = t(vectorDir), orthBases1 = t(orthBasis1),
+         orthBases2 = t(orthBasis2),
          sdDifDirections = sdDifDirections,
          beta_draws_DifDirections = beta_draws_DifDirections,
          sigma_difDirections = sigma_difDirections,
@@ -203,7 +278,7 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
   } else {
     list(taus = unique_taus, betaDifDirections = betaDifDirections,
          directions = t(vectorDir), orthBases1 = t(orthBasis1),
-         orthBases2 = t(orthBasis2),
+         orthBases2 = t(orthBasis2), orthBases3 = t(orthBasis3),
          sdDifDirections = sdDifDirections,
          beta_draws_DifDirections = beta_draws_DifDirections,
          sigma_difDirections = sigma_difDirections,

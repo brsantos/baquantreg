@@ -17,6 +17,10 @@ checkPoints <- function(gridy1, gridy2, directions, orthBasis, fullestimates, xv
     .Call('_baquantreg_checkPoints', PACKAGE = 'baquantreg', gridy1, gridy2, directions, orthBasis, fullestimates, xvalue, splines, addterm)
 }
 
+checkPoints_4d <- function(gridy1, gridy2, gridy3, gridy4, directions, orthBasis1, orthBasis2, orthBasis3, fullestimates, xvalue, splines, addterm) {
+    .Call('_baquantreg_checkPoints_4d', PACKAGE = 'baquantreg', gridy1, gridy2, gridy3, gridy4, directions, orthBasis1, orthBasis2, orthBasis3, fullestimates, xvalue, splines, addterm)
+}
+
 checkPoints_cube <- function(gridy1, gridy2, gridy3, directions, orthBasis1, orthBasis2, fullestimates, xvalue, splines, addterm) {
     .Call('_baquantreg_checkPoints_cube', PACKAGE = 'baquantreg', gridy1, gridy2, gridy3, directions, orthBasis1, orthBasis2, fullestimates, xvalue, splines, addterm)
 }

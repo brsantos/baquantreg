@@ -5,7 +5,7 @@ using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 
 // [[Rcpp::export]]
-arma::cube checkPoints_cube(arma::colvec gridy1, arma::colvec gridy2,
+arma::mat checkPoints_cube(arma::colvec gridy1, arma::colvec gridy2,
                            arma::colvec gridy3, arma::mat directions,
                            arma::mat orthBasis1, arma::mat orthBasis2,
                            arma::mat fullestimates, arma::colvec xvalue,
@@ -24,7 +24,8 @@ arma::cube checkPoints_cube(arma::colvec gridy1, arma::colvec gridy2,
   if(p == 2) estimates = fullestimates.row(0);
   else estimates = fullestimates.rows(0, p - 3);
 
-  arma::cube checking(n1, n2, n3, arma::fill::zeros);
+  arma::mat checking;
+  int number_points = 0;
 
   for(int k = 0; k < n1; k++){
     for(int j = 0; j < n2; j++){
@@ -48,7 +49,9 @@ arma::cube checkPoints_cube(arma::colvec gridy1, arma::colvec gridy2,
           if (splines) righthand = righthand + addterm(count);
           if (lefthand < righthand) partcontour = 1;
           else if (count == ndirections - 1){
-            checking(k, j, l) = 1;
+            arma::rowvec coordinates = {gridy1(k), gridy2(j), gridy3(l)};
+            checking.insert_rows(number_points, coordinates);
+            number_points++;
           }
           count++;
         }

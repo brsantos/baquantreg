@@ -90,7 +90,8 @@ drawQuantileRegion <- function(model, datafile, response,
       results <- get_results(path_folder,
                              model_name = model_name,
                              splines = splines_part,
-                             name_var = name_var)
+                             name_var = name_var, n_dim = 2,
+                             datafile, response)
 
       taus <- results$taus
       ntaus <- length(taus)

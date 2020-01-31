@@ -97,9 +97,7 @@ inform the path of BayesX in order for these new calls of the program.}
 marginal quantiles of each dimension of the response variable. Otherwise,
 the direction vector are created creating all possible combinations of
 points inside the interval [-1, 1] given the number of points
-\code{directionPoint}. The default is \code{FALSE}.
- The default
-is FALSE.}
+\code{directionPoint}. The default is \code{FALSE}.}
 
 \item{...}{arguments passed to \code{bayesx.control}.}
 }

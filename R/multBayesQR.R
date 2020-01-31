@@ -63,8 +63,6 @@
 #'  the direction vector are created creating all possible combinations of
 #'  points inside the interval [-1, 1] given the number of points
 #'  \code{directionPoint}. The default is \code{FALSE}.
-#'   The default
-#'  is FALSE.
 #' @param ... arguments passed to \code{bayesx.control}.
 #' @return A list with the chains of all parameters of interest.
 #' @useDynLib baquantreg
