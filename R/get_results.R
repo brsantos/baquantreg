@@ -138,6 +138,7 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
       qr.Q(qr(A))[, 3]
     }))
   } else {
+    directionPoint <- directionPoint^(1/4)
     if (adaptive_dir){
       Y <- datafile_original[, response]
 

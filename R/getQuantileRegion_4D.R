@@ -45,7 +45,7 @@ getQuantileRegion_4D <- function(model, datafile, response,
                                   splines_part = FALSE, wValue = NULL,
                                   print_plot = TRUE,
                                   model_name = 'bayesx.estim',
-                                  name_var, adaptive_dir, ...){
+                                  name_var, adaptive_dir = FALSE, ...){
 
   if (is.null(path_folder))
     stop("You must define a path with all the results")
@@ -85,7 +85,7 @@ getQuantileRegion_4D <- function(model, datafile, response,
     if (splines_part){
       spline_values <-
         sapply(1:number_directions, function(aa){
-          estimates_direction <- splines_estimates[[a]][[aa]][[1]]
+          estimates_direction <- splines_estimates[[a]][[aa]]
           distances <- abs(wValue - estimates_direction[, name_var])
           estimates_direction$pmean[which(distances == min(distances))[1]]
         })
