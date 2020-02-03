@@ -34,7 +34,7 @@ arma::mat checkPoints_4d(arma::colvec gridy1, arma::colvec gridy2,
   for(int k = 0; k < n1; k++){
     for(int j = 0; j < n2; j++){
       for(int l = 0; l < n3; l++){
-        for(int m = 0; l < n4; m++){
+        for(int m = 0; m < n4; m++){
 
           int partcontour = 0;
           int count = 0;
