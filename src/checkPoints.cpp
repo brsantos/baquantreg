@@ -44,7 +44,6 @@ arma::mat checkPoints(arma::colvec gridy1, arma::colvec gridy2,
           arma::rowvec coordinates = {gridy1(k), gridy2(j)};
           checking.insert_rows(number_points, coordinates);
           number_points++;
-          // checking(k, j) = 1;
         }
         count++;
       }

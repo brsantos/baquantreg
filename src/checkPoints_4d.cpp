@@ -47,17 +47,17 @@ arma::mat checkPoints_4d(arma::colvec gridy1, arma::colvec gridy2,
               (orthBasis1(count, 0) * gridy1(k) +
               orthBasis1(count, 1) * gridy2(j) +
               orthBasis1(count, 2) * gridy3(l) +
-              orthBasis1(count, 2) * gridy4(m)) +
+              orthBasis1(count, 3) * gridy4(m)) +
               effDir2(0, count) *
               (orthBasis2(count, 0) * gridy1(k) +
               orthBasis2(count, 1) * gridy2(j) +
               orthBasis2(count, 2) * gridy3(l) +
-              orthBasis2(count, 2) * gridy4(m)) +
+              orthBasis2(count, 3) * gridy4(m)) +
               effDir3(0, count) *
               (orthBasis3(count, 0) * gridy1(k) +
               orthBasis3(count, 1) * gridy2(j) +
               orthBasis3(count, 2) * gridy3(l) +
-              orthBasis3(count, 2) * gridy4(m)) +
+              orthBasis3(count, 3) * gridy4(m)) +
               arma::as_scalar(xvalue.t() * estimates.col(count));
             if (splines) righthand = righthand + addterm(count);
             if (lefthand < righthand) partcontour = 1;
