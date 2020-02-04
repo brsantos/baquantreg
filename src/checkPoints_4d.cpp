@@ -32,9 +32,13 @@ arma::mat checkPoints_4d(arma::colvec gridy1, arma::colvec gridy2,
   int number_points = 0;
 
   for(int k = 0; k < n1; k++){
+    Rcout << "k = " << k << std::endl;
     for(int j = 0; j < n2; j++){
+      Rcout << "j = " << j << std::endl;
       for(int l = 0; l < n3; l++){
+        Rcout << "l = " << k << std::endl;
         for(int m = 0; m < n4; m++){
+          Rcout << "m = " << k << std::endl;
 
           int partcontour = 0;
           int count = 0;
