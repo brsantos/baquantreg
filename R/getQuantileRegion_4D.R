@@ -40,12 +40,12 @@
 #' @useDynLib baquantreg
 
 getQuantileRegion_4D <- function(model, datafile, response,
-                                  ngridpoints = 100, xValue = 1,
-                                  path_folder = NULL,
-                                  splines_part = FALSE, wValue = NULL,
-                                  print_plot = TRUE,
-                                  model_name = 'bayesx.estim',
-                                  name_var, adaptive_dir = FALSE, ...){
+                                 ngridpoints = 100, xValue = 1,
+                                 path_folder = NULL,
+                                 splines_part = FALSE, wValue = NULL,
+                                 print_plot = TRUE,
+                                 model_name = 'bayesx.estim',
+                                 name_var, adaptive_dir = FALSE, ...){
 
   if (is.null(path_folder))
     stop("You must define a path with all the results")
@@ -92,51 +92,78 @@ getQuantileRegion_4D <- function(model, datafile, response,
     } else spline_values <- rep(0, number_directions)
 
     checkPoints_val <- checkPoints_4d(seqY1, seqY2, seqY3, seqY4,
-                                         t(directions),
-                                         t(orthBases1), t(orthBases2),
-                                         t(orthBases3),
-                                         betaDifDirections[[a]],
-                                         xValue, splines_part, spline_values)
+                                      t(directions),
+                                      t(orthBases1), t(orthBases2),
+                                      t(orthBases3),
+                                      betaDifDirections[[a]],
+                                      xValue, splines_part, spline_values)
 
     all_points <- lapply(unique(sort(checkPoints_val[, 4])), function(dddd){
-      checkPoints_values <- checkPoints_val[checkPoints_val[,4] == dddd, ]
+      checkPoints_values <- checkPoints_val[checkPoints_val[, 4] == dddd, ]
 
-      y3_inside <- unique(checkPoints_values[, 3])
+      if (is.null(dim(checkPoints_values)) & length(checkPoints_values) == 4){
+        y3_inside <- checkPoints_values[3]
+        y1_inside <- checkPoints_values[1]
+        y2_inside_max <- checkPoints_values[2]
+        y2_inside_min <- checkPoints_values[2]
 
-      points_inside <- lapply(y3_inside, function(aaa){
-        checkPoints_values_aux_ind <- checkPoints_values[,3] == aaa
-        checkPoints_values_aux <-
-          checkPoints_values[checkPoints_values_aux_ind, 1:2]
+        points_inside <- list(data.frame(y1 = rep(y1_inside, 2),
+                                         y2 = c(y2_inside_min, y2_inside_max),
+                                         y3 = rep(y3_inside, 2),
+                                         type = c('min', 'max')))
+      }
+      else {
+        y3_inside <- unique(checkPoints_values[ ,3])
 
-        if(length(checkPoints_values_aux) > 0){
-          y1_inside <- unique(sort(checkPoints_values[, 1]))
+        points_inside <- lapply(y3_inside, function(aaa){
+          checkPoints_values_aux_ind <- checkPoints_values[, 3] == aaa
+          if (sum(checkPoints_values_aux_ind) > 1){
+            checkPoints_values_aux <-
+              checkPoints_values[checkPoints_values_aux_ind, 1:2]
+          }
+          else {
+            checkPoints_values_aux <-
+              matrix(checkPoints_values[checkPoints_values_aux_ind, 1:2],
+                     nrow = 1)
+          }
 
-          y2_inside_max <- sapply(y1_inside, function(a){
-            values_to_filter <- checkPoints_values_aux[ , 1] == a
-            max(checkPoints_values_aux[ values_to_filter, 2])
-          })
 
-          y2_inside_min <- sapply(y1_inside, function(a){
-            values_to_filter <- checkPoints_values_aux[ , 1] == a
-            min(checkPoints_values_aux[values_to_filter, 2])
-          })
+          if(length(checkPoints_values_aux) > 0){
+            y1_inside <- unique(sort(checkPoints_values[, 1]))
+            y2_inside_max <- sapply(y1_inside, function(a){
+              values_to_filter <- checkPoints_values_aux[ , 1] == a
+              if (any(values_to_filter)){
+                max(checkPoints_values_aux[values_to_filter, 2])
+              }
+              else NA
+            })
 
-        }
-        else {
-          y1_inside <- NA
-          y2_inside_min <- NA
-          y2_inside_max <- NA
-        }
+            y2_inside_min <- sapply(y1_inside, function(a){
+              values_to_filter <- checkPoints_values_aux[ ,1] == a
+              if (any(values_to_filter)){
+                min(checkPoints_values_aux[values_to_filter, 2])
+              }
+              else NA
+            })
 
-        data.frame(y1 = rep(y1_inside, times = 2),
-                   y2 = c(y2_inside_min, y2_inside_max),
-                   y3 = rep(aaa, length(y1_inside) * 2),
-                   type = rep(c('min', 'max'), each = length(y1_inside)))
-      })
+          }
+          else {
+            y1_inside <- NA
+            y2_inside_min <- NA
+            y2_inside_max <- NA
+          }
+
+          data.frame(y1 = rep(y1_inside, times = 2),
+                     y2 = c(y2_inside_min, y2_inside_max),
+                     y3 = rep(aaa, length(y1_inside) * 2),
+                     type = rep(c('min', 'max'), each = length(y1_inside)))
+        })
+      }
 
       points_inside_all <- do.call(rbind.data.frame, points_inside)
       points_inside_all[stats::complete.cases(points_inside_all), ]
       points_inside_all$y4 <- rep(dddd, dim(points_inside_all)[1])
+      points_inside_all
     })
     all_points_all <- do.call(rbind.data.frame, all_points)
     all_points_all[stats::complete.cases(all_points_all), ]
