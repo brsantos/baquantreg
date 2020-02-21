@@ -139,72 +139,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// spBayesQR
-List spBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::mat matDist, double lambda, double tuneP, double alphaValue, double tuneA, double priorVar, int refresh, bool quiet, double jitter, bool includeAlpha, double tuneV, int kMT, double shapeL, double rateL);
-RcppExport SEXP _baquantreg_spBayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP matDistSEXP, SEXP lambdaSEXP, SEXP tunePSEXP, SEXP alphaValueSEXP, SEXP tuneASEXP, SEXP priorVarSEXP, SEXP refreshSEXP, SEXP quietSEXP, SEXP jitterSEXP, SEXP includeAlphaSEXP, SEXP tuneVSEXP, SEXP kMTSEXP, SEXP shapeLSEXP, SEXP rateLSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type y(ySEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< int >::type itNum(itNumSEXP);
-    Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type betaValue(betaValueSEXP);
-    Rcpp::traits::input_parameter< double >::type sigmaValue(sigmaValueSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type matDist(matDistSEXP);
-    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< double >::type tuneP(tunePSEXP);
-    Rcpp::traits::input_parameter< double >::type alphaValue(alphaValueSEXP);
-    Rcpp::traits::input_parameter< double >::type tuneA(tuneASEXP);
-    Rcpp::traits::input_parameter< double >::type priorVar(priorVarSEXP);
-    Rcpp::traits::input_parameter< int >::type refresh(refreshSEXP);
-    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    Rcpp::traits::input_parameter< double >::type jitter(jitterSEXP);
-    Rcpp::traits::input_parameter< bool >::type includeAlpha(includeAlphaSEXP);
-    Rcpp::traits::input_parameter< double >::type tuneV(tuneVSEXP);
-    Rcpp::traits::input_parameter< int >::type kMT(kMTSEXP);
-    Rcpp::traits::input_parameter< double >::type shapeL(shapeLSEXP);
-    Rcpp::traits::input_parameter< double >::type rateL(rateLSEXP);
-    rcpp_result_gen = Rcpp::wrap(spBayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, matDist, lambda, tuneP, alphaValue, tuneA, priorVar, refresh, quiet, jitter, includeAlpha, tuneV, kMT, shapeL, rateL));
-    return rcpp_result_gen;
-END_RCPP
-}
-// sppBayesQR
-List sppBayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::mat matDist, NumericVector lambdaVec, double lambda, double shapeL, double rateL, double tuneP, arma::uvec indices, int m, double alphaValue, double tuneA, double priorVar, bool quiet, int refresh, double jitter, bool includeAlpha, double tuneV, int kMT, bool discLambda);
-RcppExport SEXP _baquantreg_sppBayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP matDistSEXP, SEXP lambdaVecSEXP, SEXP lambdaSEXP, SEXP shapeLSEXP, SEXP rateLSEXP, SEXP tunePSEXP, SEXP indicesSEXP, SEXP mSEXP, SEXP alphaValueSEXP, SEXP tuneASEXP, SEXP priorVarSEXP, SEXP quietSEXP, SEXP refreshSEXP, SEXP jitterSEXP, SEXP includeAlphaSEXP, SEXP tuneVSEXP, SEXP kMTSEXP, SEXP discLambdaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type y(ySEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< int >::type itNum(itNumSEXP);
-    Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type betaValue(betaValueSEXP);
-    Rcpp::traits::input_parameter< double >::type sigmaValue(sigmaValueSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type matDist(matDistSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type lambdaVec(lambdaVecSEXP);
-    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< double >::type shapeL(shapeLSEXP);
-    Rcpp::traits::input_parameter< double >::type rateL(rateLSEXP);
-    Rcpp::traits::input_parameter< double >::type tuneP(tunePSEXP);
-    Rcpp::traits::input_parameter< arma::uvec >::type indices(indicesSEXP);
-    Rcpp::traits::input_parameter< int >::type m(mSEXP);
-    Rcpp::traits::input_parameter< double >::type alphaValue(alphaValueSEXP);
-    Rcpp::traits::input_parameter< double >::type tuneA(tuneASEXP);
-    Rcpp::traits::input_parameter< double >::type priorVar(priorVarSEXP);
-    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    Rcpp::traits::input_parameter< int >::type refresh(refreshSEXP);
-    Rcpp::traits::input_parameter< double >::type jitter(jitterSEXP);
-    Rcpp::traits::input_parameter< bool >::type includeAlpha(includeAlphaSEXP);
-    Rcpp::traits::input_parameter< double >::type tuneV(tuneVSEXP);
-    Rcpp::traits::input_parameter< int >::type kMT(kMTSEXP);
-    Rcpp::traits::input_parameter< bool >::type discLambda(discLambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(sppBayesQR(tau, y, X, itNum, thin, betaValue, sigmaValue, matDist, lambdaVec, lambda, shapeL, rateL, tuneP, indices, m, alphaValue, tuneA, priorVar, quiet, refresh, jitter, includeAlpha, tuneV, kMT, discLambda));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_baquantreg_BayesQR", (DL_FUNC) &_baquantreg_BayesQR, 15},
@@ -213,8 +147,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_baquantreg_checkPoints", (DL_FUNC) &_baquantreg_checkPoints, 8},
     {"_baquantreg_checkPoints_4d", (DL_FUNC) &_baquantreg_checkPoints_4d, 12},
     {"_baquantreg_checkPoints_cube", (DL_FUNC) &_baquantreg_checkPoints_cube, 10},
-    {"_baquantreg_spBayesQR", (DL_FUNC) &_baquantreg_spBayesQR, 21},
-    {"_baquantreg_sppBayesQR", (DL_FUNC) &_baquantreg_sppBayesQR, 25},
     {NULL, NULL, 0}
 };
 
