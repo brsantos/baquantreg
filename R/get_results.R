@@ -100,7 +100,7 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
          fixedEffects_sd = fixedEffects_sd, beta_draws = beta_draws,
          varnames = varnames, sigma_draws = sigma_draws,
          spline_estimates = spline_estimates,
-         upperq_spline_estimates = upperq_spline_estimates,
+         upperq_sp_estimates = upperq_sp_estimates,
          lowerq = fixedEffects_lowerq,
          upperq = fixedEffects_upperq)
   })
@@ -236,7 +236,7 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
   })
 
   splines_matrix <- lapply(results, function(a) a$spline_estimates)
-  upperq_splines_matrix <-lapply(results, function(a) a$upperq_spline_estimates)
+  upperq_splines_matrix <-lapply(results, function(a) a$upperq_sp_estimates)
 
   organize_info <- function(object, matrix_info = TRUE){
     lapply(unique_taus, function(a){
