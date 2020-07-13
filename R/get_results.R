@@ -74,12 +74,13 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
                                             model_name, '_scale_sample.raw'),
                                      head = TRUE)[,2]
     spline_estimates <- NULL
+    upperq_sp_estimates <- NULL
     if (splines){
       spline_estimates <- utils::read.table(paste0(path_folder, '/', a, '/',
                                               model_name, '_f_',
                                               name_var , '_pspline.res'),
                                             head = TRUE)[, 2:3]
-      upperq_spline_estimates <-
+      upperq_sp_estimates <-
         utils::read.table(paste0(path_folder, '/', a, '/',
                                  model_name, '_f_',
                                  name_var , '_pspline.res'),
