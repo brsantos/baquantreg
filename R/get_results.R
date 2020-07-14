@@ -75,6 +75,7 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
                                      head = TRUE)[,2]
     spline_estimates <- NULL
     upperq_sp_estimates <- NULL
+    lowerq_sp_estimates <- NULL
     if (splines){
       spline_estimates <- utils::read.table(paste0(path_folder, '/', a, '/',
                                               model_name, '_f_',
@@ -85,6 +86,12 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
                                  model_name, '_f_',
                                  name_var , '_pspline.res'),
                           head = TRUE)[, c(2, 8)]
+
+      lowerq_sp_estimates <-
+        utils::read.table(paste0(path_folder, '/', a, '/',
+                                 model_name, '_f_',
+                                 name_var , '_pspline.res'),
+                          head = TRUE)[, c(2, 4)]
     }
 
     y_response <- dataFile[,'y']
@@ -102,6 +109,7 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
          varnames = varnames, sigma_draws = sigma_draws,
          spline_estimates = spline_estimates,
          upperq_sp_estimates = upperq_sp_estimates,
+         lowerq_sp_estimates = lowerq_sp_estimates,
          lowerq = fixedEffects_lowerq,
          upperq = fixedEffects_upperq)
   })
@@ -238,6 +246,7 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
 
   splines_matrix <- lapply(results, function(a) a$spline_estimates)
   upperq_splines_matrix <-lapply(results, function(a) a$upperq_sp_estimates)
+  lowerq_splines_matrix <-lapply(results, function(a) a$lowerq_sp_estimates)
 
   organize_info <- function(object, matrix_info = TRUE){
     lapply(unique_taus, function(a){
@@ -280,6 +289,8 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
                                                     matrix_info = FALSE)
     upperq_spline_estimates <- organize_info(upperq_splines_matrix,
                                              matrix_info = FALSE)
+    lowerq_spline_estimates <- organize_info(lowerq_splines_matrix,
+                                             matrix_info = FALSE)
   }
 
   if (n_dim == 2){
@@ -292,7 +303,8 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
          spline_estimates_DifDirections = spline_estimates_DifDirections,
          lowerq_DifDirections = lowerq_DifDirections,
          upperq_DifDirections = upperq_DifDirections,
-         upperq_spline_estimates = upperq_spline_estimates)
+         upperq_spline_estimates = upperq_spline_estimates,
+         lowerq_spline_estimates = lowerq_spline_estimates)
   } else if (n_dim == 3) {
     list(taus = unique_taus, betaDifDirections = betaDifDirections,
          directions = t(vectorDir), orthBases1 = t(orthBasis1),
@@ -304,7 +316,8 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
          spline_estimates_DifDirections = spline_estimates_DifDirections,
          lowerq_DifDirections = lowerq_DifDirections,
          upperq_DifDirections = upperq_DifDirections,
-         upperq_spline_estimates = upperq_spline_estimates)
+         upperq_spline_estimates = upperq_spline_estimates,
+         lowerq_spline_estimates = lowerq_spline_estimates)
   } else {
     list(taus = unique_taus, betaDifDirections = betaDifDirections,
          directions = t(vectorDir), orthBases1 = t(orthBasis1),
@@ -316,6 +329,7 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
          spline_estimates_DifDirections = spline_estimates_DifDirections,
          lowerq_DifDirections = lowerq_DifDirections,
          upperq_DifDirections = upperq_DifDirections,
-         upperq_spline_estimates = upperq_spline_estimates)
+         upperq_spline_estimates = upperq_spline_estimates,
+         lowerq_spline_estimates = lowerq_spline_estimates)
   }
 }
