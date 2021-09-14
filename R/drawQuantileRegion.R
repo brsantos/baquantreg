@@ -39,6 +39,9 @@
 #' @param name_var When there is a nonlinear variable from which one wants to
 #'  consider different values for plotting, this should have the name of the
 #'  variable.
+#' @param range_y matrix type object containing in the first line the range for
+#'  the first dimension and in the second line the range for the second
+#'  dimension of Y. This will be used to find the respective quantile regions.
 #' @param ... Other parameters for \code{summary.multBQR}.
 #' @return A ggplot with the quantile regions based on Bayesian quantile
 #'  regression model estimates.
@@ -51,7 +54,8 @@ drawQuantileRegion <- function(model, datafile, response,
                                splines_part = FALSE, wValue = NULL,
                                print_plot = TRUE,
                                model_name = 'bayesx.estim',
-                               name_var, ...){
+                               name_var,
+                               range_y = NULL, ...){
 
   if (!result_folder){
     directions <- sapply(model$modelsDir, function(a) a$direction)
@@ -107,8 +111,16 @@ drawQuantileRegion <- function(model, datafile, response,
     }
   }
 
-  y1range <- range(Y[,1])
-  y2range <- range(Y[,2])
+  if(is.null(range_y)){
+    y1range <- range(Y[,1])
+    y2range <- range(Y[,2])
+  }
+  else {
+    y1range <- range_y[1, ]
+    y2range <- range_y[2, ]
+  }
+
+
 
   seqY1 <- seq(y1range[1], y1range[2], length.out = ngridpoints)
   seqY2 <- seq(y2range[1], y2range[2], length.out = ngridpoints)

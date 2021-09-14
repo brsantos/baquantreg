@@ -19,6 +19,7 @@ drawQuantileRegion(
   print_plot = TRUE,
   model_name = "bayesx.estim",
   name_var,
+  range_y = NULL,
   ...
 )
 }
@@ -72,6 +73,10 @@ the name of the name considered by BayesX to save all tables. Default is
 \item{name_var}{When there is a nonlinear variable from which one wants to
 consider different values for plotting, this should have the name of the
 variable.}
+
+\item{range_y}{matrix type object containing in the first line the range for
+the first dimension and in the second line the range for the second
+dimension of Y. This will be used to find the respective quantile regions.}
 
 \item{...}{Other parameters for \code{summary.multBQR}.}
 }
