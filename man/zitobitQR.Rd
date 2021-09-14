@@ -4,10 +4,22 @@
 \alias{zitobitQR}
 \title{Bayesian quantile regression model with a discrete component at zero}
 \usage{
-zitobitQR(formula, tau = 0.5, data, itNum, thin = 1,
-  betaValue = NULL, sigmaValue = 1, gammaValue = NULL,
-  sigmaGamma = 0.5, link = 1, priorVar = 100, refresh = 100,
-  quiet = FALSE, burnin = 50)
+zitobitQR(
+  formula,
+  tau = 0.5,
+  data,
+  itNum,
+  thin = 1,
+  betaValue = NULL,
+  sigmaValue = 1,
+  gammaValue = NULL,
+  sigmaGamma = 0.5,
+  link = 1,
+  priorVar = 100,
+  refresh = 100,
+  quiet = FALSE,
+  burnin = 50
+)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~

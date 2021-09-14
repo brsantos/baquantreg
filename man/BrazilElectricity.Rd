@@ -4,7 +4,8 @@
 \name{BrazilElectricity}
 \alias{BrazilElectricity}
 \title{Proportion of households with access to electricity in Brazil}
-\format{A data frame with 500 rows and 6 variables:
+\format{
+A data frame with 500 rows and 6 variables:
 \describe{
   \item{prop_elec}{propotion of households with access to electricity.}
   \item{region}{2 for Northeast, 3 for Southeast.}
@@ -12,7 +13,8 @@
   \item{income_percap}{Income per capita, in Brazilian reais.}
   \item{hdi}{Human development index.}
   \item{pop_density}{Population density.}
-}}
+}
+}
 \source{
 \url{http://www.ibge.gov.br/english/estatistica/populacao/
 default_censo_2000.shtm}

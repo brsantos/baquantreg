@@ -4,10 +4,21 @@
 \alias{getQuantileRegion_4D}
 \title{Multiple-output Bayesian quantile regression model}
 \usage{
-getQuantileRegion_4D(model, datafile, response, ngridpoints = 100,
-  xValue = 1, path_folder = NULL, splines_part = FALSE,
-  wValue = NULL, print_plot = TRUE, model_name = "bayesx.estim",
-  name_var, adaptive_dir = FALSE, ...)
+getQuantileRegion_4D(
+  model,
+  datafile,
+  response,
+  ngridpoints = 100,
+  xValue = 1,
+  path_folder = NULL,
+  splines_part = FALSE,
+  wValue = NULL,
+  print_plot = TRUE,
+  model_name = "bayesx.estim",
+  name_var,
+  adaptive_dir = FALSE,
+  ...
+)
 }
 \arguments{
 \item{model}{This is an object of the class \code{multBQR}, produced by a

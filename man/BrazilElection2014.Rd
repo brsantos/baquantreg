@@ -5,7 +5,8 @@
 \alias{BrazilElection2014}
 \title{Results of the Brazilian presidential election in 2014, with percentage of
  votes for Dilma Rousseff by city.}
-\format{A data frame with 5501 rows and 13 variables:
+\format{
+A data frame with 5501 rows and 13 variables:
 \describe{
   \item{city}{Name of the city.}
   \item{UF}{Code for the state.}
@@ -24,7 +25,8 @@
   \item{population}{Population number in 2010.}
   \item{latitude}{Latitude.}
   \item{longitude}{Longitude.}
-}}
+}
+}
 \source{
 \url{http://www.tse.jus.br/eleicoes/estatisticas/repositorio-de-dados-eleitorais}
 }

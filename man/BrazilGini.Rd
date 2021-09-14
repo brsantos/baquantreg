@@ -4,14 +4,16 @@
 \name{BrazilGini}
 \alias{BrazilGini}
 \title{Gini index for Brazilian states in three censuses.}
-\format{A data frame with 81 rows and 4 variables:
+\format{
+A data frame with 81 rows and 4 variables:
 \describe{
   \item{UFN}{Name of the state}
   \item{GINI}{Gini index}
   \item{INCPC}{Average income per capita}
   \item{EDUC}{Average years of education}
   \item{YEAR}{Year of the census}
-}}
+}
+}
 \source{
 \url{http://www.ibge.gov.br/english/estatistica/populacao/
 default_censo_2000.shtm}

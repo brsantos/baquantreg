@@ -4,8 +4,7 @@
 \alias{plot.summary.zitobitQR}
 \title{Plot methods for summary of Bayesian quantile regression models.}
 \usage{
-\method{plot}{summary.zitobitQR}(x, separate = FALSE, beta = TRUE,
-  sigma = FALSE, gamma = FALSE, ...)
+\method{plot}{summary.zitobitQR}(x, separate = FALSE, beta = TRUE, sigma = FALSE, gamma = FALSE, ...)
 }
 \arguments{
 \item{x}{This is an object of the class "summary.zitobitQR",

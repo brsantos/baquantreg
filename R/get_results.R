@@ -284,6 +284,7 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
 
   spline_estimates_DifDirections <- NULL
   upperq_spline_estimates <- NULL
+  lowerq_spline_estimates <- NULL
   if (splines){
     spline_estimates_DifDirections <- organize_info(splines_matrix,
                                                     matrix_info = FALSE)

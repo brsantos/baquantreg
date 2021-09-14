@@ -4,7 +4,8 @@
 \name{BrazilDurableGoods}
 \alias{BrazilDurableGoods}
 \title{Expenditures with durable goods in Brazil.}
-\format{A data frame with 2240 rows and 6 variables:
+\format{
+A data frame with 2240 rows and 6 variables:
 \describe{
   \item{expenditure}{expenditure, in Brazilian reais}
   \item{gender}{1 for male, 2 for female}
@@ -12,7 +13,8 @@
   \item{race}{1 for white, 2 for non-white}
   \item{credit_card}{1 if the observation has credit card, 2 otherwise.}
   \item{education}{Education, in years.}
-}}
+}
+}
 \source{
 \url{http://www.ibge.gov.br/english/estatistica/populacao/
 condicaodevida/pof/2008_2009/default.shtm}

@@ -4,10 +4,23 @@
 \alias{bayesQR}
 \title{Bayesian quantile regression model}
 \usage{
-bayesQR(formula, tau = 0.5, data, itNum, thin = 1, betaValue = NULL,
-  sigmaValue = 1, vSampleInit = NULL, priorVar = 100,
-  hyperSigma = c(0.1, 0.1), refresh = 100, sigmaSampling = TRUE,
-  quiet = T, tobit = FALSE, recordLat = FALSE)
+bayesQR(
+  formula,
+  tau = 0.5,
+  data,
+  itNum,
+  thin = 1,
+  betaValue = NULL,
+  sigmaValue = 1,
+  vSampleInit = NULL,
+  priorVar = 100,
+  hyperSigma = c(0.1, 0.1),
+  refresh = 100,
+  sigmaSampling = TRUE,
+  quiet = T,
+  tobit = FALSE,
+  recordLat = FALSE
+)
 }
 \arguments{
 \item{formula}{a formula object, with the response on the left of a ~

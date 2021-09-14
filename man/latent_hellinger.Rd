@@ -4,8 +4,14 @@
 \alias{latent_hellinger}
 \title{Hellinger distance for the latent variables of the estimation process.}
 \usage{
-latent_hellinger(object, burnin = 50, plot_div = TRUE,
-  scales.free = FALSE, all.obs = TRUE, obs = 1)
+latent_hellinger(
+  object,
+  burnin = 50,
+  plot_div = TRUE,
+  scales.free = FALSE,
+  all.obs = TRUE,
+  obs = 1
+)
 }
 \arguments{
 \item{object}{This is an object of the class "bqr", produced by a call

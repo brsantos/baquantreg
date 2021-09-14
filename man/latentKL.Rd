@@ -5,8 +5,14 @@
 \title{Kullback-Leibler divergence for the latent variables of the estimation
  process.}
 \usage{
-latentKL(object, burnin = 50, plotKL = TRUE, scales.free = FALSE,
-  all.obs = TRUE, obs = 1)
+latentKL(
+  object,
+  burnin = 50,
+  plotKL = TRUE,
+  scales.free = FALSE,
+  all.obs = TRUE,
+  obs = 1
+)
 }
 \arguments{
 \item{object}{This is an object of the class "bqr", produced by a call
