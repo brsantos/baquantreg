@@ -33,7 +33,7 @@ checkpoints_qreg_2D <- function(model, datafile, response,
                                 path_folder = NULL,
                                 splines_part = FALSE, w_values = NULL,
                                 model_name = 'bayesx.estim',
-                                name_var, lambda_a, ...){
+                                name_var, lambda_a = NULL, ...){
 
   if (is.null(path_folder))
     stop("You must define a path with all the results")
@@ -52,24 +52,6 @@ checkpoints_qreg_2D <- function(model, datafile, response,
 
     betaDifDirections <- results$betaDifDirections
     splines_estimates <- results$spline_estimates_DifDirections
-
-    # if (!upperq){
-    #   betaDifDirections <- results$betaDifDirections
-    #   splines_estimates <- results$spline_estimates_DifDirections
-    # }
-    # else {
-    #   betaDifDirections <- results$upperq_DifDirections
-    #   splines_estimates <- results$upperq_spline_estimates
-    # }
-    #
-    # if (!lowerq){
-    #   betaDifDirections <- results$betaDifDirections
-    #   splines_estimates <- results$spline_estimates_DifDirections
-    # }
-    # else {
-    #   betaDifDirections <- results$lowerq_DifDirections
-    #   splines_estimates <- results$lowerq_spline_estimates
-    # }
 
     directions <- results$directions
     orthBases <- results$orthBases
@@ -90,13 +72,14 @@ checkpoints_qreg_2D <- function(model, datafile, response,
           })
       } else spline_values <- rep(0, number_directions)
 
-      checkPoints_val <- checkPoints_4d(points_y[nnn, 1],
-                                        points_y[nnn, 2],
-                                        t(directions),
-                                        t(orthBases),
-                                        betaDifDirections[[a]],
-                                        x_values[nnn, ],
-                                        splines_part, spline_values)
+      checkPoints_val <- checkPoints(points_y[nnn, 1],
+                                     points_y[nnn, 2],
+                                     t(directions),
+                                     t(orthBases),
+                                     betaDifDirections[[a]],
+                                     x_values[nnn, ],
+                                     splines_part, 
+                                     spline_values)
       if(length(checkPoints_val) == 0) inside <- FALSE
       else inside <- TRUE
 
