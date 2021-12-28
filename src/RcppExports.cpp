@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // BayesQR
 List BayesQR(double tau, arma::colvec y, arma::mat X, int itNum, int thin, arma::colvec betaValue, double sigmaValue, arma::vec vSampleInit, double priorVar, NumericVector hyperSigma, int refresh, bool sigmaSampling, bool quiet, bool tobit, bool recordLat);
 RcppExport SEXP _baquantreg_BayesQR(SEXP tauSEXP, SEXP ySEXP, SEXP XSEXP, SEXP itNumSEXP, SEXP thinSEXP, SEXP betaValueSEXP, SEXP sigmaValueSEXP, SEXP vSampleInitSEXP, SEXP priorVarSEXP, SEXP hyperSigmaSEXP, SEXP refreshSEXP, SEXP sigmaSamplingSEXP, SEXP quietSEXP, SEXP tobitSEXP, SEXP recordLatSEXP) {

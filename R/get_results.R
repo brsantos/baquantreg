@@ -1,7 +1,8 @@
 ## Organizing the results in a folder
 
 get_results <- function(path_folder, model_name, splines = FALSE, name_var,
-                        n_dim = 2, datafile_original, response, adaptive_dir){
+                        n_dim = 2, datafile_original, response, adaptive_dir,
+                        lambda_a = NULL){
   folders <- list.files(path_folder)
 
   ## Considering at most 999 directions
@@ -42,6 +43,10 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
       fixedEffects_lowerq <- do.call(rbind, all_files)[, 5]
       fixedEffects_upperq <- do.call(rbind, all_files)[, 9]
       varnames <- do.call(rbind, all_files)[, 2]
+
+      if (!is.null(lambda_a)){
+        fixedEffects[1] <- fixedEffects[1] - lambda_a
+      }
     } else {
       info <- utils::read.table(paste0(path_folder, '/', a, '/',
                                        files_results), head = TRUE)
@@ -50,6 +55,10 @@ get_results <- function(path_folder, model_name, splines = FALSE, name_var,
       fixedEffects_lowerq <- info[, 5]
       fixedEffects_upperq <- info[, 9]
       varnames <- info[, 2]
+
+      if (!is.null(lambda_a)){
+        fixedEffects[1] <- fixedEffects[1] - lambda_a
+      }
     }
 
     if (sum(beta_draws_files) > 1){

@@ -39,6 +39,13 @@
 #' @param name_var When there is a nonlinear variable from which one wants to
 #'  consider different values for plotting, this should have the name of the
 #'  variable.
+#' @param lower_q Logical determining whether quantile region should be based
+#' on the lower value of 95% credible interval for each parameter of the model.
+#' @param upper_q Logical determining whether quantile region should be based
+#' on the upper value of 95% credible interval for each parameter of the model.
+#' @param lambda_a Parameter to be make the adjustment of the intercept to
+#'  correct the miscoverage of the quantile regions.
+#' \code{lower_q} must be FALSE for this argument to be checked.
 #' @param ... Other parameters for \code{summary.multBQR}.
 #' @return A ggplot with the quantile regions based on Bayesian quantile
 #'  regression model estimates.
@@ -51,7 +58,9 @@ drawQuantileRegion <- function(model, datafile, response,
                                splines_part = FALSE, wValue = NULL,
                                print_plot = TRUE,
                                model_name = 'bayesx.estim',
-                               name_var, ...){
+                               name_var, lower_q = FALSE, upper_q = FALSE,
+                               lambda_a = NULL,
+                               ...){
 
   if (!result_folder){
     directions <- sapply(model$modelsDir, function(a) a$direction)
@@ -86,24 +95,47 @@ drawQuantileRegion <- function(model, datafile, response,
   else{
     if (is.null(path_folder))
       stop("You must define a path with all the results")
-    else{
+    else {
       results <- get_results(path_folder,
                              model_name = model_name,
                              splines = splines_part,
-                             name_var = name_var, n_dim = 2,
-                             datafile, response)
+                             name_var = name_var,
+                             n_dim = 2,
+                             datafile,
+                             response,
+                             lambda_a = lambda_a)
 
       taus <- results$taus
       ntaus <- length(taus)
 
       Y <- datafile[, response]
-      betaDifDirections <- results$betaDifDirections
       directions <- results$directions
       orthBases <- results$orthBases
 
       number_directions <- dim(directions)[2]
 
-      splines_estimates <- results$spline_estimates_DifDirections
+      if (!any(c(lower_q, upper_q))){
+        betaDifDirections <- results$betaDifDirections
+        splines_estimates <- results$spline_estimates_DifDirections
+      }
+      else if (lower_q){
+        betaDifDirections <- lapply(1:length(results$betaDifDirections),
+                                    function(xxx){
+          results$betaDifDirections[[xxx]] -
+            stats::qnorm(0.975) * diag(c(xValue, 0)) %*%
+            results$sdDifDirections[[xxx]]
+        })
+        splines_estimates <- results$spline_estimates_DifDirections
+      }
+      else {
+        betaDifDirections <- lapply(1:length(results$betaDifDirections),
+                                    function(xxx){
+          results$betaDifDirections[[xxx]] +
+            stats::qnorm(0.975) * diag(c(xValue, 0)) %*%
+            results$sdDifDirections[[xxx]]
+        })
+        splines_estimates <- results$spline_estimates_DifDirections
+      }
     }
   }
 
@@ -259,7 +291,7 @@ drawQuantileRegion <- function(model, datafile, response,
                              taus = tausPoints,
                              predictors = predictorsType)
 
-      if(print_plot){
+      if (print_plot){
         g <- ggplot() + theme_bw()
         g + geom_path(data = dataPlot, aes(x, y, linetype = factor(taus),
                                            color = factor(predictors))) +

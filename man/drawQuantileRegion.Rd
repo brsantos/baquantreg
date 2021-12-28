@@ -19,6 +19,9 @@ drawQuantileRegion(
   print_plot = TRUE,
   model_name = "bayesx.estim",
   name_var,
+  lower_q = FALSE,
+  upper_q = FALSE,
+  lambda_a = NULL,
   ...
 )
 }
@@ -72,6 +75,16 @@ the name of the name considered by BayesX to save all tables. Default is
 \item{name_var}{When there is a nonlinear variable from which one wants to
 consider different values for plotting, this should have the name of the
 variable.}
+
+\item{lower_q}{Logical determining whether quantile region should be based
+on the lower value of 95% credible interval for each parameter of the model.}
+
+\item{upper_q}{Logical determining whether quantile region should be based
+on the upper value of 95% credible interval for each parameter of the model.}
+
+\item{lambda_a}{Parameter to be make the adjustment of the intercept to
+ correct the miscoverage of the quantile regions.
+\code{lower_q} must be FALSE for this argument to be checked.}
 
 \item{...}{Other parameters for \code{summary.multBQR}.}
 }
