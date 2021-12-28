@@ -5,24 +5,20 @@
 \title{Multiple-output Bayesian quantile regression model}
 \usage{
 checkpoints_qreg_2D(
-  model,
   datafile,
   response,
   points_y,
-  x_values = 1,
+  x_values,
   path_folder = NULL,
   splines_part = FALSE,
   w_values = NULL,
   model_name = "bayesx.estim",
   name_var,
-  lambda_a,
+  lambda_a = NULL,
   ...
 )
 }
 \arguments{
-\item{model}{This is an object of the class \code{multBQR}, produced by a
-call to the \code{multBayesQR} function.}
-
 \item{datafile}{A data.frame from which to find the variables defined in the
 formula.}
 

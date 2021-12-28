@@ -3,8 +3,6 @@
 #' This function checks whether points belong to quantile regions or not, based
 #'  on estimated models for models with 2 dimensions.
 #'
-#' @param model This is an object of the class \code{multBQR}, produced by a
-#'  call to the \code{multBayesQR} function.
 #' @param datafile A data.frame from which to find the variables defined in the
 #'  formula.
 #' @param response Names of response variables
@@ -28,13 +26,13 @@
 #'  regression model estimates.
 #' @useDynLib baquantreg
 
-checkpoints_qreg_2D <- function(model, datafile, response,
-                                points_y, x_values = 1,
+checkpoints_qreg_2D <- function(datafile, response,
+                                points_y, x_values,
                                 path_folder = NULL,
                                 splines_part = FALSE, w_values = NULL,
                                 model_name = 'bayesx.estim',
                                 name_var, lambda_a = NULL, ...){
-
+  
   if (is.null(path_folder))
     stop("You must define a path with all the results")
   else {
