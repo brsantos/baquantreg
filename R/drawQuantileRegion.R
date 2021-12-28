@@ -39,6 +39,7 @@
 #' @param name_var When there is a nonlinear variable from which one wants to
 #'  consider different values for plotting, this should have the name of the
 #'  variable.
+<<<<<<< HEAD
 #' @param lower_q Logical determining whether quantile region should be based
 #' on the lower value of 95% credible interval for each parameter of the model.
 #' @param upper_q Logical determining whether quantile region should be based
@@ -46,6 +47,11 @@
 #' @param lambda_a Parameter to be make the adjustment of the intercept to
 #'  correct the miscoverage of the quantile regions.
 #' \code{lower_q} must be FALSE for this argument to be checked.
+=======
+#' @param range_y matrix type object containing in the first line the range for
+#'  the first dimension and in the second line the range for the second
+#'  dimension of Y. This will be used to find the respective quantile regions.
+>>>>>>> 804e2e74b58e17b10907d90d2919439f66ba280e
 #' @param ... Other parameters for \code{summary.multBQR}.
 #' @return A ggplot with the quantile regions based on Bayesian quantile
 #'  regression model estimates.
@@ -58,9 +64,14 @@ drawQuantileRegion <- function(model, datafile, response,
                                splines_part = FALSE, wValue = NULL,
                                print_plot = TRUE,
                                model_name = 'bayesx.estim',
+<<<<<<< HEAD
                                name_var, lower_q = FALSE, upper_q = FALSE,
                                lambda_a = NULL,
                                ...){
+=======
+                               name_var,
+                               range_y = NULL, ...){
+>>>>>>> 804e2e74b58e17b10907d90d2919439f66ba280e
 
   if (!result_folder){
     directions <- sapply(model$modelsDir, function(a) a$direction)
@@ -139,8 +150,16 @@ drawQuantileRegion <- function(model, datafile, response,
     }
   }
 
-  y1range <- range(Y[,1])
-  y2range <- range(Y[,2])
+  if(is.null(range_y)){
+    y1range <- range(Y[,1])
+    y2range <- range(Y[,2])
+  }
+  else {
+    y1range <- range_y[1, ]
+    y2range <- range_y[2, ]
+  }
+
+
 
   seqY1 <- seq(y1range[1], y1range[2], length.out = ngridpoints)
   seqY2 <- seq(y2range[1], y2range[2], length.out = ngridpoints)
