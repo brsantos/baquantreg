@@ -19,13 +19,10 @@ drawQuantileRegion(
   print_plot = TRUE,
   model_name = "bayesx.estim",
   name_var,
-<<<<<<< HEAD
+  range_y = NULL,
   lower_q = FALSE,
   upper_q = FALSE,
   lambda_a = NULL,
-=======
-  range_y = NULL,
->>>>>>> 804e2e74b58e17b10907d90d2919439f66ba280e
   ...
 )
 }
@@ -80,21 +77,19 @@ the name of the name considered by BayesX to save all tables. Default is
 consider different values for plotting, this should have the name of the
 variable.}
 
-<<<<<<< HEAD
-\item{lower_q}{Logical determining whether quantile region should be based
-on the lower value of 95% credible interval for each parameter of the model.}
-
-\item{upper_q}{Logical determining whether quantile region should be based
-on the upper value of 95% credible interval for each parameter of the model.}
-
-\item{lambda_a}{Parameter to be make the adjustment of the intercept to
- correct the miscoverage of the quantile regions.
-\code{lower_q} must be FALSE for this argument to be checked.}
-=======
 \item{range_y}{matrix type object containing in the first line the range for
 the first dimension and in the second line the range for the second
 dimension of Y. This will be used to find the respective quantile regions.}
->>>>>>> 804e2e74b58e17b10907d90d2919439f66ba280e
+
+\item{lower_q}{Logical determining whether quantile region should be based
+on the lower value of 0.95 credible interval for each parameter of the model.}
+
+\item{upper_q}{Logical determining whether quantile region should be based
+on the upper value of 0.95 credible interval for each parameter of the model.}
+
+\item{lambda_a}{Parameter to be make the adjustment of the intercept to
+correct the miscoverage of the quantile regions.
+\code{lower_q} must be FALSE for this argument to be checked.}
 
 \item{...}{Other parameters for \code{summary.multBQR}.}
 }
